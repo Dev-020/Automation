@@ -1,0 +1,14 @@
+/Gather/dataset
+*.png
+/replay/video_replays
+/TTS/audio_logs
+/TTS/audio_samples
+/TTS/converted_dataset
+/TTS/HSR
+/TTS/orion_voice
+/TTS/piper_model
+*.wav
+*.csv
+/TTS/rvc models
+*.pt
+*.jpg
