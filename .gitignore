@@ -12,3 +12,4 @@
 /TTS/rvc models
 *.pt
 *.jpg
+*.pyc

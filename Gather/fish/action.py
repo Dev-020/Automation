@@ -107,7 +107,7 @@ def run_action(bot_state):
                         
                     if coords:
                         print(f"[Action] State is CAUGHT. Clicking 'Continue' at {coords}.")
-                        pyautogui.click(coords[0], coords[1])
+                        pyautogui.click(1488, 1026)
                         # Reset the click cooldown timer
                         last_continue_click = time.time()
                     else:

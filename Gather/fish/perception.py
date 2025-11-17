@@ -103,6 +103,10 @@ def run_perception(bot_state):
                             screen_gray, recast_template, config.RECAST_THRESHOLD
                         )
                 
+                #print(cont_coords)
+                #print(recast_coords)
+                #print(bot_state.current_state)
+                
                 # --- 4. FSM Logic (Your New, Robust FSM) ---
                 with bot_state.lock:
                     state = bot_state.current_state 
@@ -146,11 +150,26 @@ def run_perception(bot_state):
                             bot_state.current_state = config.STATE_REELING
                         
                         # Failsafe: Check for "B" prompt in the FULL gray screen
-                        elif utils.find_template(screen_gray, recast_template, config.RECAST_THRESHOLD):
+                        elif recast_coords:
                             bot_state.current_state = config.STATE_IDLE
                     
                     # --- THIS IS THE MODIFIED STATE ---
                     elif state == config.STATE_REELING:
+                        
+                        # 6. Failsafe: Check for "Continue" button (unchanged)
+                        #print("Checking coords")
+                        if cont_coords:
+                            print("[Perception] Fish caught! State changing to CAUGHT.")
+                            monitor = bot_state.monitor_object
+                            bot_state.cached_button_coords = (cont_coords[0] + monitor['left'], cont_coords[1] + monitor['top'])
+                            bot_state.current_state = config.STATE_CAUGHT
+                            bot_state.arrow_direction = "NONE" # Clear arrows
+                            
+                        # 7. Failsafe: Check for "B" prompt (unchanged)
+                        elif recast_coords:
+                            print("[Perception] Fish got away. State changing to IDLE.")
+                            bot_state.current_state = config.STATE_IDLE
+                            bot_state.arrow_direction = "NONE"
                         
                         # --- NEW YOLOv8 DETECTION LOGIC ---
                         
@@ -197,11 +216,14 @@ def run_perception(bot_state):
                                         # 5. Compare fish position to dead zone
                                         if fish_center_x < dead_zone_left:
                                             bot_state.arrow_direction = "LEFT"
+                                            print("[Perception] Left.")
                                         elif fish_center_x > dead_zone_right:
                                             bot_state.arrow_direction = "RIGHT"
+                                            print("[Perception] Right.")
                                         else:
                                             # Fish is in the dead zone, do nothing
                                             bot_state.arrow_direction = "NONE"
+                                            print("[Perception] Dead zone.")
                                             
                                         found_fish = True
                                         break # We only care about the most confident fish
@@ -210,34 +232,13 @@ def run_perception(bot_state):
 
                         if not found_fish:
                             # If the model saw nothing (or confidence was too low), don't move.
-                            bot_state.arrow_direction = "NONE"
+                            continue
+                            #bot_state.arrow_direction = "NONE"
                             
                         # --- END OF NEW YOLOv8 LOGIC ---
-
-                        # 6. Failsafe: Check for "Continue" button (unchanged)
-                        if cont_coords:
-                            print("[Perception] Fish caught! State changing to CAUGHT.")
-                            monitor = bot_state.monitor_object
-                            bot_state.cached_button_coords = (cont_coords[0] + monitor['left'], cont_coords[1] + monitor['top'])
-                            bot_state.current_state = config.STATE_CAUGHT
-                            bot_state.arrow_direction = "NONE" # Clear arrows
-                            
-                        # 7. Failsafe: Check for "B" prompt (unchanged)
-                        elif recast_coords:
-                            print("[Perception] Fish got away. State changing to IDLE.")
-                            bot_state.current_state = config.STATE_IDLE
-                            bot_state.arrow_direction = "NONE"
                         
                     elif state == config.STATE_CAUGHT:
                         # (This state is unchanged)
-                        # Look for "Continue" button in the FULL gray screen
-                        if not cont_coords:
-                            print("[Perception] Button clicked. Waiting for next cycle...")
-                            time.sleep(config.CAST_WAIT_TIME_SEC) 
-                            print("[Perception] State changing to IDLE.")
-                            bot_state.current_state = config.STATE_IDLE
-                        
-                    elif state == config.STATE_CAUGHT:
                         # Look for "Continue" button in the FULL gray screen
                         if not cont_coords:
                             print("[Perception] Button clicked. Waiting for next cycle...")
