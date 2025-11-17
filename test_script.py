@@ -18,8 +18,6 @@ import discord
 import os
 import asyncio
 from dotenv import load_dotenv
-from orion_core import OrionCore
-from discord.ext import commands
 
 dotenv.load_dotenv()
 
