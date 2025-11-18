@@ -1,0 +1,11 @@
+keyboard
+mss
+numpy
+opencv_python
+Pillow
+pyautogui
+PyDirectInput
+PyQt5
+pyqt5_sip
+pywin32
+ultralytics

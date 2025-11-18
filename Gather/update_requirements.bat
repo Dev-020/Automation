@@ -1,0 +1,1 @@
+pipreqs c:\GitBash\Automation\Gather --force
