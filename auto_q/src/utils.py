@@ -11,6 +11,30 @@ ASSETS_DIR = os.path.join(os.path.dirname(__file__), 'assets')
 RIOT_CLIENT_WINDOW_TITLE = "Riot Client"
 LEAGUE_CLIENT_WINDOW_TITLE = "League of Legends"
 
+import ctypes
+from ctypes import wintypes
+
+# Windows API Constants
+PW_RENDERFULLCONTENT = 0x00000002
+SRCCOPY = 0x00CC0020
+DIB_RGB_COLORS = 0
+
+# Windows API Structures
+class BITMAPINFOHEADER(ctypes.Structure):
+    _fields_ = [
+        ('biSize', wintypes.DWORD),
+        ('biWidth', wintypes.LONG),
+        ('biHeight', wintypes.LONG),
+        ('biPlanes', wintypes.WORD),
+        ('biBitCount', wintypes.WORD),
+        ('biCompression', wintypes.DWORD),
+        ('biSizeImage', wintypes.DWORD),
+        ('biXPelsPerMeter', wintypes.LONG),
+        ('biYPelsPerMeter', wintypes.LONG),
+        ('biClrUsed', wintypes.DWORD),
+        ('biClrImportant', wintypes.DWORD),
+    ]
+
 def get_window_rect(title):
     """
     Finds a window by title and returns its (left, top, width, height).
@@ -27,26 +51,77 @@ def get_window_rect(title):
         print(f"Error finding window '{title}': {e}")
         return None
 
-def capture_screen_region(region):
+def capture_window(title):
     """
-    Captures a specific region of the screen using mss.
-    region: (left, top, width, height)
-    Returns: numpy array (BGR) ready for opencv
+    Captures a specific window using Windows PrintWindow API.
+    Works even if the window is not active or is occluded.
+    Returns: (image (BGR numpy array), (left, top, width, height)) or (None, None)
     """
-    with mss.mss() as sct:
-        # mss expects {'top':, 'left':, 'width':, 'height':}
-        monitor = {
-            "top": region[1],
-            "left": region[0],
-            "width": region[2],
-            "height": region[3]
-        }
-        sct_img = sct.grab(monitor)
+    try:
+        windows = gw.getWindowsWithTitle(title)
+        if not windows:
+            return None, None
+        win = windows[0]
+        hwnd = win._hWnd  # pygetwindow exposes _hWnd
+
+        # Get window dimensions
+        left, top, width, height = win.left, win.top, win.width, win.height
+        if width <= 0 or height <= 0:
+            return None, None
+
+        # Create a device context (DC) for the window
+        hwndDC = ctypes.windll.user32.GetWindowDC(hwnd)
+        mfcDC = ctypes.windll.gdi32.CreateCompatibleDC(hwndDC)
+        saveDC = ctypes.windll.gdi32.CreateCompatibleBitmap(hwndDC, width, height)
+
+        ctypes.windll.gdi32.SelectObject(mfcDC, saveDC)
+
+        # Print the window to the DC
+        # PW_RENDERFULLCONTENT (0x02) is important for some apps (like Chrome/Electron)
+        result = ctypes.windll.user32.PrintWindow(hwnd, mfcDC, PW_RENDERFULLCONTENT)
+        
+        if result == 0:
+            # Fallback to standard PrintWindow if RENDERFULLCONTENT fails
+            result = ctypes.windll.user32.PrintWindow(hwnd, mfcDC, 0)
+
+        if result == 0:
+            print(f"PrintWindow failed for {title}")
+            ctypes.windll.user32.ReleaseDC(hwnd, hwndDC)
+            ctypes.windll.gdi32.DeleteDC(mfcDC)
+            ctypes.windll.gdi32.DeleteObject(saveDC)
+            return None, None
+
+        # Get bitmap bits
+        bmp_info = BITMAPINFOHEADER()
+        bmp_info.biSize = ctypes.sizeof(BITMAPINFOHEADER)
+        bmp_info.biWidth = width
+        bmp_info.biHeight = -height # Negative height for top-down
+        bmp_info.biPlanes = 1
+        bmp_info.biBitCount = 32
+        bmp_info.biCompression = 0 # BI_RGB
+
+        buffer_len = width * height * 4
+        buffer = ctypes.create_string_buffer(buffer_len)
+        
+        ctypes.windll.gdi32.GetDIBits(mfcDC, saveDC, 0, height, buffer, ctypes.byref(bmp_info), DIB_RGB_COLORS)
+
         # Convert to numpy array
-        img = np.array(sct_img)
-        # Convert BGRA to BGR
-        img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-        return img
+        img = np.frombuffer(buffer, dtype=np.uint8).reshape((height, width, 4))
+        
+        # Remove alpha channel and convert to BGR (PrintWindow usually returns BGRA)
+        img = img[:, :, :3]
+        # img is already BGR because Windows bitmaps are BGR(A)
+        
+        # Cleanup
+        ctypes.windll.user32.ReleaseDC(hwnd, hwndDC)
+        ctypes.windll.gdi32.DeleteDC(mfcDC)
+        ctypes.windll.gdi32.DeleteObject(saveDC)
+
+        return img, (left, top, width, height)
+
+    except Exception as e:
+        print(f"Error capturing window '{title}': {e}")
+        return None, None
 
 def find_image_on_screen(template_path, region_img, threshold=0.8):
     """

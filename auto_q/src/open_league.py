@@ -53,13 +53,12 @@ def main():
     start_time = time.time()
     while time.time() - start_time < 30: # 30 second timeout
         # Capture current state of the window
-        riot_rect = utils.get_window_rect(utils.RIOT_CLIENT_WINDOW_TITLE)
-        if not riot_rect:
+        window_img, riot_rect = utils.capture_window(utils.RIOT_CLIENT_WINDOW_TITLE)
+        
+        if window_img is None:
             print("Riot Client lost!")
             return
             
-        window_img = utils.capture_screen_region(riot_rect)
-        
         # Find the icon
         icon_pos = utils.find_image_on_screen(league_icon_path, window_img)
         
@@ -69,6 +68,7 @@ def main():
             abs_x = riot_rect[0] + icon_pos[0]
             abs_y = riot_rect[1] + icon_pos[1]
             
+            utils.focus_window(utils.RIOT_CLIENT_WINDOW_TITLE)
             utils.click_at(abs_x, abs_y)
             break
         
@@ -85,12 +85,11 @@ def main():
     
     start_time = time.time()
     while time.time() - start_time < 30:
-        riot_rect = utils.get_window_rect(utils.RIOT_CLIENT_WINDOW_TITLE)
-        if not riot_rect:
+        window_img, riot_rect = utils.capture_window(utils.RIOT_CLIENT_WINDOW_TITLE)
+        
+        if window_img is None:
             print("Riot Client lost!")
             return
-
-        window_img = utils.capture_screen_region(riot_rect)
         
         play_pos = utils.find_image_on_screen(play_button_path, window_img)
         
@@ -99,6 +98,7 @@ def main():
             abs_x = riot_rect[0] + play_pos[0]
             abs_y = riot_rect[1] + play_pos[1]
             
+            utils.focus_window(utils.RIOT_CLIENT_WINDOW_TITLE)
             utils.click_at(abs_x, abs_y)
             print("Launched League of Legends!")
             break

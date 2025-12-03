@@ -1,0 +1,5 @@
+aiohttp
+aiofiles
+playwright
+fake-useragent
+aiohttp-socks
