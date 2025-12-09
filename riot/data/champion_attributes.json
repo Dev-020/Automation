@@ -1,0 +1,19 @@
+{
+    "_comment": "Custom attributes for composition analysis. Map Champion ID (int) to attributes.",
+    "266": {"role": "Top", "style": "Drain Tank", "dmg_type": "Physical", "class": "Skirmisher"},
+    "103": {"role": "Mid", "style": "Pick", "dmg_type": "Magic", "class": "Burst Mage"},
+    "84":  {"role": "Mid", "style": "Assassin", "dmg_type": "Mixed", "class": "Assassin"},
+    "12":  {"role": "Support", "style": "Engage", "dmg_type": "Magic", "class": "Vanguard"},
+    "32":  {"role": "Jungle", "style": "Engage", "dmg_type": "Magic", "class": "Vanguard"},
+    "34":  {"role": "Mid", "style": "Control", "dmg_type": "Magic", "class": "Battlemage"},
+    "1":   {"role": "Mid", "style": "Burst", "dmg_type": "Magic", "class": "Burst Mage"},
+    "22":  {"role": "ADC", "style": "Utility", "dmg_type": "Physical", "class": "Marksman"},
+    "51":  {"role": "ADC", "style": "Poke", "dmg_type": "Physical", "class": "Marksman"},
+    "99":  {"role": "Support", "style": "Poke", "dmg_type": "Magic", "class": "Artillery"},
+    "202": {"role": "ADC", "style": "Utility", "dmg_type": "Physical", "class": "Marksman"},
+    "412": {"role": "Support", "style": "Hook", "dmg_type": "Magic", "class": "Catcher"},
+    "53":  {"role": "Support", "style": "Hook", "dmg_type": "Magic", "class": "Catcher"},
+    "89":  {"role": "Support", "style": "Engage", "dmg_type": "Magic", "class": "Vanguard"},
+    "25":  {"role": "Support", "style": "Peel", "dmg_type": "Magic", "class": "Warden"},
+    "222": {"role": "ADC", "style": "Hypercarry", "dmg_type": "Physical", "class": "Marksman"}
+}
