@@ -1,0 +1,39 @@
+--- Audio Speakers (Loopback Targets) ---
+Index 0: Voicemeeter AUX Input (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{09eb05f6-5ec6-4345-ba67-a8b31d8ec488}
+Index 1: Speakers (2- Logitech G733 Gaming Headset), {0.0.0.00000000}.{0efeb3ad-9514-4d1c-b40e-24bd09cd94c6}
+Index 2: Voicemeeter In 2 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{22db6eb9-04ae-41b7-a093-a1804e3996cf}
+Index 3: CABLE Input (VB-Audio Virtual Cable), {0.0.0.00000000}.{288fdce2-3069-4f09-b7cd-888628b2560d}
+Index 4: Speakers (Realtek(R) Audio), {0.0.0.00000000}.{377bec91-aa9b-46a4-bd8e-8eb9826084d7}
+Index 5: Voicemeeter In 3 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{6742cbc2-2734-4ec3-a6c4-f7024435f3d3}
+Index 6: CABLE In 16ch (VB-Audio Virtual Cable), {0.0.0.00000000}.{804060b6-f829-4235-9d0b-89adc310587d}
+Index 7: Voicemeeter In 5 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{ac527745-1c9a-40ed-91a7-a0f29f0164ae}
+Index 8: Voicemeeter In 4 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{b93454ee-c11e-44c7-864f-10491663ae7c}
+Index 9: Voicemeeter Input (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{bf97ea69-ac30-445f-9507-fb1d6c30ecd9}
+Index 10: Voicemeeter VAIO3 Input (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{dfbf70d7-b81d-4d4c-9a6c-0aa251aae8ca}
+Index 11: Voicemeeter In 1 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{ec24b11d-9aaf-447e-a9f1-7b063f55fdc1}
+
+--- Audio Microphones ---
+Index 0: Voicemeeter AUX Input (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{09eb05f6-5ec6-4345-ba67-a8b31d8ec488}
+Index 1: Speakers (2- Logitech G733 Gaming Headset), {0.0.0.00000000}.{0efeb3ad-9514-4d1c-b40e-24bd09cd94c6}
+Index 2: Voicemeeter In 2 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{22db6eb9-04ae-41b7-a093-a1804e3996cf}
+Index 3: CABLE Input (VB-Audio Virtual Cable), {0.0.0.00000000}.{288fdce2-3069-4f09-b7cd-888628b2560d}
+Index 4: Speakers (Realtek(R) Audio), {0.0.0.00000000}.{377bec91-aa9b-46a4-bd8e-8eb9826084d7}
+Index 5: Voicemeeter In 3 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{6742cbc2-2734-4ec3-a6c4-f7024435f3d3}
+Index 6: CABLE In 16ch (VB-Audio Virtual Cable), {0.0.0.00000000}.{804060b6-f829-4235-9d0b-89adc310587d}
+Index 7: Voicemeeter In 5 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{ac527745-1c9a-40ed-91a7-a0f29f0164ae}
+Index 8: Voicemeeter In 4 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{b93454ee-c11e-44c7-864f-10491663ae7c}
+Index 9: Voicemeeter Input (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{bf97ea69-ac30-445f-9507-fb1d6c30ecd9}
+Index 10: Voicemeeter VAIO3 Input (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{dfbf70d7-b81d-4d4c-9a6c-0aa251aae8ca}
+Index 11: Voicemeeter In 1 (VB-Audio Voicemeeter VAIO), {0.0.0.00000000}.{ec24b11d-9aaf-447e-a9f1-7b063f55fdc1}
+Index 12: Voicemeeter Out B3 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{2419d104-0a51-48f8-be99-618627b0fa14}
+Index 13: Microphone Array (AMD Audio Device), {0.0.1.00000000}.{2a8d5749-24a0-4413-b728-d3894d12a6c4}
+Index 14: Voicemeeter Out B2 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{4a225142-7fdb-4738-8fde-8c875fd90f91}
+Index 15: Voicemeeter Out A2 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{5963adcb-27a8-411b-8e4e-4b8f9bff15fa}
+Index 16: Voicemeeter Out B1 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{63bdd191-2ece-48cd-b0bb-bc001269b8d7}
+Index 17: Stereo Mix (Realtek(R) Audio), {0.0.1.00000000}.{6e521f08-130d-49dd-91ca-505d7a070c39}
+Index 18: Voicemeeter Out A1 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{6f146424-795e-4725-9922-6a1d84b102c3}
+Index 19: Voicemeeter Out A3 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{8337fda9-f45d-4053-a3ba-08151f1764b5}
+Index 20: Voicemeeter Out A4 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{90b61398-0492-4a51-b439-00c3f280db10}
+Index 21: Microphone (2- Logitech G733 Gaming Headset), {0.0.1.00000000}.{e8bea528-4de2-45aa-ab3a-3a64a62dc074}
+Index 22: CABLE Output (VB-Audio Virtual Cable), {0.0.1.00000000}.{f8e8c737-7e7a-402f-acd7-8992f66ae7e8}
+Index 23: Voicemeeter Out A5 (VB-Audio Voicemeeter VAIO), {0.0.1.00000000}.{fa1ecd79-6649-4ebc-a60d-99880dc5d000}

@@ -13,3 +13,4 @@
 *.pt
 *.jpg
 *.pyc
+/audio_corruption/venv-windows

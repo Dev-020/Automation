@@ -1,0 +1,6 @@
+sounddevice
+numpy
+scipy
+voicemeeter-api
+keyboard
+soundcard
