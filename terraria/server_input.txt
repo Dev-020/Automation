@@ -1,0 +1,13 @@
+say hepl
+help
+modlist
+say this was written through CLI
+help
+noon
+midnight
+dawn
+time
+seed
+say hello world
+say hello world
+help

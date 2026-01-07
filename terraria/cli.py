@@ -3,6 +3,7 @@ import sys
 import re
 from pathlib import Path
 from server_manager import ServerManager, STATE_FILE
+from terraria_logging import SERVER_PIPE_PATH
 from monitor import LogMonitor
 
 import json
@@ -79,6 +80,22 @@ def status_cmd(args):
         
     print("------------------------------")
 
+def console_cmd(args):
+    """Appends a command to the server input pipe."""
+    command_str = " ".join(args.command_text)
+    
+    if not command_str:
+        print("Error: No command provided.")
+        return
+
+    try:
+        # Append to the file
+        with open(SERVER_PIPE_PATH, 'a') as f:
+            f.write(command_str + "\n")
+        print(f"Sent command: {command_str}")
+    except Exception as e:
+        print(f"Failed to send command: {e}")
+
 def main():
     parser = argparse.ArgumentParser(description="Terraria Server Automation CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -92,6 +109,10 @@ def main():
 
     status_parser = subparsers.add_parser("status", help="Check status and tunnel URL")
     status_parser.set_defaults(func=status_cmd)
+
+    console_parser = subparsers.add_parser("console", help="Send a command to the server console")
+    console_parser.add_argument("command_text", nargs='+', help="The command to send (e.g., 'say Hello')")
+    console_parser.set_defaults(func=console_cmd)
 
     args = parser.parse_args()
     args.func(args)

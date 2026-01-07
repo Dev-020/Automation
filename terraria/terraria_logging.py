@@ -3,8 +3,14 @@ import subprocess
 import argparse
 import time
 import shutil
+import ctypes
 from pathlib import Path
 from datetime import datetime
+
+# --- Constants ---
+# --- Constants ---
+# Use absolute path based on this script's location to avoid CWD mismatch
+SERVER_PIPE_PATH = Path(__file__).parent.resolve() / "server_input.txt"
 
 # --- Reusable Classes ---
 
@@ -35,6 +41,133 @@ class DualLogger:
             self.log.flush()
         except:
             pass
+
+# --- Windows API for Ghost Typing (WriteConsoleInput) ---
+from ctypes import Structure, Union, byref, windll, c_short, c_ushort, c_ulong, c_wchar, sizeof, POINTER
+
+class COORD(Structure):
+    _fields_ = [("X", c_short), ("Y", c_short)]
+
+class KEY_EVENT_RECORD(Structure):
+    _fields_ = [
+        ("bKeyDown", c_ulong),
+        ("wRepeatCount", c_short),
+        ("wVirtualKeyCode", c_short),
+        ("wVirtualScanCode", c_short),
+        ("uChar", c_wchar),
+        ("dwControlKeyState", c_ulong)
+    ]
+
+class INPUT_RECORD_UNION(Union):
+    _fields_ = [("KeyEvent", KEY_EVENT_RECORD)]
+
+class INPUT_RECORD(Structure):
+    _fields_ = [
+        ("EventType", c_short),
+        ("Event", INPUT_RECORD_UNION)
+    ]
+
+# Constants
+STD_INPUT_HANDLE = -10
+KEY_EVENT = 0x0001
+VK_RETURN = 0x0D
+
+def send_command_to_console(command):
+    """Bypasses window messaging and writes directly to the Console Input Buffer."""
+    hStdIn = windll.kernel32.GetStdHandle(STD_INPUT_HANDLE)
+    
+    if hStdIn == -1:
+        print("[Wrapper] Error: Invalid Input Handle")
+        return
+
+    # Helper to create a key stroke pair (Down + Up)
+    def create_key_events(char_code, virtual_key=0):
+        events = []
+        
+        # Key Down
+        down = INPUT_RECORD()
+        down.EventType = KEY_EVENT
+        down.Event.KeyEvent.bKeyDown = 1
+        down.Event.KeyEvent.wRepeatCount = 1
+        down.Event.KeyEvent.wVirtualKeyCode = virtual_key
+        down.Event.KeyEvent.uChar = char_code
+        down.Event.KeyEvent.dwControlKeyState = 0
+        events.append(down)
+        
+        # Key Up
+        up = INPUT_RECORD()
+        up.EventType = KEY_EVENT
+        up.Event.KeyEvent.bKeyDown = 0 # Key Up
+        up.Event.KeyEvent.wRepeatCount = 1
+        up.Event.KeyEvent.wVirtualKeyCode = virtual_key
+        up.Event.KeyEvent.uChar = char_code
+        up.Event.KeyEvent.dwControlKeyState = 0
+        events.append(up)
+        
+        return events
+
+    records = []
+    
+    # Typing the command
+    for char in command:
+        records.extend(create_key_events(char))
+        
+    # Pressing Enter
+    records.extend(create_key_events(chr(VK_RETURN), VK_RETURN))
+    
+    # Convert list to array
+    arr_type = INPUT_RECORD * len(records)
+    input_records = arr_type(*records)
+    
+    written = c_ulong(0)
+    windll.kernel32.WriteConsoleInputW(hStdIn, byref(input_records), len(records), byref(written))
+
+class InputMonitor:
+    """Monitors a file and mimics typing into the console window."""
+    def __init__(self, process, check_interval=1.0):
+        self.process = process
+        self.check_interval = check_interval
+        self.shutdown_flag = False
+        
+        # Ensure pipe file exists
+        if not SERVER_PIPE_PATH.exists():
+            with open(SERVER_PIPE_PATH, 'w') as f:
+                f.write("")
+
+    def start(self):
+        import threading
+        self.thread = threading.Thread(target=self._monitor_loop, daemon=True)
+        self.thread.start()
+
+    def _monitor_loop(self):
+        last_pos = 0
+        while not self.shutdown_flag:
+            try:
+                if SERVER_PIPE_PATH.exists():
+                    current_size = SERVER_PIPE_PATH.stat().st_size
+                    
+                    # If file shrank (was cleared), reset position
+                    if current_size < last_pos:
+                        last_pos = 0
+                        
+                    if current_size > last_pos:
+                        with open(SERVER_PIPE_PATH, 'r') as f:
+                            f.seek(last_pos)
+                            new_commands = f.read().splitlines()
+                            last_pos = f.tell()
+                            
+                        for cmd in new_commands:
+                            if cmd.strip():
+                                # Ghost Type the command
+                                send_command_to_console(cmd)
+                                print(f"[Wrapper] Ghost Typed: {cmd}")
+            except Exception as e:
+                print(f"[Wrapper] Input Monitor Error: {e}")
+                
+            time.sleep(self.check_interval)
+
+    def stop(self):
+        self.shutdown_flag = True
 
 def setup_dual_logging(log_file_path):
     """Redirects sys.stdout and sys.stderr to a DualLogger."""
@@ -97,10 +230,16 @@ def main():
         process = subprocess.Popen(
             cmd_list,
             stdout=subprocess.PIPE,
+            # stdin=subprocess.PIPE,  <-- REMOVED to allow sharing console input
             stderr=subprocess.STDOUT, # Merge stderr into stdout
             text=True,
             bufsize=1
         )
+
+        # Start Input Monitor
+        monitor = InputMonitor(process)
+        monitor.start()
+
 
         for line in process.stdout:
             print(line, end='')

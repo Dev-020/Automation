@@ -165,6 +165,30 @@ async def status(interaction: discord.Interaction):
     
     await interaction.followup.send(msg)
 
+
+@bot.tree.command(name="console", description="Send a command to the Terraria Server Console")
+@app_commands.describe(command="The command to execute (e.g. 'say Hello', 'noon', 'save')")
+async def console_cmd(interaction: discord.Interaction, command: str):
+    """Sends a command to the server console."""
+    await interaction.response.defer(ephemeral=True) # Ephemeral so only admin sees it
+    
+    manager = ServerManager()
+    state = manager.load_state()
+    
+    if not state:
+        await interaction.followup.send("❌ **Error: Server is OFFLINE**")
+        return
+
+    try:
+        # Use the shared pipe path from logging module
+        pipe_path = terraria_logging.SERVER_PIPE_PATH
+        with open(pipe_path, 'a') as f:
+            f.write(command + "\n")
+            
+        await interaction.followup.send(f"✅ **Sent:** `{command}`")
+    except Exception as e:
+        await interaction.followup.send(f"❌ **Failed:** {e}")
+
 @bot.tree.command(name="start", description="Start the Terarria Server remotely")
 @app_commands.choices(mode=[
     app_commands.Choice(name="Headless (Default)", value="nosteam"),
