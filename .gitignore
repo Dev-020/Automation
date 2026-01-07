@@ -14,3 +14,13 @@
 *.jpg
 *.pyc
 /audio_corruption/venv-windows
+terraria/logs
+terraria/venv
+terraria/legacy
+terraria/data
+terraria/server_state.json
+terraria/server
+terraria/playit.exe
+terraria/serverconfig.txt
+terraria/.env
+terraria/config.py
