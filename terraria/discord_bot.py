@@ -7,6 +7,9 @@ from discord import app_commands
 from discord.ext import commands, tasks
 from server_manager import ServerManager
 from monitor import LogMonitor
+import json
+import sys
+import re
 
 # Load environment variables
 load_dotenv()
@@ -19,6 +22,7 @@ if not TOKEN or TOKEN == "your_token_here":
 
 # Setup Bot with Slash Command support
 intents = discord.Intents.default()
+intents.message_content = True # Required for reading messages
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 import terraria_logging
@@ -44,6 +48,44 @@ atexit.register(on_exit_archive)
 IDLE_SINCE = None
 # IDLE_THRESHOLD_MINUTES is now in config.py
 
+# Chat Bridge Configuration
+CHAT_CONFIG_PATH = config.BASE_DIR / "data" / "chat_config.json"
+
+def load_chat_config():
+    """Loads the linked channel ID from config."""
+    if CHAT_CONFIG_PATH.exists():
+        try:
+            with open(CHAT_CONFIG_PATH, 'r') as f:
+                return json.load(f)
+        except:
+            pass
+    return {}
+
+def save_chat_config(data):
+    """Saves the linked channel ID to config."""
+    config.BASE_DIR.joinpath("data").mkdir(parents=True, exist_ok=True)
+    with open(CHAT_CONFIG_PATH, 'w') as f:
+        json.dump(data, f)
+
+@bot.tree.command(name="link_chat", description="Links the current channel to the Terraria server chat")
+async def link_chat(interaction: discord.Interaction):
+    """Links the current channel for 2-way chat sync."""
+    data = load_chat_config()
+    data['channel_id'] = interaction.channel_id
+    save_chat_config(data)
+    await interaction.response.send_message(f"✅ **Chat Linked!** messages in {interaction.channel.mention} will be synced with the server.")
+
+@bot.tree.command(name="unlink_chat", description="Unlinks the chat bridge")
+async def unlink_chat(interaction: discord.Interaction):
+    """Unlinks the chat bridge."""
+    data = load_chat_config()
+    if 'channel_id' in data:
+        del data['channel_id']
+        save_chat_config(data)
+        await interaction.response.send_message("✅ **Chat Unlinked!** Sync disabled.")
+    else:
+        await interaction.response.send_message("⚠️ No chat channel was linked.")
+
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
@@ -56,6 +98,125 @@ async def on_ready():
     # Start the monitoring loop
     if not monitor_loop.is_running():
         monitor_loop.start()
+        
+    # Start the chat bridge loop
+    if not chat_bridge_loop.is_running():
+        chat_bridge_loop.start()
+
+# Chat Log Tracking
+LAST_LOG_POS = 0
+LOG_FILE_PATH = config.LOGS_DIR / "terraria_server.log"
+
+@tasks.loop(seconds=2)
+async def chat_bridge_loop():
+    """Tails the server log and forwards chat messages to Discord."""
+    global LAST_LOG_POS
+    
+    # 1. Check if Bridge is Enabled (We do this LATER now to ensure we track log pos regardless)
+    # config_data = load_chat_config() ... MOVED
+
+    # 2. Check if Log Exists
+    if not LOG_FILE_PATH.exists():
+        LAST_LOG_POS = 0
+        return
+        
+    try:
+        current_size = LOG_FILE_PATH.stat().st_size
+        
+        # Reset if file rotated (shrank)
+        if current_size < LAST_LOG_POS:
+            LAST_LOG_POS = 0
+            
+        # STARTUP FIX: If this is the first time we see the file, jump to the end
+        # This prevents spamming the entire log history on bot restart
+        if LAST_LOG_POS == 0:
+            LAST_LOG_POS = current_size
+            return
+
+        if current_size > LAST_LOG_POS:
+            with open(LOG_FILE_PATH, 'r', encoding='utf-8', errors='replace') as f:
+                f.seek(LAST_LOG_POS)
+                new_lines = f.readlines()
+                LAST_LOG_POS = f.tell()
+                
+            config_data = load_chat_config()
+            linked_channel_id = config_data.get('channel_id')
+
+            # If no channel linked, we just consume the lines and update POS to stay synced
+            if not linked_channel_id:
+                return
+
+            channel = bot.get_channel(linked_channel_id)
+            if not channel:
+                # Channel might have been deleted
+                print(f"[Bridge] Error: Linked channel {linked_channel_id} not found/accessible.")
+                return
+
+            for line in new_lines:
+                line = line.strip()
+                if not line: continue
+                
+                # Regex for Chat: <User> Message
+                # Example: <Cypher> Hello World
+                match = re.match(r"^<([^>]+)> (.*)$", line)
+                
+                if match:
+                    user = match.group(1)
+                    message = match.group(2)
+                    
+                    # LOOP PREVENTION: Ignore messages we sent (starting with [Discord])
+                    if message.startswith("[Discord]"):
+                        continue
+                        
+                    # Send to Discord
+                    await channel.send(f"**<{user}>** {message}")
+                    print(f"[Bridge] T2D: <{user}> {message}")
+                    
+                # Optional: Catch Join/Leave (e.g., "Name has joined.")
+                # We can add this later if requested
+    except Exception as e:
+        print(f"[Bridge] Error: {e}")
+
+@bot.event
+async def on_message(message):
+    # Ignore bot messages
+    if message.author.bot:
+        return
+
+    # Process commands first
+    await bot.process_commands(message)
+
+    # Chat Bridge Logic (Discord -> Terraria)
+    config_data = load_chat_config()
+    linked_channel_id = config_data.get('channel_id')
+
+    if linked_channel_id and message.channel.id == linked_channel_id:
+        # Construct the message
+        # Sanitize: Remove newlines to keep it one line
+        content = message.content.replace('\n', ' ')
+        
+        # Handle Attachments
+        if message.attachments:
+            attachment_types = [a.content_type.split('/')[0] if a.content_type else 'file' for a in message.attachments]
+            # e.g. [image, video]
+            # Simple format: [Attachment: image, video]
+            content += f" [Attachment: {', '.join(attachment_types)}]"
+
+        if content.strip():
+            # Send to Terraria
+            # Format: [Discord] <Name> Message
+            # Note: Terraria 'say' command broadcasts to everyone
+            manager = ServerManager()
+            cmd = f"say [Discord] <{message.author.display_name}> {content}"
+            
+            # Fire and forget (no need to wait for feedback from log for chat)
+            try:
+                # Ghost typing directly or via helper
+                # Using send_command without capture is safer
+                manager.send_command(cmd, capture_output=False)
+                print(f"[Bridge] D2T: {cmd}")
+            except Exception as e:
+                print(f"[Bridge] Failed D2T: {e}")
 
 @tasks.loop(minutes=1)
 async def monitor_loop():
@@ -166,12 +327,23 @@ async def status(interaction: discord.Interaction):
     await interaction.followup.send(msg)
 
 
+ALLOWED_COMMANDS = {'playing', 'save', 'time', 'motd', 'seed', 'modlist'}
+
 @bot.tree.command(name="console", description="Send a command to the Terraria Server Console")
 @app_commands.describe(command="The command to execute (e.g. 'say Hello', 'noon', 'save')")
 async def console_cmd(interaction: discord.Interaction, command: str):
     """Sends a command to the server console."""
     await interaction.response.defer(ephemeral=True) # Ephemeral so only admin sees it
     
+    # 1. Whitelist Check
+    # We check if the command STARTS with an allowed keyword (e.g. 'motd new message' matches 'motd')
+    cmd_lower = command.lower()
+    is_allowed = any(cmd_lower.startswith(allowed) for allowed in ALLOWED_COMMANDS)
+    
+    if not is_allowed:
+        await interaction.followup.send(f"❌ **Unauthorized Command**\nAllowed: `{', '.join(sorted(ALLOWED_COMMANDS))}`")
+        return
+
     manager = ServerManager()
     state = manager.load_state()
     
@@ -180,12 +352,21 @@ async def console_cmd(interaction: discord.Interaction, command: str):
         return
 
     try:
-        # Use the shared pipe path from logging module
-        pipe_path = terraria_logging.SERVER_PIPE_PATH
-        with open(pipe_path, 'a') as f:
-            f.write(command + "\n")
-            
-        await interaction.followup.send(f"✅ **Sent:** `{command}`")
+        # 2. Execution with Feedback
+        # We wait 1 second for the log to catch up
+        output = manager.send_command(command, capture_output=True, wait_time=1.0)
+        
+        msg = f"✅ **Executed:** `{command}`\n"
+        if output and output.strip():
+            # Truncate if too long for Discord (2000 chars limit helper)
+            if len(output) > 1900:
+                output = output[:1900] + "\n...(truncated)"
+            msg += f"```\n{output.strip()}\n```"
+        else:
+             msg += "*(No visible logs produced)*"
+             
+        await interaction.followup.send(msg)
+        
     except Exception as e:
         await interaction.followup.send(f"❌ **Failed:** {e}")
 

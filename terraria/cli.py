@@ -81,18 +81,27 @@ def status_cmd(args):
     print("------------------------------")
 
 def console_cmd(args):
-    """Appends a command to the server input pipe."""
+    """Sends a command to the server and prints the output."""
     command_str = " ".join(args.command_text)
     
     if not command_str:
         print("Error: No command provided.")
         return
 
+    manager = ServerManager()
+    print(f"Sending command: '{command_str}' (Waiting for output...)")
+    
     try:
-        # Append to the file
-        with open(SERVER_PIPE_PATH, 'a') as f:
-            f.write(command_str + "\n")
-        print(f"Sent command: {command_str}")
+        # Use send_command with output capture
+        output = manager.send_command(command_str, capture_output=True, wait_time=2.5)
+        
+        if output:
+            print("--- Server Output ---")
+            print(output.strip())
+            print("---------------------")
+        else:
+             print("(No visible output in logs)")
+             
     except Exception as e:
         print(f"Failed to send command: {e}")
 

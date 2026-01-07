@@ -259,6 +259,43 @@ class ServerManager:
                 return False
         return False
 
+    def send_command(self, command, capture_output=False, wait_time=1.0):
+        """
+        Sends a command to the server pipe.
+        If capture_output is True, it waits and returns new log lines.
+        """
+        response = ""
+        start_pos = 0
+
+        # 1. Mark position if capturing
+        if capture_output and self.terraria_log_path.exists():
+            try:
+                with open(self.terraria_log_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    f.seek(0, 2) # Seek to end
+                    start_pos = f.tell()
+            except Exception as e:
+                print(f"Error marking log position: {e}")
+
+        # 2. Add to Input Queue (Ghost Typing)
+        try:
+            with open(terraria_logging.SERVER_PIPE_PATH, 'a', encoding='utf-8') as f:
+                f.write(f"{command}\n")
+        except Exception as e:
+            return f"Error sending command: {e}"
+
+        # 3. Wait and Read Logic
+        if capture_output:
+            time.sleep(wait_time)
+            if self.terraria_log_path.exists():
+                try:
+                    with open(self.terraria_log_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        f.seek(start_pos)
+                        response = f.read()
+                except Exception as e:
+                    response = f"Error reading response: {e}"
+
+        return response
+
     def _stop_process(self, pid_key):
         """Stops a process and clears its PID from state."""
         state = self.load_state()

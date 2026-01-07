@@ -129,10 +129,9 @@ class InputMonitor:
         self.check_interval = check_interval
         self.shutdown_flag = False
         
-        # Ensure pipe file exists
-        if not SERVER_PIPE_PATH.exists():
-            with open(SERVER_PIPE_PATH, 'w') as f:
-                f.write("")
+        # Clear the pipe file on startup to prevent re-executing old commands
+        with open(SERVER_PIPE_PATH, 'w') as f:
+            f.write("")
 
     def start(self):
         import threading
@@ -151,7 +150,7 @@ class InputMonitor:
                         last_pos = 0
                         
                     if current_size > last_pos:
-                        with open(SERVER_PIPE_PATH, 'r') as f:
+                        with open(SERVER_PIPE_PATH, 'r', encoding='utf-8') as f:
                             f.seek(last_pos)
                             new_commands = f.read().splitlines()
                             last_pos = f.tell()
