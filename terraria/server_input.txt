@@ -1,5 +1,0 @@
-say [Discord] <Dēv> test
-say [Discord] <Dēv> bomboclats
-say [Discord] <Dēv> bro why u keep talkin to urself
-say [Discord] <Dēv> stfu
-exit

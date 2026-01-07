@@ -10,7 +10,7 @@ from datetime import datetime
 # --- Constants ---
 # --- Constants ---
 # Use absolute path based on this script's location to avoid CWD mismatch
-SERVER_PIPE_PATH = Path(__file__).parent.resolve() / "server_input.txt"
+SERVER_PIPE_PATH = Path(__file__).parent.resolve() / "data" / "server_input.txt"
 
 # --- Reusable Classes ---
 
