@@ -11,6 +11,9 @@ from typing import Optional
 import config
 import terraria_logging
 
+import config
+import terraria_logging
+
 STATE_FILE = Path("server_state.json")
 
 class ServerManager:
@@ -262,7 +265,32 @@ class ServerManager:
         pid = state.get(pid_key) if state else None
         if pid:
             print(f"Stopping {pid_key} (PID: {pid})...")
-            self._kill_process_tree(pid)
+
+            # GRACEFUL SHUTDOWN FOR TERRARIA SERVER
+            if pid_key == "terraria_pid":
+                print("Attempting graceful exit...")
+                try:
+                    # Send 'exit' command
+                    with open(terraria_logging.SERVER_PIPE_PATH, 'a') as f:
+                        f.write("exit\n")
+                    
+                    # Wait for process to exit (Timeout: 20s)
+                    for _ in range(20):
+                        time.sleep(1)
+                        if not self._check_process_running(pid_key):
+                            print("Graceful exit successful.")
+                            break
+                    else:
+                        print("Graceful exit timed out. Force killing...")
+                        self._kill_process_tree(pid)
+                except Exception as e:
+                    print(f"Graceful exit failed: {e}. Force killing...")
+                    self._kill_process_tree(pid)
+            else:
+                 # Default force kill for other processes (like playit)
+                 self._kill_process_tree(pid)
+            
+            # Archive Log if it was the server
             
             # Archive Log if it was the server
             if pid_key == "terraria_pid":
