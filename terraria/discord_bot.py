@@ -327,6 +327,12 @@ async def status(interaction: discord.Interaction):
     await interaction.followup.send(msg)
 
 
+@bot.tree.command(name="modpack", description="Get the Steam Workshop link for the server's modpack")
+async def modpack(interaction: discord.Interaction):
+    """Displays the link to the Steam Workshop modpack."""
+    await interaction.response.send_message("Here is the modpack for the Terraria server:\nhttps://steamcommunity.com/workshop/filedetails/?id=3456508757")
+
+
 ALLOWED_COMMANDS = {'playing', 'save', 'time', 'motd', 'seed', 'modlist'}
 
 @bot.tree.command(name="console", description="Send a command to the Terraria Server Console")
