@@ -25,16 +25,19 @@ export interface Action {
 }
 
 export interface Spell {
-  id: string;
   name: string;
+  source: string;
+  page: number;
   level: number;
   school: string;
-  castingTime: string;
-  range: string;
-  components: string; // V, S, M
-  duration: string;
-  description: string;
-  prepared: boolean;
+  time: { number: number; unit: string }[];
+  range: { type: string; distance: { type: string; amount?: number } };
+  components: { v?: boolean; s?: boolean; m?: string | boolean };
+  duration: { type: string; duration?: { type: string; amount: number }; concentration?: boolean }[];
+  entries: (string | FeatureEntry)[]; // Reusing FeatureEntry for rich text
+  entriesHigherLevel?: { type: string; name: string; entries: string[] }[];
+  meta?: { ritual?: boolean };
+  prepared?: boolean; // UI state, not in JSON
 }
 
 export interface SpellSlots {
@@ -50,34 +53,44 @@ export interface Item {
   equipped?: boolean;
 }
 
-// Complex Feature Structure (5eTools inspired)
+// Complex Feature Structure
 export interface FeatureEntry {
-  type?: 'entries' | 'list' | 'table' | 'options' | 'refOptionalfeature';
+  type?: 'entries' | 'list' | 'table' | 'options' | 'refOptionalfeature' | 'section' | 'item';
   name?: string;
   entries?: (string | FeatureEntry)[];
-  items?: (string | FeatureEntry)[]; // For type: 'list'
-  caption?: string; // For type: 'table'
-  colLabels?: string[]; // For type: 'table'
-  colStyles?: string[]; // For type: 'table'
-  rows?: string[][]; // For type: 'table'
-  count?: number; // For type: 'options'
-  optionalfeature?: string; // For type: 'refOptionalfeature'
-}
+  items?: (string | FeatureEntry)[];
+  
+  // Dynamic User Choices
+  choices?: {
+    type: string; // 'MM', 'Feat', 'FS'
+    count: number;
+    selected: FeatureEntry[]; 
+    filter?: string;
+    _embeddedOptions?: FeatureEntry[];
+  };
 
-export interface Feature {
-  name: string;
-  source: string;
+  // User Custom Note
+  customChoice?: string;
+
+  caption?: string; 
+  colLabels?: string[];
+  colStyles?: string[];
+  rows?: string[][];
+  
+  // Allow source/page/level on entries too (common in 5eTools)
+  source?: string;
   page?: number;
+  level?: number;
   srd52?: boolean;
   basicRules2024?: boolean;
-  className?: string;
-  classSource?: string;
+  prerequisite?: any[];
+}
+
+export interface Feature extends FeatureEntry {
+  name: string;
+  source: string;
+  page: number;
   level: number;
-  entries: (string | FeatureEntry)[];
-  consumes?: {
-    name: string;
-    amount: number;
-  };
 }
 
 export interface Character {
@@ -87,44 +100,34 @@ export interface Character {
   level: number;
   background: string;
   alignment: string;
-  xp: {
-    current: number;
-    max: number;
-  };
+  xp: { current: number; max: number };
   stats: Record<StatName, AbilityScore>;
+  saves: Record<StatName, { modifier: number; proficiency: boolean }>;
+  skills: Skill[];
   vitals: {
-    hp: {
-      current: number;
-      max: number;
-      temp: number;
-    };
-    hitDice: {
-      current: number;
-      max: number;
-      face: string;
-    };
+    hp: { current: number; max: number; temp: number };
+    hitDice: { current: number; max: number; die: string };
+    sorceryPoints?: { current: number; max: number };
     ac: number;
     initiative: number;
     speed: number;
     proficiencyBonus: number;
   };
-  skills: Skill[];
-  // Extended Details
   senses: {
-    passivePerception: number;
-    passiveInvestigation: number;
-    passiveInsight: number;
+      passivePerception: number;
+      passiveInvestigation: number;
+      passiveInsight: number;
   };
   proficiencies: {
-    armor: string[];
-    weapons: string[];
-    tools: string[];
-    languages: string[];
+      armor: string[];
+      weapons: string[];
+      tools: string[];
+      languages: string[];
   };
   defenses: {
-    resistances: string[];
-    immunities: string[];
-    vulnerabilities: string[];
+      resistances: string[];
+      immunities: string[];
+      vulnerabilities: string[];
   };
   conditions: string[];
   // New Sections

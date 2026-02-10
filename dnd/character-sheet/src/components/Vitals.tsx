@@ -139,10 +139,27 @@ export const Vitals: React.FC<VitalsProps> = ({ vitals, onChange }) => {
         </div>
             
         {/* Proficiency Bonus & Hit Dice */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.5rem', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', color: 'var(--color-text-muted)' }}>
-            <span>Proficiency: <strong style={{color: 'white'}}>+{vitals.proficiencyBonus}</strong></span>
-            <span>Hit Dice: <strong style={{color: 'white'}}>{vitals.hitDice.current}/{vitals.hitDice.max} ({vitals.hitDice.face})</strong></span>
+        <div style={{ marginTop: '1rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: '0.9rem' }}>
+            Proficiency: <strong>+{vitals.proficiencyBonus}</strong>
         </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+            {vitals.sorceryPoints && (
+                <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Sorcery Points</div>
+                    <div style={{ fontWeight: 'bold' }}>
+                        {vitals.sorceryPoints.current}/{vitals.sorceryPoints.max}
+                    </div>
+                </div>
+            )}
+            <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.8rem', color: '#aaa', cursor: 'pointer' }} onClick={() => onChange({ ...vitals, hitDice: { ...vitals.hitDice, current: Math.max(0, vitals.hitDice.current - 1) } })}>Hit Dice (-1)</div>
+                <div style={{ fontWeight: 'bold' }}>
+                    {vitals.hitDice.current}/{vitals.hitDice.max} ({vitals.hitDice.die})
+                </div>
+            </div>
+        </div>
+      </div>
     </Card>
   );
 };

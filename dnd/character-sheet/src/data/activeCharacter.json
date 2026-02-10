@@ -1,6 +1,6 @@
 {
   "name": "Leo & Orion",
-  "race": "Human/Construct",
+  "race": "Human",
   "class": "Sorcerer",
   "level": 6,
   "background": "Sage",
@@ -55,7 +55,11 @@
     "ac": 12,
     "initiative": 1,
     "speed": 30,
-    "proficiencyBonus": 3
+    "proficiencyBonus": 3,
+    "sorceryPoints": {
+      "current": 6,
+      "max": 6
+    }
   },
   "skills": [
     {
@@ -188,7 +192,7 @@
   },
   "defenses": {
     "resistances": [
-      "Mock Defense"
+      ""
     ],
     "immunities": [],
     "vulnerabilities": []
@@ -217,51 +221,795 @@
   ],
   "spells": [
     {
-      "id": "s1",
-      "name": "Mage Hand",
-      "level": 0,
-      "school": "Conjuration",
-      "castingTime": "1 Action",
-      "range": "30ft",
-      "components": "V, S",
-      "duration": "1 Minute",
-      "description": "A spectral, floating hand appears at a point you choose within range.",
+      "name": "Misty Step",
+      "source": "XPHB",
+      "page": 299,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 2,
+      "school": "C",
+      "time": [
+        {
+          "number": 1,
+          "unit": "bonus"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "self"
+        }
+      },
+      "components": {
+        "v": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see."
+      ],
+      "miscTags": [
+        "SGT",
+        "TP"
+      ],
       "prepared": true
     },
     {
-      "id": "s2",
       "name": "Magic Missile",
+      "source": "XPHB",
+      "page": 295,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
       "level": 1,
-      "school": "Evocation",
-      "castingTime": "1 Action",
-      "range": "120ft",
-      "components": "V, S",
-      "duration": "Instantaneous",
-      "description": "You create three glowing darts of magical force.",
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You create three glowing darts of magical force. Each dart strikes a creature of your choice that you can see within range. A dart deals {@damage 1d4 + 1} Force damage to its target. The darts all strike simultaneously, and you can direct them to hit one creature or several."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "The spell creates one more dart for each spell slot level above 1."
+          ]
+        }
+      ],
+      "damageInflict": [
+        "force"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "areaTags": [
+        "MT",
+        "ST"
+      ],
+      "hasFluffImages": true,
       "prepared": true
     },
     {
-      "id": "s3",
+      "name": "Sorcerous Burst",
+      "source": "XPHB",
+      "page": 318,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 0,
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You cast sorcerous energy at one creature or object within range. Make a ranged attack roll against the target. On a hit, the target takes {@damage 1d8} damage of a type you choose: Acid, Cold, Fire, Lightning, Poison, Psychic, or Thunder.",
+        "If you roll an 8 on a {@dice d8} for this spell, you can roll another {@dice d8}, and add it to the damage. When you cast this spell, the maximum number of these d8s you can add to the spell's damage equals your spellcasting ability modifier."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Cantrip Upgrade",
+          "entries": [
+            "The damage increases by {@damage 1d8} when you reach levels 5 ({@damage 2d8}), 11 ({@damage 3d8}), and 17 ({@damage 4d8})."
+          ]
+        }
+      ],
+      "scalingLevelDice": {
+        "label": "damage",
+        "scaling": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      },
+      "damageInflict": [
+        "acid",
+        "cold",
+        "fire",
+        "lightning",
+        "poison",
+        "psychic",
+        "thunder"
+      ],
+      "spellAttack": [
+        "R"
+      ],
+      "miscTags": [
+        "OBJ",
+        "SCL"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "prepared": true
+    },
+    {
       "name": "Shield",
+      "source": "XPHB",
+      "page": 316,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
       "level": 1,
-      "school": "Abjuration",
-      "castingTime": "1 Reaction",
-      "range": "Self",
-      "components": "V, S",
-      "duration": "1 Round",
-      "description": "+5 to AC until start of next turn.",
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "reaction",
+          "condition": "which you take when you are hit by an attack roll or targeted by the Magic Missile spell"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "self"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "round",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "An imperceptible barrier of magical force protects you. Until the start of your next turn, you have a +5 bonus to AC, including against the triggering attack, and you take no damage from {@spell Magic Missile|XPHB}."
+      ],
+      "miscTags": [
+        "MAC"
+      ],
       "prepared": true
     },
     {
-      "id": "s4",
-      "name": "Fireball",
+      "name": "Blindness/Deafness",
+      "source": "XPHB",
+      "page": 248,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 2,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "One creature that you can see within range must succeed on a Constitution saving throw, or it has the {@condition Blinded|XPHB} or {@condition Deafened|XPHB} condition (your choice) for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "You can target one additional creature for each spell slot level above 2."
+          ]
+        }
+      ],
+      "conditionInflict": [
+        "blinded",
+        "deafened"
+      ],
+      "savingThrow": [
+        "constitution"
+      ],
+      "miscTags": [
+        "SCT",
+        "SGT"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Detect Thoughts",
+      "source": "XPHB",
+      "page": 262,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 2,
+      "school": "D",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "self"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "1 Copper Piece"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
+        }
+      ],
+      "entries": [
+        "You activate one of the effects below. Until the spell ends, you can activate either effect as a {@action Magic|XPHB} action on your later turns.",
+        {
+          "type": "entries",
+          "name": "Sense Thoughts",
+          "entries": [
+            "You sense the presence of thoughts within 30 feet of yourself that belong to creatures that know languages or are telepathic. You don't read the thoughts, but you know that a thinking creature is present.",
+            "The spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Read Thoughts",
+          "entries": [
+            "Target one creature you can see within 30 feet of yourself or one creature within 30 feet of yourself that you detected with the Sense Thoughts option. You learn what is most on the target's mind right now. If the target doesn't know any languages and isn't telepathic, you learn nothing.",
+            "As a {@action Magic|XPHB} action on your next turn, you can try to probe deeper into the target's mind. If you probe deeper, the target makes a Wisdom saving throw. On a failed save, you discern the target's reasoning, emotions, and something that looms large in its mind (such as a worry, love, or hate). On a successful save, the spell ends. Either way, the target knows that you are probing into its mind, and until you shift your attention away from the target's mind, the target can take an action on its turn to make an Intelligence ({@skill Arcana|XPHB}) check against your spell save DC, ending the spell on a success."
+          ]
+        }
+      ],
+      "savingThrow": [
+        "wisdom"
+      ],
+      "abilityCheck": [
+        "intelligence"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "See Invisibility",
+      "source": "XPHB",
+      "page": 314,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 2,
+      "school": "D",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "self"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a pinch of talc"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "For the duration, you see creatures and objects that have the {@condition Invisible|XPHB} condition as if they were visible, and you can see into the Ethereal Plane. Creatures and objects there appear ghostly."
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Dispel Magic",
+      "source": "XPHB",
+      "page": 264,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "DrDe-SD"
+      ],
       "level": 3,
-      "school": "Evocation",
-      "castingTime": "1 Action",
-      "range": "150ft",
-      "components": "V, S, M",
-      "duration": "Instantaneous",
-      "description": "A bright streak flashes from your pointing finger to a point you choose...",
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "Choose one creature, object, or magical effect within range. Any ongoing spell of level 3 or lower on the target ends. For each ongoing spell of level 4 or higher on the target, make an ability check using your spellcasting ability ({@dc 10} plus that spell's level). On a successful check, the spell ends."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "You automatically end a spell on the target if the spell's level is equal to or less than the level of the spell slot you use."
+          ]
+        }
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Fireball",
+      "source": "XPHB",
+      "page": 274,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH",
+        "DrDe-SD",
+        "HotB",
+        "FFotR"
+      ],
+      "level": 3,
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 150
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a ball of bat guano and sulfur"
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "A bright streak flashes from you to a point you choose within range and then blossoms with a low roar into a fiery explosion. Each creature in a 20-foot-radius {@variantrule Sphere [Area of Effect]|XPHB|Sphere} centered on that point makes a Dexterity saving throw, taking {@damage 8d6} Fire damage on a failed save or half as much damage on a successful one.",
+        "Flammable objects in the area that aren't being worn or carried start {@hazard burning|XPHB}."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "The damage increases by {@scaledamage 8d6|3-9|1d6} for each spell slot level above 3."
+          ]
+        }
+      ],
+      "damageInflict": [
+        "fire"
+      ],
+      "savingThrow": [
+        "dexterity"
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "areaTags": [
+        "S"
+      ],
+      "hasFluffImages": true,
+      "prepared": true
+    },
+    {
+      "name": "Slow",
+      "source": "XPHB",
+      "page": 318,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 3,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a drop of molasses"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
+        }
+      ],
+      "entries": [
+        "You alter time around up to six creatures of your choice in a 40-foot {@variantrule Cube [Area of Effect]|XPHB|Cube} within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration.",
+        "An affected target's {@variantrule Speed|XPHB} is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a {@variantrule Bonus Action|XPHB}, not both, and it can make only one attack if it takes the {@action Attack|XPHB} action. If it casts a spell with a Somatic component, there is a {@chance 25|||The spell fails!|The spell does not fail.} chance the spell fails as a result of the target making the spell's gestures too slowly.",
+        "An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
+      ],
+      "savingThrow": [
+        "wisdom"
+      ],
+      "miscTags": [
+        "MAC"
+      ],
+      "areaTags": [
+        "C",
+        "MT"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Message",
+      "source": "XPHB",
+      "page": 298,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "s": true,
+        "m": "a copper wire"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "round",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "You point toward a creature within range and whisper a message. The target (and only the target) hears the message and can reply in a whisper that only you can hear.",
+        "You can cast this spell through solid objects if you are familiar with the target and know it is beyond the barrier. Magical silence; 1 foot of stone, metal, or wood; or a thin sheet of lead blocks the spell."
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Mending",
+      "source": "XPHB",
+      "page": 297,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "BQGT",
+        "DrDe-ACfaS"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "minute"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "two lodestones"
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "This spell repairs a single break or tear in an object you touch, such as a broken chain link, two halves of a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no larger than 1 foot in any dimension, you mend it, leaving no trace of the former damage.",
+        "This spell can physically repair a magic item, but it can't restore magic to such an object."
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Prestidigitation",
+      "source": "XPHB",
+      "page": 307,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 10
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "You create a magical effect within range. Choose the effect from the options below. If you cast this spell multiple times, you can have up to three of its non-instantaneous effects active at a time.",
+        {
+          "type": "entries",
+          "name": "Sensory Effect",
+          "entries": [
+            "You create an instantaneous, harmless sensory effect, such as a shower of sparks, a puff of wind, faint musical notes, or an odd odor."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Fire Play",
+          "entries": [
+            "You instantaneously light or snuff out a candle, a torch, or a small campfire."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Clean or Soil",
+          "entries": [
+            "You instantaneously clean or soil an object no larger than 1 cubic foot."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Minor Sensation",
+          "entries": [
+            "You chill, warm, or flavor up to 1 cubic foot of nonliving material for 1 hour."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Magic Mark",
+          "entries": [
+            "You make a color, a small mark, or a symbol appear on an object or a surface for 1 hour."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Minor Creation",
+          "entries": [
+            "You create a nonmagical trinket or an illusory image that can fit in your hand. It lasts until the end of your next turn. A trinket can deal no damage and has no monetary worth."
+          ]
+        }
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Shocking Grasp",
+      "source": "XPHB",
+      "page": 316,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 0,
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "Lightning springs from you to a creature that you try to touch. Make a melee spell attack against the target. On a hit, the target takes {@damage 1d8} Lightning damage, and it can't make {@action Opportunity Attack|XPHB|Opportunity Attacks} until the start of its next turn."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Cantrip Upgrade",
+          "entries": [
+            "The damage increases by {@damage 1d8} when you reach levels 5 ({@damage 2d8}), 11 ({@damage 3d8}), and 17 ({@damage 4d8})."
+          ]
+        }
+      ],
+      "scalingLevelDice": {
+        "label": "Lightning damage",
+        "scaling": {
+          "1": "1d8",
+          "5": "2d8",
+          "11": "3d8",
+          "17": "4d8"
+        }
+      },
+      "damageInflict": [
+        "lightning"
+      ],
+      "spellAttack": [
+        "M"
+      ],
+      "miscTags": [
+        "SCL"
+      ],
+      "areaTags": [
+        "ST"
+      ],
       "prepared": true
     }
   ],
@@ -501,84 +1249,13 @@
       "className": "Sorcerer",
       "classSource": "XPHB",
       "level": 2,
+      "choices": {
+        "type": "MM",
+        "count": 2,
+        "selected": []
+      },
       "entries": [
-        "The following options are available to your Metamagic feature. The options are presented in alphabetical order.",
-        {
-          "type": "options",
-          "count": 2,
-          "entries": [
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Careful Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Distant Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Empowered Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Extended Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Heightened Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Quickened Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Seeking Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Subtle Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Transmuted Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            },
-            {
-              "type": "refOptionalfeature",
-              "optionalfeature": "Twinned Spell|XPHB",
-              "preserve": {
-                "consumes": true
-              }
-            }
-          ]
-        }
+        "The following options are available to your Metamagic feature. The options are presented in alphabetical order."
       ]
     },
     {
@@ -605,7 +1282,12 @@
       "level": 4,
       "entries": [
         "You gain the {@feat Ability Score Improvement|XPHB} feat or another {@5etools feat|feats.html} of your choice for which you qualify. You gain this feature again at Sorcerer levels 8, 12, and 16."
-      ]
+      ],
+      "choices": {
+        "type": "Feat",
+        "count": 1,
+        "selected": []
+      }
     },
     {
       "name": "Sorcerous Restoration",
@@ -690,7 +1372,12 @@
       "level": 12,
       "entries": [
         "You gain the {@feat Ability Score Improvement|XPHB} feat or another {@5etools feat|feats.html} of your choice for which you qualify."
-      ]
+      ],
+      "choices": {
+        "type": "Feat",
+        "count": 1,
+        "selected": []
+      }
     },
     {
       "name": "Subclass Feature",
@@ -716,7 +1403,12 @@
       "level": 16,
       "entries": [
         "You gain the {@feat Ability Score Improvement|XPHB} feat or another {@5etools feat|feats.html} of your choice for which you qualify."
-      ]
+      ],
+      "choices": {
+        "type": "Feat",
+        "count": 1,
+        "selected": []
+      }
     },
     {
       "name": "Metamagic",
@@ -731,7 +1423,12 @@
         "Because your magic flows from within you, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from the \"{@filter Metamagic Options|optionalfeatures|feature type=MM|source=XPHB}\" section later in this class's description.",
         "You can use only one Metamagic option on a spell when you cast it, unless otherwise noted in one of those options.",
         "Whenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know."
-      ]
+      ],
+      "choices": {
+        "type": "MM",
+        "count": 2,
+        "selected": []
+      }
     },
     {
       "name": "Subclass Feature",
@@ -757,7 +1454,12 @@
       "level": 19,
       "entries": [
         "You gain an {@filter Epic Boon feat|feats|category=EB} or another {@5etools feat|feats.html} of your choice for which you qualify. {@feat Boon of Dimensional Travel|XPHB} is recommended."
-      ]
+      ],
+      "choices": {
+        "type": "Feat",
+        "count": 1,
+        "selected": []
+      }
     },
     {
       "name": "Arcane Apotheosis",
@@ -772,5 +1474,6 @@
         "While your Innate Sorcery feature is active, you can use one Metamagic option on each of your turns without spending Sorcery Points on it."
       ]
     }
-  ]
+  ],
+  "proficiencyBonus": 3
 }

@@ -9,8 +9,9 @@ import { ActionsPanel } from './components/ActionsPanel';
 import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
-import type { Character, StatName } from './types';
+import type { Character, StatName, Spell } from './types';
 import { calculateModifier } from './utils/dnd';
+import { getProficiencyBonus, calculateMaxHP, getSorceryPoints } from './utils/rules';
 import './App.css';
 
 import activeCharacterData from './data/activeCharacter.json';
@@ -57,6 +58,95 @@ function App() {
   const statsList: StatName[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const [allSpells, setAllSpells] = useState<Spell[]>([]);
+
+  // Calculate Dynamic Stats
+  useEffect(() => {
+      // 1. Calculate Modifiers
+      const getMod = (score: number) => Math.floor((score - 10) / 2);
+      
+      const conScore = character.stats.CON.base; 
+      const dexScore = character.stats.DEX.base;
+      
+      const realConMod = getMod(conScore);
+      const realDexMod = getMod(dexScore);
+
+      const newProf = getProficiencyBonus(character.level);
+      const newMaxHP = calculateMaxHP(character.level, realConMod, character.class);
+      const newHitDieMax = character.level;
+      const newSorceryPointsMax = getSorceryPoints(character.level, character.class);
+      const newInit = realDexMod; // Baseline
+
+      let hasChanges = false;
+      const updated = { ...character, vitals: { ...character.vitals } };
+
+      if (updated.vitals.proficiencyBonus !== newProf) {
+          updated.vitals.proficiencyBonus = newProf;
+          hasChanges = true;
+      }
+
+      if (updated.vitals.hp.max !== newMaxHP) {
+          updated.vitals.hp.max = newMaxHP;
+          hasChanges = true;
+      }
+
+      if (updated.vitals.hitDice.max !== newHitDieMax) {
+          updated.vitals.hitDice.max = newHitDieMax;
+          hasChanges = true;
+      }
+
+      // Sorcery Points
+      if (newSorceryPointsMax > 0) {
+          if (!updated.vitals.sorceryPoints || updated.vitals.sorceryPoints.max !== newSorceryPointsMax) {
+               updated.vitals.sorceryPoints = {
+                   current: updated.vitals.sorceryPoints?.current ?? newSorceryPointsMax,
+                   max: newSorceryPointsMax
+               };
+               hasChanges = true;
+          }
+      }
+
+      // Initiative (Baseline) - Only update if strictly diff from dex mod (unless we want to support manual overrides)
+      // If user has Alert, they might have manually set it.
+      // But user requested "dynamic".
+      // Let's assume baseline. If they have a feat, we should parse it, but that's hard.
+      // I'll leave initiative alone if it's explicitly set to something else? 
+      // No, let's update it to ensure it tracks DEX changes.
+      // But manual edits...
+      // I will only update if it matches old Dex mod? No.
+      // I'll update it.
+      if (updated.vitals.initiative !== newInit) {
+           // check for Alert feat
+           const hasAlert = character.features.some(f => f.name === 'Alert');
+           const targetInit = newInit + (hasAlert ? 5 : 0);
+           if (updated.vitals.initiative !== targetInit) {
+                updated.vitals.initiative = targetInit;
+                hasChanges = true;
+           }
+      }
+      
+      // Update AC baseline if unarmored?
+      // I wont touch AC for now as it depends on equipment. 
+
+      if (hasChanges) {
+          setCharacter(updated);
+      }
+
+  }, [
+      character.level, 
+      character.class, 
+      character.stats.CON.base, 
+      character.stats.DEX.base,
+      character.features // For Alert feat check
+  ]);
+
+  // Fetch Spells
+  useEffect(() => {
+    fetch('http://localhost:3001/api/spells')
+        .then(res => res.json())
+        .then(data => setAllSpells(data))
+        .catch(err => console.error("Failed to load spells:", err));
+  }, []);
 
   // Auto-Save Effect (Local Storage + API)
   useEffect(() => {
@@ -261,9 +351,9 @@ function App() {
           <div className="tab-content" style={{ overflowY: 'auto', flex: 1, paddingRight: '0.5rem', marginTop: '1rem' }}>
             <div className="animate-fade-in">
                 {activeTab === 'Actions' && <ActionsPanel actions={character.actions} />}
-                {activeTab === 'Spells' && <SpellsPanel spells={character.spells} slots={character.spellSlots} />}
+                {activeTab === 'Spells' && <SpellsPanel spells={character.spells} slots={character.spellSlots} allSpells={allSpells} onUpdateSpells={(updatedSpells) => setCharacter(prev => ({ ...prev, spells: updatedSpells }))} level={character.level} />}
                 {activeTab === 'Inventory' && <InventoryPanel inventory={character.inventory} wealth={character.wealth} />}
-                {activeTab === 'Features' && <FeaturesPanel features={character.features} />}
+                {activeTab === 'Features' && <FeaturesPanel features={character.features} character={character} onUpdateFeatures={(updated) => setCharacter(prev => ({ ...prev, features: updated }))} />}
             </div>
           </div>
         </div>
