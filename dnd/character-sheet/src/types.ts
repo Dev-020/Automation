@@ -86,6 +86,24 @@ export interface Character {
     proficiencyBonus: number;
   };
   skills: Skill[];
+  // Extended Details
+  senses: {
+    passivePerception: number;
+    passiveInvestigation: number;
+    passiveInsight: number;
+  };
+  proficiencies: {
+    armor: string[];
+    weapons: string[];
+    tools: string[];
+    languages: string[];
+  };
+  defenses: {
+    resistances: string[];
+    immunities: string[];
+    vulnerabilities: string[];
+  };
+  conditions: string[];
   // New Sections
   actions: Action[];
   spells: Spell[];

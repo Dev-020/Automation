@@ -39,22 +39,32 @@ export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus,
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div 
                 style={{ 
-                  width: '12px', 
-                  height: '12px', 
+                  width: '14px', 
+                  height: '14px', 
                   borderRadius: '50%', 
-                  background: skill.proficiency ? 'var(--color-primary)' : 'rgba(255,255,255,0.1)',
-                  border: skill.expertise ? '2px solid #fff' : 'none',
-                  boxShadow: skill.expertise ? '0 0 5px var(--color-primary)' : 'none',
+                  
+                  // Logic for styles
+                  background: skill.expertise 
+                    ? '#ffffff' // White for Expertise
+                    : skill.proficiency 
+                        ? '#888888' // Gray for Proficient
+                        : 'transparent', // Empty/None
+                  
+                  border: skill.expertise || skill.proficiency 
+                    ? 'none' 
+                    : '2px solid #555', // Dark ring for None
+                  
+                  boxShadow: skill.expertise 
+                    ? '0 0 8px rgba(255,255,255,0.6)' 
+                    : 'none',
+
                   transition: 'all 0.2s',
                   position: 'relative'
                 }} 
               >
-                  {skill.expertise && (
-                      <div style={{ 
-                          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', 
-                          width: '4px', height: '4px', background: '#fff', borderRadius: '50%' 
-                      }} />
-                  )}
+                  {/* Optional: Inner dot for Expertise to make it look even more distinct? 
+                      User said "White circle", implying solid white. I'll leave it solid.
+                  */}
               </div>
               <span style={{ color: skill.proficiency ? 'white' : 'var(--color-text-muted)', transition: 'color 0.2s' }}>
                 {skill.name} <span style={{fontSize: '0.7em', color: '#666'}}>({skill.stat})</span>

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card } from './components/Card';
 import { CharacterHeader } from './components/CharacterHeader';
-import { AbilityScore } from './components/AbilityScore';
 import { Vitals } from './components/Vitals';
+import { AbilityScore } from './components/AbilityScore';
 import { Skills } from './components/Skills';
 import { Tabs } from './components/Tabs';
 import { ActionsPanel } from './components/ActionsPanel';
@@ -10,80 +10,13 @@ import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
 import type { Character, StatName } from './types';
+import { calculateModifier } from './utils/dnd';
 import './App.css';
 
-// Mock Data
-const initialCharacter: Character = {
-  name: "Leo & Orion",
-  race: "Human/Construct",
-  class: "Sorcerer",
-  level: 6,
-  background: "Sage",
-  alignment: "Chaotic Good",
-  xp: { current: 14000, max: 23000 },
-  stats: {
-    STR: { base: 8, modifier: -1, saveProficiency: false },
-    DEX: { base: 12, modifier: +1, saveProficiency: false },
-    CON: { base: 17, modifier: +3, saveProficiency: true },
-    INT: { base: 14, modifier: +2, saveProficiency: false },
-    WIS: { base: 8, modifier: -1, saveProficiency: false },
-    CHA: { base: 15, modifier: +2, saveProficiency: true },
-  },
-  vitals: {
-    hp: { current: 44, max: 44, temp: 0 },
-    hitDice: { current: 6, max: 6, face: "d6" },
-    ac: 12,
-    initiative: 1,
-    speed: 30,
-    proficiencyBonus: 3,
-  },
-  skills: [
-    { name: "Acrobatics", stat: "DEX", proficiency: false, expertise: false },
-    { name: "Animal Handling", stat: "WIS", proficiency: false, expertise: false },
-    { name: "Arcana", stat: "INT", proficiency: true, expertise: false }, 
-    { name: "Athletics", stat: "STR", proficiency: false, expertise: false },
-    { name: "Deception", stat: "CHA", proficiency: true, expertise: false },
-    { name: "History", stat: "INT", proficiency: false, expertise: false },
-    { name: "Insight", stat: "WIS", proficiency: true, expertise: false },
-    { name: "Intimidation", stat: "CHA", proficiency: false, expertise: false },
-    { name: "Investigation", stat: "INT", proficiency: false, expertise: false },
-    { name: "Medicine", stat: "WIS", proficiency: false, expertise: false },
-    { name: "Nature", stat: "INT", proficiency: false, expertise: false },
-    { name: "Perception", stat: "WIS", proficiency: false, expertise: false },
-    { name: "Performance", stat: "CHA", proficiency: false, expertise: false },
-    { name: "Persuasion", stat: "CHA", proficiency: true, expertise: false },
-    { name: "Religion", stat: "INT", proficiency: false, expertise: false },
-    { name: "Sleight of Hand", stat: "DEX", proficiency: false, expertise: false },
-    { name: "Stealth", stat: "DEX", proficiency: false, expertise: false },
-    { name: "Survival", stat: "WIS", proficiency: false, expertise: false },
-  ],
-  actions: [
-    { id: '1', name: 'Dagger', type: 'Melee Weapon', range: '20/60', hitBonus: 4, damage: '1d4 + 1', damageType: 'Piercing', notes: 'Finesse, Light, Thrown' },
-    { id: '2', name: 'Fire Bolt', type: 'Spell Attack', range: '120ft', hitBonus: 5, damage: '2d10', damageType: 'Fire' },
-  ],
-  spells: [
-    { id: 's1', name: 'Mage Hand', level: 0, school: 'Conjuration', castingTime: '1 Action', range: '30ft', components: 'V, S', duration: '1 Minute', description: 'A spectral, floating hand appears at a point you choose within range.', prepared: true },
-    { id: 's2', name: 'Magic Missile', level: 1, school: 'Evocation', castingTime: '1 Action', range: '120ft', components: 'V, S', duration: 'Instantaneous', description: 'You create three glowing darts of magical force.', prepared: true },
-    { id: 's3', name: 'Shield', level: 1, school: 'Abjuration', castingTime: '1 Reaction', range: 'Self', components: 'V, S', duration: '1 Round', description: '+5 to AC until start of next turn.', prepared: true },
-    { id: 's4', name: 'Fireball', level: 3, school: 'Evocation', castingTime: '1 Action', range: '150ft', components: 'V, S, M', duration: 'Instantaneous', description: 'A bright streak flashes from your pointing finger to a point you choose...', prepared: true },
-  ],
-  spellSlots: {
-    1: { current: 4, max: 4 },
-    2: { current: 3, max: 3 },
-    3: { current: 3, max: 3 },
-  },
-  inventory: [
-    { id: 'i1', name: 'Dagger', quantity: 1, weight: 1, equipped: true },
-    { id: 'i2', name: 'Arcane Focus (Orb)', quantity: 1, weight: 3, equipped: true },
-    { id: 'i3', name: 'Backpack', quantity: 1, weight: 5, equipped: false },
-    { id: 'i4', name: 'Rations (1 day)', quantity: 10, weight: 2, equipped: false },
-  ],
-  wealth: { cp: 0, sp: 15, ep: 0, gp: 120, pp: 0 },
-  features: [
-    { id: 'f1', name: 'Font of Magic', source: 'Class', description: 'You tap into a deep wellspring of magic within yourself. You have 6 sorcery points.' },
-    { id: 'f2', name: 'Metamagic: Quickened Spell', source: 'Class', description: 'When you cast a spell that has a casting time of 1 action, you can spend 2 sorcery points to change the casting time to 1 bonus action.' },
-  ]
-};
+import activeCharacterData from './data/activeCharacter.json';
+
+// Ensure the imported JSON matches our Character type structure at runtime/compile time
+const initialCharacter: Character = activeCharacterData as unknown as Character;
 
 // ... imports remain the same
 
@@ -95,7 +28,14 @@ function App() {
     const saved = localStorage.getItem('dnd-character-sheet');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Merge with initialCharacter to ensure new fields (senses, proficiencies, etc.) exist
+        return { ...initialCharacter, ...parsed, 
+            senses: { ...initialCharacter.senses, ...(parsed.senses || {}) },
+            proficiencies: { ...initialCharacter.proficiencies, ...(parsed.proficiencies || {}) },
+            defenses: { ...initialCharacter.defenses, ...(parsed.defenses || {}) },
+            conditions: parsed.conditions || initialCharacter.conditions
+        };
       } catch (e) {
         console.error("Failed to parse saved character", e);
       }
@@ -106,9 +46,37 @@ function App() {
   const [activeTab, setActiveTab] = useState('Actions');
   const statsList: StatName[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
-  // Auto-Save Effect
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+
+  // Auto-Save Effect (Local Storage + API)
   useEffect(() => {
+    // 1. Save to Local Storage (Always works)
     localStorage.setItem('dnd-character-sheet', JSON.stringify(character));
+
+    // 2. Save to File System via Local API (If running)
+    const saveToFile = async () => {
+        try {
+            setSaveStatus('saving');
+            const response = await fetch('http://localhost:3001/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(character)
+            });
+            if (response.ok) {
+                setSaveStatus('saved');
+            } else {
+                setSaveStatus('error');
+            }
+        } catch (e) {
+            console.warn("Local server not running or reachable. Saving to local storage only.");
+            setSaveStatus('error');
+        }
+    };
+
+    // Debounce the API call slightly to avoid spamming file writes
+    const timeoutId = setTimeout(saveToFile, 500);
+    return () => clearTimeout(timeoutId);
+
   }, [character]);
 
   // Export to JSON
@@ -153,7 +121,11 @@ function App() {
       ...prev,
       stats: {
         ...prev.stats,
-        [stat]: { ...prev.stats[stat], base: newVal }
+        [stat]: { 
+          ...prev.stats[stat], 
+          base: newVal,
+          modifier: calculateModifier(newVal) // Update derived modifier
+        }
       }
     }));
   };
@@ -164,19 +136,24 @@ function App() {
 
   const handleSkillToggle = (index: number) => {
     setCharacter(prev => {
-        const newSkills = [...prev.skills];
-        const skill = newSkills[index];
-        
-        // Cycle: None -> Proficient -> Expertise -> None
-        if (!skill.proficiency) {
-            skill.proficiency = true;
-            skill.expertise = false;
-        } else if (skill.proficiency && !skill.expertise) {
-            skill.expertise = true; // Expertise implies proficiency
-        } else {
-            skill.proficiency = false;
-            skill.expertise = false;
-        }
+        const newSkills = prev.skills.map((skill, i) => {
+            if (i !== index) return skill;
+
+            // Create new skill object to avoid mutation
+            const newSkill = { ...skill };
+            
+            // Cycle: None -> Proficient -> Expertise -> None
+            if (!newSkill.proficiency) {
+                newSkill.proficiency = true;
+                newSkill.expertise = false;
+            } else if (newSkill.proficiency && !newSkill.expertise) {
+                newSkill.expertise = true; 
+            } else {
+                newSkill.proficiency = false;
+                newSkill.expertise = false;
+            }
+            return newSkill;
+        });
         
         return { ...prev, skills: newSkills };
     });
@@ -192,51 +169,9 @@ function App() {
       position: 'relative'
     }}>
       
-      {/* Utility Bar (Save/Load) */}
-      <div style={{ position: 'absolute', top: 0, right: 0, display: 'flex', gap: '0.5rem', zIndex: 100 }}>
-        <button onClick={handleExport} className="btn-primary" style={{ fontSize: '0.8rem', padding: '0.25rem 0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>💾</span> Export
-        </button>
-        <label className="btn-primary" style={{ fontSize: '0.8rem', padding: '0.25rem 0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' }}>
-            <span>📂</span> Import
-            <input type="file" accept=".json" onChange={handleImport} style={{ display: 'none' }} />
-        </label>
-      </div>
-
-      {/* Left Column: Stats & Skills */}
+      {/* Left Column: Skills Only */}
       <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-        
-        {/* Ability Scores - 2 Columns */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-          {statsList.map(statName => (
-            <AbilityScore 
-              key={statName} 
-              label={statName} 
-              score={character.stats[statName].base} 
-              onChange={(val) => handleStatChange(statName, val)}
-            />
-          ))}
-        </div>
-
-        <Card title="Saving Throws" className="saving-throws-panel">
-           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-             {statsList.map(stat => {
-                const isProficient = character.stats[stat].saveProficiency;
-                const mod = character.stats[stat].modifier + (isProficient ? character.vitals.proficiencyBonus : 0);
-                return (
-                  <li key={stat} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
-                    <span style={{color: isProficient ? 'var(--color-primary)' : 'inherit', fontWeight: isProficient ? 'bold' : 'normal'}}>
-                      {stat}
-                    </span>
-                    <span>{mod >= 0 ? `+${mod}` : mod}</span>
-                  </li>
-                )
-             })}
-           </ul>
-        </Card>
-
-        {/* Skills - Takes remaining height */}
-        <div style={{ flexGrow: 1, overflowY: 'auto', minHeight: '0' }}>
+         <div style={{ flexGrow: 1, overflowY: 'auto', minHeight: '0' }}>
           <Skills 
             skills={character.skills} 
             stats={character.stats} 
@@ -244,16 +179,61 @@ function App() {
             onToggleSkill={handleSkillToggle}
           />
         </div>
-
       </aside>
 
       {/* Main Content Area */}
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
         
-        {/* Header: Identity & Vitals */}
-        <div className="header-section" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
-          <CharacterHeader character={character} onChange={(updates) => setCharacter(prev => ({ ...prev, ...updates }))} />
-          <Vitals vitals={character.vitals} onChange={handleVitalsChange} />
+        {/* Top Section: Header + Stats + Saves */}
+        <div className="top-section" style={{ display: 'flex', gap: '1rem', alignItems: 'start', flexWrap: 'wrap' }}>
+            
+            {/* Header (Identity + Vitals) */}
+            <div style={{ flex: '2 1 500px' }}>
+                <CharacterHeader 
+                    character={character} 
+                    onChange={(updates) => setCharacter(prev => ({ ...prev, ...updates }))} 
+                    onExport={handleExport}
+                    onImport={handleImport}
+                    saveStatus={saveStatus}
+                />
+            </div>
+
+            {/* Stats & Saves Column */}
+            <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                
+                {/* Stats Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.25rem' }}>
+                    {statsList.map(statName => (
+                        <AbilityScore 
+                        key={statName} 
+                        label={statName} 
+                        score={character.stats[statName].base} 
+                        onChange={(val) => handleStatChange(statName, val)}
+                        />
+                    ))}
+                </div>
+
+                {/* Saving Throws */}
+                 <Card title="Saving Throws" className="saving-throws-panel" style={{ padding: '0.5rem' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                        {statsList.map(stat => {
+                            const isProficient = character.stats[stat].saveProficiency;
+                            const mod = character.stats[stat].modifier + (isProficient ? character.vitals.proficiencyBonus : 0);
+                            return (
+                            <li key={stat} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
+                                <span style={{color: isProficient ? 'var(--color-primary)' : 'inherit', fontWeight: isProficient ? 'bold' : 'normal'}}>
+                                {stat}
+                                </span>
+                                <span>{mod >= 0 ? `+${mod}` : mod}</span>
+                            </li>
+                            )
+                        })}
+                    </ul>
+                </Card>
+
+                {/* Vitals Section (Moved here) */}
+                <Vitals vitals={character.vitals} onChange={handleVitalsChange} />
+            </div>
         </div>
 
         {/* Tabbed Interface */}

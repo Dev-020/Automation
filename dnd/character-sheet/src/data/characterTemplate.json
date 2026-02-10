@@ -1,0 +1,70 @@
+{
+  "name": "New Character",
+  "race": "Race",
+  "class": "Class",
+  "level": 1,
+  "background": "Background",
+  "alignment": "Neutral",
+  "xp": { "current": 0, "max": 300 },
+  "stats": {
+    "STR": { "base": 10, "modifier": 0, "saveProficiency": false },
+    "DEX": { "base": 10, "modifier": 0, "saveProficiency": false },
+    "CON": { "base": 10, "modifier": 0, "saveProficiency": false },
+    "INT": { "base": 10, "modifier": 0, "saveProficiency": false },
+    "WIS": { "base": 10, "modifier": 0, "saveProficiency": false },
+    "CHA": { "base": 10, "modifier": 0, "saveProficiency": false }
+  },
+  "vitals": {
+    "hp": { "current": 10, "max": 10, "temp": 0 },
+    "hitDice": { "current": 1, "max": 1, "face": "d8" },
+    "ac": 10,
+    "initiative": 0,
+    "speed": 30,
+    "proficiencyBonus": 2
+  },
+  "skills": [
+    { "name": "Acrobatics", "stat": "DEX", "proficiency": false, "expertise": false },
+    { "name": "Animal Handling", "stat": "WIS", "proficiency": false, "expertise": false },
+    { "name": "Arcana", "stat": "INT", "proficiency": false, "expertise": false }, 
+    { "name": "Athletics", "stat": "STR", "proficiency": false, "expertise": false },
+    { "name": "Deception", "stat": "CHA", "proficiency": false, "expertise": false },
+    { "name": "History", "stat": "INT", "proficiency": false, "expertise": false },
+    { "name": "Insight", "stat": "WIS", "proficiency": false, "expertise": false },
+    { "name": "Intimidation", "stat": "CHA", "proficiency": false, "expertise": false },
+    { "name": "Investigation", "stat": "INT", "proficiency": false, "expertise": false },
+    { "name": "Medicine", "stat": "WIS", "proficiency": false, "expertise": false },
+    { "name": "Nature", "stat": "INT", "proficiency": false, "expertise": false },
+    { "name": "Perception", "stat": "WIS", "proficiency": false, "expertise": false },
+    { "name": "Performance", "stat": "CHA", "proficiency": false, "expertise": false },
+    { "name": "Persuasion", "stat": "CHA", "proficiency": false, "expertise": false },
+    { "name": "Religion", "stat": "INT", "proficiency": false, "expertise": false },
+    { "name": "Sleight of Hand", "stat": "DEX", "proficiency": false, "expertise": false },
+    { "name": "Stealth", "stat": "DEX", "proficiency": false, "expertise": false },
+    { "name": "Survival", "stat": "WIS", "proficiency": false, "expertise": false }
+  ],
+  "senses": {
+    "passivePerception": 10,
+    "passiveInvestigation": 10,
+    "passiveInsight": 10
+  },
+  "proficiencies": {
+    "armor": [],
+    "weapons": [],
+    "tools": [],
+    "languages": ["Common"]
+  },
+  "defenses": {
+    "resistances": [],
+    "immunities": [],
+    "vulnerabilities": []
+  },
+  "conditions": [],
+  "actions": [],
+  "spells": [],
+  "spellSlots": {
+    "1": { "current": 0, "max": 0 }
+  },
+  "inventory": [],
+  "wealth": { "cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0 },
+  "features": []
+}
