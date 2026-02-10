@@ -74,4 +74,4 @@ const enrichFeature = (feature) => {
     return enriched;
 };
 
-module.exports = { enrichFeature };
+export { enrichFeature };
