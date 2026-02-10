@@ -1,0 +1,91 @@
+:root {
+  /* Color Palette - Dark Mode Default */
+  --color-bg-base: 220 15% 10%;
+  --color-bg-surface: 220 15% 16%;
+  --color-primary: 340 80% 55%; /* Red/Pink accent like D&D Beyond */
+  --color-text-main: 220 10% 95%;
+  --color-text-muted: 220 10% 70%;
+  --color-border: 220 10% 25%;
+
+  /* Glassmorphism Variables */
+  --glass-bg: rgba(30, 35, 45, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 12px;
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Cinzel', serif; /* Optional for D&D flavor */
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: hsl(var(--color-bg-base));
+  color: hsl(var(--color-text-main));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(var(--color-primary), 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(50, 100, 200, 0.05) 0%, transparent 25%);
+}
+
+#root {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-md);
+}
+
+/* Glass Utility Class */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 12px;
+}
+
+/* Typography Utilities */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-top: 0;
+  color: hsl(var(--color-text-main));
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: hsl(var(--color-primary));
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}

@@ -22,3 +22,5 @@ terraria/server_state.json
 terraria/server
 terraria/playit.exe
 terraria/.env
+dnd/venv
+dnd/5etools
