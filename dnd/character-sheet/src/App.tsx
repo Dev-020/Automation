@@ -29,12 +29,22 @@ function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        
+        // Version Check: If the saved data is older than our file data, ignore local storage
+        // This prevents stale data from breaking the app (like the Class Features update)
+        // and stops the app from overwriting the new JSON file with old data.
+        if (!parsed.version || parsed.version < (initialCharacter as any).version) {
+            console.log("Detected old data version in localStorage. Migrating to new activeCharacter.json.");
+            return initialCharacter;
+        }
+
         // Merge with initialCharacter to ensure new fields (senses, proficiencies, etc.) exist
         return { ...initialCharacter, ...parsed, 
             senses: { ...initialCharacter.senses, ...(parsed.senses || {}) },
             proficiencies: { ...initialCharacter.proficiencies, ...(parsed.proficiencies || {}) },
             defenses: { ...initialCharacter.defenses, ...(parsed.defenses || {}) },
-            conditions: parsed.conditions || initialCharacter.conditions
+            conditions: parsed.conditions || initialCharacter.conditions,
+            features: parsed.features || initialCharacter.features // Ensure features are loaded
         };
       } catch (e) {
         console.error("Failed to parse saved character", e);
@@ -160,18 +170,22 @@ function App() {
   };
 
   return (
-    <div className="app-container" style={{ /* ... styles ... */ 
+    <div className="app-container" style={{ 
       display: 'grid', 
       gridTemplateColumns: 'minmax(250px, 300px) 1fr', 
       gap: '1.5rem', 
-      height: 'calc(100vh - 4rem)',
+      height: '100vh', 
+      maxHeight: '100vh',
+      overflow: 'hidden',
       alignContent: 'start',
-      position: 'relative'
+      position: 'relative',
+      padding: '2rem',
+      boxSizing: 'border-box'
     }}>
       
       {/* Left Column: Skills Only */}
-      <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-         <div style={{ flexGrow: 1, overflowY: 'auto', minHeight: '0' }}>
+      <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', overflow: 'hidden' }}>
+         <div style={{ flexGrow: 1, overflowY: 'auto', minHeight: '0', paddingRight: '0.5rem' }}>
           <Skills 
             skills={character.skills} 
             stats={character.stats} 
@@ -182,10 +196,10 @@ function App() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="main-content" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
+      <main className="main-content" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', overflow: 'hidden' }}>
         
         {/* Top Section: Header + Stats + Saves */}
-        <div className="top-section" style={{ display: 'flex', gap: '1rem', alignItems: 'start', flexWrap: 'wrap' }}>
+        <div className="top-section" style={{ display: 'flex', gap: '1rem', alignItems: 'start', flexWrap: 'wrap', flexShrink: 0 }}>
             
             {/* Header (Identity + Vitals) */}
             <div style={{ flex: '2 1 500px' }}>
@@ -237,14 +251,14 @@ function App() {
         </div>
 
         {/* Tabbed Interface */}
-        <div className="tabs-container flex-grow" style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="tabs-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <Tabs 
             tabs={['Actions', 'Spells', 'Inventory', 'Features']} 
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
           />
           
-          <div className="tab-content" style={{ overflowY: 'auto', flexGrow: 1, paddingBottom: '2rem' /* spacing for scroll */ }}>
+          <div className="tab-content" style={{ overflowY: 'auto', flex: 1, paddingRight: '0.5rem', marginTop: '1rem' }}>
             <div className="animate-fade-in">
                 {activeTab === 'Actions' && <ActionsPanel actions={character.actions} />}
                 {activeTab === 'Spells' && <SpellsPanel spells={character.spells} slots={character.spellSlots} />}

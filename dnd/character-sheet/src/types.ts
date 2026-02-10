@@ -50,11 +50,34 @@ export interface Item {
   equipped?: boolean;
 }
 
+// Complex Feature Structure (5eTools inspired)
+export interface FeatureEntry {
+  type?: 'entries' | 'list' | 'table' | 'options' | 'refOptionalfeature';
+  name?: string;
+  entries?: (string | FeatureEntry)[];
+  items?: (string | FeatureEntry)[]; // For type: 'list'
+  caption?: string; // For type: 'table'
+  colLabels?: string[]; // For type: 'table'
+  colStyles?: string[]; // For type: 'table'
+  rows?: string[][]; // For type: 'table'
+  count?: number; // For type: 'options'
+  optionalfeature?: string; // For type: 'refOptionalfeature'
+}
+
 export interface Feature {
-  id: string;
   name: string;
-  source: string; // e.g., "Racial", "Class", "Feat"
-  description: string;
+  source: string;
+  page?: number;
+  srd52?: boolean;
+  basicRules2024?: boolean;
+  className?: string;
+  classSource?: string;
+  level: number;
+  entries: (string | FeatureEntry)[];
+  consumes?: {
+    name: string;
+    amount: number;
+  };
 }
 
 export interface Character {
