@@ -38,6 +38,7 @@ export interface Spell {
   entriesHigherLevel?: { type: string; name: string; entries: string[] }[];
   meta?: { ritual?: boolean };
   prepared?: boolean; // UI state, not in JSON
+  classes?: string[];
 }
 
 export interface SpellSlots {
@@ -143,4 +144,13 @@ export interface Character {
     pp: number;
   };
   features: Feature[];
+  rollHistory: RollEntry[];
+}
+
+export interface RollEntry {
+  timestamp: number;
+  label: string; // e.g. "d20", "2d6", "Attack Roll"
+  result: number;
+  details?: string; // e.g. "Natural 20"
+  diceType: string; // "d20"
 }

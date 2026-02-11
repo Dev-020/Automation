@@ -1061,6 +1061,65 @@
       ],
       "hasFluffImages": true,
       "prepared": true
+    },
+    {
+      "name": "Cure Wounds",
+      "source": "XPHB",
+      "page": 259,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 1,
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "A creature you touch regains a number of {@variantrule Hit Points|XPHB} equal to {@dice 2d8} plus your spellcasting ability modifier."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "The healing increases by {@scaledice 2d8|1-9|2d8} for each spell slot level above 1."
+          ]
+        }
+      ],
+      "miscTags": [
+        "HL"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Ranger",
+        "Paladin"
+      ],
+      "prepared": true
     }
   ],
   "spellSlots": {
@@ -1134,7 +1193,8 @@
           ]
         },
         "You can use this feature twice, and you regain all expended uses of it when you finish a {@variantrule Long Rest|XPHB}."
-      ]
+      ],
+      "customChoice": "LEBOMBO"
     },
     {
       "name": "Spellcasting",
@@ -1302,7 +1362,39 @@
       "choices": {
         "type": "MM",
         "count": 2,
-        "selected": []
+        "selected": [
+          {
+            "name": "Seeking Spell",
+            "source": "XPHB",
+            "page": 142,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point",
+              "amount": 1
+            },
+            "entries": [
+              "If you make an attack roll for a spell and miss, you can spend 1 Sorcery Point to reroll the {@dice d20}, and you must use the new roll.",
+              "You can use Seeking Spell even if you've already used a different Metamagic option during the casting of the spell."
+            ]
+          },
+          {
+            "name": "Distant Spell",
+            "source": "XPHB",
+            "page": 141,
+            "srd52": true,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point"
+            },
+            "entries": [
+              "When you cast a spell that has a range of at least 5 feet, you can spend 1 Sorcery Point to double the spell's range. Or when you cast a spell that has a range of Touch, you can spend 1 Sorcery Point to make the spell's range 30 feet."
+            ]
+          }
+        ]
       },
       "entries": [
         "The following options are available to your Metamagic feature. The options are presented in alphabetical order."
@@ -1525,5 +1617,443 @@
       ]
     }
   ],
-  "proficiencyBonus": 3
+  "proficiencyBonus": 3,
+  "rollHistory": [
+    {
+      "timestamp": 1770786283035,
+      "label": "d2",
+      "result": 2,
+      "diceType": "d2",
+      "details": "CRIT!"
+    },
+    {
+      "timestamp": 1770786284270,
+      "label": "d2",
+      "result": 1,
+      "diceType": "d2",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786284678,
+      "label": "d2",
+      "result": 1,
+      "diceType": "d2",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786285017,
+      "label": "d2",
+      "result": 2,
+      "diceType": "d2",
+      "details": "CRIT!"
+    },
+    {
+      "timestamp": 1770786285470,
+      "label": "d2",
+      "result": 1,
+      "diceType": "d2",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786287352,
+      "label": "d100",
+      "result": 74,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786289457,
+      "label": "d100",
+      "result": 21,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786290020,
+      "label": "d100",
+      "result": 81,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786290473,
+      "label": "d100",
+      "result": 79,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786291040,
+      "label": "d100",
+      "result": 17,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786291616,
+      "label": "d100",
+      "result": 85,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786291744,
+      "label": "d100",
+      "result": 47,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786292625,
+      "label": "d100",
+      "result": 65,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786293186,
+      "label": "d100",
+      "result": 49,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786293334,
+      "label": "d100",
+      "result": 96,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786293805,
+      "label": "d100",
+      "result": 64,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786294174,
+      "label": "d100",
+      "result": 17,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786294343,
+      "label": "d100",
+      "result": 77,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786294492,
+      "label": "d100",
+      "result": 61,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786297364,
+      "label": "d100",
+      "result": 48,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786298186,
+      "label": "d100",
+      "result": 32,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786298623,
+      "label": "d100",
+      "result": 53,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786298772,
+      "label": "d100",
+      "result": 34,
+      "diceType": "d100"
+    },
+    {
+      "timestamp": 1770786299388,
+      "label": "d12",
+      "result": 6,
+      "diceType": "d12"
+    },
+    {
+      "timestamp": 1770786299544,
+      "label": "d12",
+      "result": 11,
+      "diceType": "d12"
+    },
+    {
+      "timestamp": 1770786299845,
+      "label": "d10",
+      "result": 1,
+      "diceType": "d10",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786300134,
+      "label": "d20",
+      "result": 11,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786300412,
+      "label": "d6",
+      "result": 5,
+      "diceType": "d6"
+    },
+    {
+      "timestamp": 1770786300685,
+      "label": "d8",
+      "result": 8,
+      "diceType": "d8",
+      "details": "CRIT!"
+    },
+    {
+      "timestamp": 1770786300843,
+      "label": "d8",
+      "result": 5,
+      "diceType": "d8"
+    },
+    {
+      "timestamp": 1770786300966,
+      "label": "d8",
+      "result": 4,
+      "diceType": "d8"
+    },
+    {
+      "timestamp": 1770786301220,
+      "label": "d6",
+      "result": 1,
+      "diceType": "d6",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786301368,
+      "label": "d4",
+      "result": 1,
+      "diceType": "d4",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786301544,
+      "label": "d2",
+      "result": 1,
+      "diceType": "d2",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786301865,
+      "label": "d6",
+      "result": 6,
+      "diceType": "d6",
+      "details": "CRIT!"
+    },
+    {
+      "timestamp": 1770786302272,
+      "label": "d4",
+      "result": 1,
+      "diceType": "d4",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786302428,
+      "label": "d4",
+      "result": 3,
+      "diceType": "d4"
+    },
+    {
+      "timestamp": 1770786302582,
+      "label": "d4",
+      "result": 3,
+      "diceType": "d4"
+    },
+    {
+      "timestamp": 1770786302735,
+      "label": "d4",
+      "result": 1,
+      "diceType": "d4",
+      "details": "FAIL!"
+    },
+    {
+      "timestamp": 1770786302888,
+      "label": "d4",
+      "result": 2,
+      "diceType": "d4"
+    },
+    {
+      "timestamp": 1770786303244,
+      "label": "d4",
+      "result": 2,
+      "diceType": "d4"
+    },
+    {
+      "timestamp": 1770786303400,
+      "label": "d4",
+      "result": 4,
+      "diceType": "d4",
+      "details": "CRIT!"
+    },
+    {
+      "timestamp": 1770786303554,
+      "label": "d4",
+      "result": 3,
+      "diceType": "d4"
+    },
+    {
+      "timestamp": 1770786304918,
+      "label": "d20",
+      "result": 10,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786305109,
+      "label": "d20",
+      "result": 12,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786305264,
+      "label": "d20",
+      "result": 5,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786305393,
+      "label": "d20",
+      "result": 7,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786305545,
+      "label": "d20",
+      "result": 6,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786305872,
+      "label": "d20",
+      "result": 3,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786306026,
+      "label": "d20",
+      "result": 3,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786306313,
+      "label": "d20",
+      "result": 11,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786306483,
+      "label": "d20",
+      "result": 16,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786306853,
+      "label": "d20",
+      "result": 9,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786307087,
+      "label": "d20",
+      "result": 19,
+      "diceType": "d20"
+    },
+    {
+      "timestamp": 1770786871304,
+      "label": "5d2",
+      "result": 5,
+      "diceType": "mixed",
+      "details": "d2:[1,1,1,1,1]"
+    },
+    {
+      "timestamp": 1770786881955,
+      "label": "3d20",
+      "result": 37,
+      "diceType": "mixed",
+      "details": "d20:[10,9,18]"
+    },
+    {
+      "timestamp": 1770786900901,
+      "label": "2d4 + 3d6 + 1d12",
+      "result": 14,
+      "diceType": "mixed",
+      "details": "d4:[1,2] d6:[1,2,2] d12:[6]"
+    },
+    {
+      "timestamp": 1770787803234,
+      "label": "1d2 + 2d4 + 2d6 + 1d10 + 3d12",
+      "result": 40,
+      "diceType": "mixed",
+      "details": "d2:[1] d4:[3,1] d6:[6,3] d10:[4] d12:[11,6,5]"
+    },
+    {
+      "timestamp": 1770788806523,
+      "label": "2d6 + 1d8 + 1d100",
+      "result": 82,
+      "diceType": "mixed",
+      "details": "(6 + 1) + (3) + (72)"
+    },
+    {
+      "timestamp": 1770790567047,
+      "label": "1d20",
+      "result": 14,
+      "diceType": "mixed",
+      "details": "(14)"
+    },
+    {
+      "timestamp": 1770790569091,
+      "label": "1d20",
+      "result": 13,
+      "diceType": "mixed",
+      "details": "(13)"
+    },
+    {
+      "timestamp": 1770790570703,
+      "label": "1d2",
+      "result": 2,
+      "diceType": "mixed",
+      "details": "(2)"
+    },
+    {
+      "timestamp": 1770790572525,
+      "label": "1d2",
+      "result": 1,
+      "diceType": "mixed",
+      "details": "(1)"
+    },
+    {
+      "timestamp": 1770790574547,
+      "label": "1d20",
+      "result": 6,
+      "diceType": "mixed",
+      "details": "(6)"
+    },
+    {
+      "timestamp": 1770790576914,
+      "label": "4d20",
+      "result": 24,
+      "diceType": "mixed",
+      "details": "(5 + 10 + 3 + 6)"
+    },
+    {
+      "timestamp": 1770790581176,
+      "label": "4d20",
+      "result": 25,
+      "diceType": "mixed",
+      "details": "(2 + 13 + 7 + 3)"
+    },
+    {
+      "timestamp": 1770790586079,
+      "label": "4d20",
+      "result": 54,
+      "diceType": "mixed",
+      "details": "(2 + 20 + 12 + 20)"
+    },
+    {
+      "timestamp": 1770793967532,
+      "label": "1d20",
+      "result": 13,
+      "diceType": "mixed",
+      "details": "(13)"
+    }
+  ]
 }

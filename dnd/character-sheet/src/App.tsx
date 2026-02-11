@@ -5,11 +5,12 @@ import { Vitals } from './components/Vitals';
 import { AbilityScore } from './components/AbilityScore';
 import { Skills } from './components/Skills';
 import { Tabs } from './components/Tabs';
+import { DiceRoller } from './components/DiceRoller';
 import { ActionsPanel } from './components/ActionsPanel';
 import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
-import type { Character, StatName, Spell } from './types';
+import type { Character, StatName, Spell, RollEntry } from './types';
 import { calculateModifier } from './utils/dnd';
 import { getProficiencyBonus, calculateMaxHP, getSorceryPoints } from './utils/rules';
 import './App.css';
@@ -259,6 +260,15 @@ function App() {
     });
   };
 
+
+
+  const handleRoll = (entry: RollEntry) => {
+    setCharacter(prev => ({
+        ...prev,
+        rollHistory: [...(prev.rollHistory || []), entry]
+    }));
+  };
+
   return (
     <div className="app-container" style={{ 
       display: 'grid', 
@@ -275,7 +285,7 @@ function App() {
       
       {/* Left Column: Skills Only */}
       <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', overflow: 'hidden' }}>
-         <div style={{ flexGrow: 1, overflowY: 'auto', minHeight: '0', paddingRight: '0.5rem' }}>
+         <div style={{ flex: 2, overflowY: 'auto', minHeight: '0', paddingRight: '0.5rem' }}>
           <Skills 
             skills={character.skills} 
             stats={character.stats} 
@@ -283,6 +293,11 @@ function App() {
             onToggleSkill={handleSkillToggle}
           />
         </div>
+        <DiceRoller 
+          history={character.rollHistory || []} 
+          onRoll={handleRoll} 
+          style={{ flex: 1, minHeight: 0 }} // Fill remaining space (approx 1/3)
+        />
       </aside>
 
       {/* Main Content Area */}

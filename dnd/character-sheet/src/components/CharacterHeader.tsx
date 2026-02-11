@@ -11,7 +11,82 @@ interface CharacterHeaderProps {
   saveStatus?: 'saved' | 'saving' | 'error';
 }
 
+import { SidePanel } from './SidePanel';
+import EntryRenderer from './EntryRenderer';
+import type { FeatureEntry } from '../types';
+
+interface CharacterHeaderProps {
+  character: Character;
+  onChange: (updates: Partial<Character>) => void;
+  // Data Management Props
+  onExport: () => void;
+  onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  saveStatus?: 'saved' | 'saving' | 'error';
+}
+
+const ConditionItem = ({ condition, isActive, onToggle }: { condition: any, isActive: boolean, onToggle: () => void }) => {
+    const [isHovered, setIsHovered] = React.useState(false);
+    
+    return (
+        <div 
+            onClick={onToggle}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+                background: isActive ? 'rgba(234, 179, 8, 0.2)' : 'rgba(255,255,255,0.05)',
+                border: isActive ? '1px solid #eab308' : '1px solid transparent',
+                borderRadius: '8px',
+                padding: '1rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                overflow: 'hidden'
+            }}
+        >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: isActive ? '#eab308' : '#eee' }}>{condition.name}</h3>
+                {isActive && <span style={{ color: '#eab308' }}>✓</span>}
+            </div>
+            
+            <div style={{ 
+                maxHeight: isHovered ? '1000px' : '0px', 
+                opacity: isHovered ? 1 : 0,
+                transition: 'all 0.4s ease-in-out',
+                overflow: 'hidden'
+            }}>
+                 <div style={{ fontSize: '0.8rem', color: '#aaa', lineHeight: 1.4, paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    <EntryRenderer entry={condition.entries} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onChange, onExport, onImport, saveStatus = 'saved' }) => {
+  const [showConditions, setShowConditions] = React.useState(false);
+  const [availableConditions, setAvailableConditions] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+      if (showConditions && availableConditions.length === 0) {
+          fetch('http://localhost:3001/api/conditions')
+            .then(res => res.json())
+            .then(data => setAvailableConditions(data))
+            .catch(err => console.error("Failed to load conditions:", err));
+      }
+  }, [showConditions]);
+
+  const toggleCondition = (conditionName: string) => {
+      const current = character.conditions || [];
+      const exists = current.includes(conditionName);
+      let newConditions;
+      if (exists) {
+          newConditions = current.filter(c => c !== conditionName);
+      } else {
+          newConditions = [...current, conditionName];
+      }
+      onChange({ conditions: newConditions });
+  };
+
   const xpPercentage = Math.min(100, (character.xp.current / character.xp.max) * 100);
 
   const inputStyle = {
@@ -204,15 +279,52 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                     />
                 </div>
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 'bold', borderLeft: '3px solid #eab308', paddingLeft: '8px', letterSpacing: '0.05em' }}>CONDITIONS</div>
-                    <textarea 
-                        value={character.conditions.join(', ')} 
-                        onChange={e => onChange({ conditions: e.target.value.split(', ') })}
-                        placeholder="Add Active Conditions"
-                        style={{ ...inputStyle, width: '100%', fontSize: '0.8rem', resize: 'none', height: '60px', background: 'rgba(0,0,0,0.1)', borderRadius: '4px', padding: '4px' }} 
-                    />
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 'bold', borderLeft: '3px solid #eab308', paddingLeft: '8px', letterSpacing: '0.05em', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        CONDITIONS
+                        <button 
+                            onClick={() => setShowConditions(true)}
+                            style={{ background: 'transparent', border: '1px solid var(--color-primary)', color: 'var(--color-primary)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', padding: '1px 6px' }}
+                        >
+                            + Manage
+                        </button>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', minHeight: '60px', alignContent: 'flex-start', background: 'rgba(0,0,0,0.1)', borderRadius: '4px', padding: '4px' }}>
+                        {character.conditions.length === 0 && <span style={{ color: '#aaa', fontSize: '0.8rem', fontStyle: 'italic', padding: '4px' }}>None</span>}
+                        {character.conditions.map(c => (
+                            <span key={c} style={{ 
+                                background: '#eab308', color: '#000', fontSize: '0.75rem', 
+                                padding: '2px 6px', borderRadius: '4px', fontWeight: 600,
+                                display: 'flex', alignItems: 'center', gap: '4px'
+                            }}>
+                                {c}
+                                <span 
+                                    onClick={() => toggleCondition(c)}
+                                    style={{ cursor: 'pointer', fontSize: '0.8em', opacity: 0.7 }}
+                                    title="Remove"
+                                >×</span>
+                            </span>
+                        ))}
+                    </div>
                 </div>
             </div>
+
+            <SidePanel 
+                isOpen={showConditions} 
+                onClose={() => setShowConditions(false)} 
+                title="Manage Conditions"
+                width="500px"
+            >
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', alignItems: 'start' }}>
+                    {availableConditions.map(c => (
+                        <ConditionItem 
+                            key={c.name} 
+                            condition={c} 
+                            isActive={character.conditions.includes(c.name)}
+                            onToggle={() => toggleCondition(c.name)}
+                        />
+                    ))}
+                </div>
+            </SidePanel>
 
         </div>
 

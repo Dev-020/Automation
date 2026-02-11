@@ -23,6 +23,9 @@ const FEATS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/feats.jso
 let spellCache = null;
 let featureCache = null; // Optional Features (Metamagic, Fighting Styles)
 let featCache = null;    // Feats
+let conditionCache = null; // Conditions
+
+const CONDITIONS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/conditionsdiseases.json';
 
 // Initial Data Load
 async function loadData() {
@@ -35,34 +38,47 @@ async function loadData() {
         const techData = JSON.parse(techRaw);
         const sourceData = JSON.parse(sourceRaw);
         
-        // Features
+        // Features & Conditions
         const optFeatRaw = await fs.promises.readFile(OPTIONAL_FEATURES_PATH, 'utf8');
         const featsRaw = await fs.promises.readFile(FEATS_PATH, 'utf8');
+        const conditionsRaw = await fs.promises.readFile(CONDITIONS_PATH, 'utf8');
+
         featureCache = JSON.parse(optFeatRaw).optionalfeature;
         featCache = JSON.parse(featsRaw).feat;
-
-        console.log(`Loaded ${techData.spell.length} spells, ${featureCache.length} optional features, ${featCache.length} feats.`);
         
-        // Filter for Sorcerer (XPHB Source)
-        const sorcererSpells = techData.spell.filter(spell => {
+        const conditionsData = JSON.parse(conditionsRaw);
+        // Combine 'condition' and 'status' arrays
+        conditionCache = [
+            ...(conditionsData.condition || []),
+            ...(conditionsData.status || [])
+        ];
+
+        console.log(`Loaded ${techData.spell.length} spells, ${featureCache.length} optional features, ${featCache.length} feats, ${conditionCache.length} conditions.`);
+        
+        // Process all spells to attach Class info
+        const allSpells = techData.spell.map(spell => {
             const lookupName = spell.name.toLowerCase();
             const sourceKey = spell.source.toLowerCase();
             const sourceEntry = sourceData[sourceKey]?.[lookupName];
             
-            if (!sourceEntry) return false;
+            const classes = [];
+            if (sourceEntry && sourceEntry.class) {
+                // Check XPHB and PHB for class definitions
+                ['XPHB', 'PHB', 'TCE', 'XGE'].forEach(src => {
+                    if (sourceEntry.class[src]) {
+                        Object.keys(sourceEntry.class[src]).forEach(cls => {
+                            if (!classes.includes(cls)) classes.push(cls);
+                        });
+                    }
+                });
+            }
             
-            const classList = sourceEntry.class;
-            if (!classList) return false;
-            
-            let isSorcerer = false;
-            if (classList.XPHB && classList.XPHB.Sorcerer) isSorcerer = true;
-            if (classList.PHB && classList.PHB.Sorcerer) isSorcerer = true;
-            
-            return isSorcerer;
+            // Return enriched spell
+            return { ...spell, classes };
         });
         
-        console.log(`Filtered down to ${sorcererSpells.length} Sorcerer spells.`);
-        spellCache = sorcererSpells;
+        console.log(`Loaded ${allSpells.length} spells with class info.`);
+        spellCache = allSpells;
         
     } catch (error) {
         console.error('Failed to load data:', error);
@@ -97,6 +113,14 @@ app.get('/api/features/options', (req, res) => {
     // Structure: featureType: ["MM", "AF"] or just ["MM"]
     const filtered = featureCache.filter(f => f.featureType && f.featureType.includes(type));
     res.json(filtered);
+});
+
+// Get Conditions (XPHB Only)
+app.get('/api/conditions', (req, res) => {
+    if (!conditionCache) return res.status(503).json({ error: 'Data loading...' });
+    
+    const xphbConditions = conditionCache.filter(c => c.source === 'XPHB');
+    res.json(xphbConditions);
 });
 
 const DATA_FILE = path.join(__dirname, 'src', 'data', 'activeCharacter.json');

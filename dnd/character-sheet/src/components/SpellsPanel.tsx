@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
+import { SidePanel } from './SidePanel';
+import EntryRenderer from './EntryRenderer';
 import type { Spell, SpellSlots, FeatureEntry } from '../types';
 
 interface SpellsPanelProps {
@@ -9,25 +11,6 @@ interface SpellsPanelProps {
   onUpdateSpells: (spells: Spell[]) => void;
   level: number;
 }
-
-// Reuse EntryRenderer Logic (Simplified for Spells)
-const SpellDescriptionRenderer: React.FC<{ entry: string | FeatureEntry }> = ({ entry }) => {
-    if (typeof entry === 'string') {
-        const cleanText = entry.replace(/{@\w+ (.*?)\|.*?}/g, '$1').replace(/{@\w+ (.*?)}/g, '$1');
-        return <p style={{ margin: '0 0 0.5rem 0' }}>{cleanText}</p>;
-    }
-    // Handle simple nested entries for now
-    if (entry.type === 'entries' || entry.type === 'list') {
-        return (
-            <div style={{ marginLeft: '1rem' }}>
-                {entry.name && <strong>{entry.name}. </strong>}
-                {entry.entries?.map((e, i) => <SpellDescriptionRenderer key={i} entry={e} />)}
-                {entry.items?.map((e, i) => <SpellDescriptionRenderer key={i} entry={e} />)}
-            </div>
-        );
-    }
-    return null;
-};
 
 // 5e 2024 / 2014 Sorcerer Limits
 const getSorcererLimits = (level: number) => {
@@ -49,6 +32,10 @@ const getSorcererLimits = (level: number) => {
 export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpells, onUpdateSpells, level }) => {
   const [mode, setMode] = useState<'view' | 'manage'>('view');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedClasses, setSelectedClasses] = useState<string[]>(['Sorcerer']);
+  const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
+
+  const CLASSES = ["Sorcerer", "Wizard", "Warlock", "Bard", "Cleric", "Druid", "Paladin", "Ranger", "Fighter", "Rogue", "Barbarian", "Monk", "Artificer"];
 
   const limits = getSorcererLimits(level);
   const currentCantrips = spells.filter(s => s.level === 0).length;
@@ -60,15 +47,7 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
       if (exists) {
           onUpdateSpells(spells.filter(s => s.name !== spell.name));
       } else {
-          // Check limits
-          if (spell.level === 0 && currentCantrips >= limits.cantrips) {
-              alert(`You can only know ${limits.cantrips} cantrips!`);
-              return;
-          }
-          if (spell.level > 0 && currentLeveled >= limits.known) {
-              alert(`You can only know ${limits.known} leveled spells!`);
-              return;
-          }
+          // Check limits (Relaxed: Just warn visually)
           onUpdateSpells([...spells, { ...spell, prepared: true }]);
       }
   };
@@ -82,9 +61,22 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
       return parts.join(', ');
   };
 
-  const filteredLibrary = allSpells.filter(s => 
-      s.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const toggleClass = (cls: string) => {
+      if (selectedClasses.includes(cls)) {
+          setSelectedClasses(selectedClasses.filter(c => c !== cls));
+      } else {
+          setSelectedClasses([...selectedClasses, cls]);
+      }
+  };
+
+  const filteredLibrary = allSpells.filter(s => {
+      const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesClass = selectedClasses.length > 0 
+          ? s.classes?.some(c => selectedClasses.includes(c))
+          : false; 
+      
+      return matchesSearch && matchesClass;
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -124,16 +116,39 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
       </div>
 
       {mode === 'manage' && (
-          <input 
-            type="text" 
-            placeholder={`Search Level ${level} Sorcerer spells...`}
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            style={{ 
-                width: '100%', padding: '8px', background: 'rgba(0,0,0,0.3)', 
-                border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '4px' 
-            }}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <input 
+                type="text" 
+                placeholder={`Search spells...`}
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                style={{ 
+                    width: '100%', padding: '8px', background: 'rgba(0,0,0,0.3)', 
+                    border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '4px' 
+                }}
+            />
+            {/* Class Filters */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                {CLASSES.map(cls => (
+                    <button
+                        key={cls}
+                        onClick={() => toggleClass(cls)}
+                        style={{
+                            fontSize: '0.75rem',
+                            padding: '2px 8px',
+                            borderRadius: '12px',
+                            border: '1px solid var(--glass-border)',
+                            background: selectedClasses.includes(cls) ? 'var(--color-primary)' : 'rgba(0,0,0,0.3)',
+                            color: selectedClasses.includes(cls) ? '#000' : '#aaa',
+                            cursor: 'pointer',
+                            opacity: selectedClasses.includes(cls) ? 1 : 0.7
+                        }}
+                    >
+                        {cls}
+                    </button>
+                ))}
+            </div>
+          </div>
       )}
 
       {/* Spell List */}
@@ -178,76 +193,124 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                         }}>
                             {title}
                         </h3>
-                        {groupSpells.map(spell => {
-                            const isPrepared = spells.some(s => s.name === spell.name);
-                            return (
-                                <Card key={spell.name} style={{ 
-                                    marginBottom: '1rem',
-                                    borderLeft: isPrepared ? '3px solid var(--color-primary)' : '3px solid transparent',
-                                    opacity: mode === 'manage' && !isPrepared ? 0.7 : 1
-                                }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                                        <div>
-                                            <h3 style={{ margin: 0, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                {spell.name}
-                                                {spell.meta?.ritual && <span title="Ritual" style={{ fontSize: '0.7em', padding: '1px 4px', background: '#444', borderRadius: '4px' }}>R</span>}
-                                                {spell.duration[0]?.concentration && <span title="Concentration" style={{ fontSize: '0.7em', padding: '1px 4px', background: '#444', borderRadius: '4px' }}>C</span>}
-                                            </h3>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                                                {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} • {spell.school}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '0.5rem' }}>
+                            {groupSpells.map(spell => {
+                                const isPrepared = spells.some(s => s.name === spell.name);
+                                return (
+                                    <Card 
+                                        key={spell.name} 
+                                        onClick={(e) => {
+                                            // Don't open SidePanel if clicking buttons
+                                            if ((e.target as HTMLElement).tagName === 'BUTTON') return;
+                                            setSelectedSpell(spell);
+                                        }}
+                                        style={{ 
+                                            marginBottom: '0',
+                                            borderLeft: isPrepared ? '3px solid var(--color-primary)' : '3px solid transparent',
+                                            opacity: mode === 'manage' && !isPrepared ? 0.7 : 1,
+                                            padding: '0.75rem',
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.1s',
+                                            ':hover': { transform: 'translateY(-2px)' }
+                                        } as any}
+                                    >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div>
+                                                <div style={{ fontWeight: 'bold', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    {spell.name}
+                                                    {spell.meta?.ritual && <span title="Ritual" style={{ fontSize: '0.7em', padding: '1px 4px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}>R</span>}
+                                                    {spell.duration[0]?.concentration && <span title="Concentration" style={{ fontSize: '0.7em', padding: '1px 4px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}>C</span>}
+                                                </div>
+                                                <div style={{ fontSize: '0.75rem', color: '#aaa', marginTop: '2px' }}>
+                                                    {spell.school} • {spell.range.distance?.amount ? `${spell.range.distance.amount} ft` : spell.range.type}
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Actions: Remove in View Mode OR Add/Remove in Manage Mode */}
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                {mode === 'view' && (
+                                                    <button 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleSpell(spell);
+                                                        }}
+                                                        style={{ 
+                                                            background: 'transparent', 
+                                                            border: '1px solid #ff4444', color: '#ff4444', 
+                                                            padding: '2px 8px', borderRadius: '4px', cursor: 'pointer',
+                                                            fontSize: '0.8rem'
+                                                        }}
+                                                        title="Remove Prepared Spell"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                )}
+                                                {mode === 'manage' && (
+                                                    <button 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleSpell(spell);
+                                                        }}
+                                                        style={{ 
+                                                            background: isPrepared ? 'rgba(255,50,50,0.2)' : 'rgba(50,255,50,0.2)', 
+                                                            border: 'none', color: isPrepared ? '#ff8888' : '#88ff88', 
+                                                            padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' 
+                                                        }}
+                                                    >
+                                                        {isPrepared ? 'Remove' : 'Add'}
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
-                                        
-                                        {/* Actions: Remove in View Mode OR Add/Remove in Manage Mode */}
-                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                            {mode === 'view' && (
-                                                <button 
-                                                    onClick={() => toggleSpell(spell)}
-                                                    style={{ 
-                                                        background: 'transparent', 
-                                                        border: '1px solid #ff4444', color: '#ff4444', 
-                                                        padding: '2px 8px', borderRadius: '4px', cursor: 'pointer',
-                                                        fontSize: '0.8rem'
-                                                    }}
-                                                    title="Remove Prepared Spell"
-                                                >
-                                                    Remove
-                                                </button>
-                                            )}
-                                            {mode === 'manage' && (
-                                                <button 
-                                                    onClick={() => toggleSpell(spell)}
-                                                    style={{ 
-                                                        background: isPrepared ? 'rgba(255,50,50,0.2)' : 'rgba(50,255,50,0.2)', 
-                                                        border: 'none', color: isPrepared ? '#ff8888' : '#88ff88', 
-                                                        padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' 
-                                                    }}
-                                                >
-                                                    {isPrepared ? 'Remove' : 'Add'}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Meta Data Grid */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', color: '#aaa', marginBottom: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '4px', borderRadius: '4px' }}>
-                                        <div><strong>Time:</strong> {spell.time[0].number} {spell.time[0].unit}</div>
-                                        <div><strong>Range:</strong> {spell.range.distance?.amount ? `${spell.range.distance.amount} ft` : spell.range.type}</div>
-                                        <div><strong>Comp:</strong> {formatComponents(spell.components)}</div>
-                                        <div><strong>Dur:</strong> {spell.duration[0].type === 'instant' ? 'Instant' : `${spell.duration[0].duration?.amount} ${spell.duration[0].duration?.type}`}</div>
-                                    </div>
-
-                                    <div style={{ fontSize: '0.9rem', lineHeight: 1.5, color: '#ddd' }}>
-                                        {spell.entries.map((entry, i) => <SpellDescriptionRenderer key={i} entry={entry} />)}
-                                    </div>
-                                </Card>
-                            );
-                        })}
+                                    </Card>
+                                );
+                            })}
+                        </div>
                     </div>
                 );
             });
         })()}
       </div>
+
+      {/* Spell Detail SidePanel */}
+      <SidePanel
+        isOpen={!!selectedSpell}
+        onClose={() => setSelectedSpell(null)}
+        title={selectedSpell?.name || 'Spell Details'}
+        width="500px"
+      >
+        {selectedSpell && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {/* Meta Header */}
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px' }}>
+                     <div style={{ fontSize: '0.9rem', color: 'var(--color-primary)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                        {selectedSpell.level === 0 ? 'Cantrip' : `Level ${selectedSpell.level}`} {selectedSpell.school}
+                     </div>
+                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem' }}>
+                        <div><strong>Time:</strong> {selectedSpell.time[0].number} {selectedSpell.time[0].unit}</div>
+                        <div><strong>Range:</strong> {selectedSpell.range.distance?.amount ? `${selectedSpell.range.distance.amount} ft` : selectedSpell.range.type}</div>
+                        <div><strong>Duration:</strong> {selectedSpell.duration[0].type === 'instant' ? 'Instant' : `${selectedSpell.duration[0].duration?.amount} ${selectedSpell.duration[0].duration?.type}`} {selectedSpell.duration[0].concentration && '(Conc)'}</div>
+                        <div><strong>Components:</strong> {formatComponents(selectedSpell.components)}</div>
+                     </div>
+                </div>
+
+                {/* Description */}
+                <div style={{ lineHeight: 1.6, fontSize: '0.95rem' }}>
+                    <EntryRenderer entry={selectedSpell.entries} />
+                </div>
+                
+                {/* Upcast */}
+                {selectedSpell.entriesHigherLevel && (
+                    <div style={{ marginTop: '1rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
+                        <strong style={{ color: '#aaa', display: 'block', marginBottom: '0.5rem' }}>At Higher Levels</strong>
+                        {selectedSpell.entriesHigherLevel.map((e, i) => (
+                             <EntryRenderer key={i} entry={e.entries} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        )}
+      </SidePanel>
     </div>
   );
 };
