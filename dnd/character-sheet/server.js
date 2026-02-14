@@ -3,13 +3,36 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { Client, GatewayIntentBits } from 'discord.js';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { enrichFeature } from './server/featureEnricher.js';
 
+// Load .env from parent directory
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
 const app = express();
 const PORT = 3001;
+
+// Discord Bot Setup
+const client = new Client({ 
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] 
+});
+
+const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN;
+const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
+
+client.once('ready', () => {
+    console.log(`Discord Bot ready! Logged in as ${client.user.tag}`);
+});
+
+if (DISCORD_TOKEN) {
+    client.login(DISCORD_TOKEN).catch(err => console.error("Discord Login Failed:", err));
+} else {
+    console.warn("No DISCORD_BOT_TOKEN found in .env");
+}
 
 app.use(cors());
 app.use(express.json());
@@ -19,10 +42,12 @@ const SPELLS_TECH_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/spe
 const SPELLS_SOURCE_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/generated/gendata-spell-source-lookup.json';
 const OPTIONAL_FEATURES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/optionalfeatures.json';
 const FEATS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/feats.json';
+const SKILLS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/skills.json';
 
 let spellCache = null;
 let featureCache = null; // Optional Features (Metamagic, Fighting Styles)
 let featCache = null;    // Feats
+let skillCache = null;   // Skills
 let conditionCache = null; // Conditions
 
 const CONDITIONS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/conditionsdiseases.json';
@@ -41,10 +66,12 @@ async function loadData() {
         // Features & Conditions
         const optFeatRaw = await fs.promises.readFile(OPTIONAL_FEATURES_PATH, 'utf8');
         const featsRaw = await fs.promises.readFile(FEATS_PATH, 'utf8');
+        const skillsRaw = await fs.promises.readFile(SKILLS_PATH, 'utf8');
         const conditionsRaw = await fs.promises.readFile(CONDITIONS_PATH, 'utf8');
 
         featureCache = JSON.parse(optFeatRaw).optionalfeature;
         featCache = JSON.parse(featsRaw).feat;
+        skillCache = JSON.parse(skillsRaw).skill;
         
         const conditionsData = JSON.parse(conditionsRaw);
         // Combine 'condition' and 'status' arrays
@@ -123,6 +150,17 @@ app.get('/api/conditions', (req, res) => {
     res.json(xphbConditions);
 });
 
+// Get Skills (XPHB Only)
+app.get('/api/ref/skills', (req, res) => {
+    if (!skillCache) return res.status(503).json({ error: 'Data loading...' });
+
+    // Filter for XPHB source
+    // Note: Some skills might be in PHB but reprinted in XPHB. 
+    // The JSON usually has specific entries for XPHB.
+    const xphbSkills = skillCache.filter(s => s.source === 'XPHB');
+    res.json(xphbSkills);
+});
+
 const DATA_FILE = path.join(__dirname, 'src', 'data', 'activeCharacter.json');
 
 // Get Character Data
@@ -159,6 +197,37 @@ app.post('/api/save', (req, res) => {
         console.log(`[${new Date().toLocaleTimeString()}] Character saved successfully.`);
         res.json({ success: true });
     });
+});
+
+// Log Roll to Discord
+app.post('/api/log-roll', async (req, res) => {
+    const { characterName, label, result, details } = req.body;
+
+    if (!client.isReady()) {
+        console.warn("Discord client not ready, skipping log.");
+        return res.status(503).json({ error: 'Discord bot not ready' });
+    }
+
+    if (!DISCORD_CHANNEL_ID) {
+        console.warn("No Discord Channel ID configured.");
+        return res.status(500).json({ error: 'No Channel ID' });
+    }
+
+    try {
+        const channel = await client.channels.fetch(DISCORD_CHANNEL_ID);
+        if (channel && channel.isTextBased()) {
+            const message = `**${characterName || 'Unknown'}** rolled **${label}**: ${details} = **${result}**`;
+            await channel.send(message);
+            console.log(`Relayed roll to Discord: ${message}`);
+            res.json({ success: true });
+        } else {
+            console.error("Channel not found or not text-based");
+            res.status(404).json({ error: 'Channel not found' });
+        }
+    } catch (error) {
+        console.error("Failed to send to Discord:", error);
+        res.status(500).json({ error: 'Failed to send to Discord' });
+    }
 });
 
 app.listen(PORT, () => {

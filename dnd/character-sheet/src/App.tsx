@@ -11,7 +11,7 @@ import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
 import type { Character, StatName, Spell, RollEntry } from './types';
-import { calculateModifier } from './utils/dnd';
+import { calculateModifier, rollDice } from './utils/dnd';
 import { getProficiencyBonus, calculateMaxHP, getSorceryPoints } from './utils/rules';
 import './App.css';
 
@@ -60,6 +60,8 @@ function App() {
 
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [allSpells, setAllSpells] = useState<Spell[]>([]);
+  const [allSkills, setAllSkills] = useState<any[]>([]); // Using any for now, or define SkillRef type
+  const [sendToDiscord, setSendToDiscord] = useState(false);
 
   // Calculate Dynamic Stats
   useEffect(() => {
@@ -235,27 +237,12 @@ function App() {
     setCharacter(prev => ({ ...prev, vitals: newVitals }));
   };
 
-  const handleSkillToggle = (index: number) => {
+  const handleSkillUpdate = (index: number, proficiency: boolean, expertise: boolean) => {
     setCharacter(prev => {
         const newSkills = prev.skills.map((skill, i) => {
             if (i !== index) return skill;
-
-            // Create new skill object to avoid mutation
-            const newSkill = { ...skill };
-            
-            // Cycle: None -> Proficient -> Expertise -> None
-            if (!newSkill.proficiency) {
-                newSkill.proficiency = true;
-                newSkill.expertise = false;
-            } else if (newSkill.proficiency && !newSkill.expertise) {
-                newSkill.expertise = true; 
-            } else {
-                newSkill.proficiency = false;
-                newSkill.expertise = false;
-            }
-            return newSkill;
+            return { ...skill, proficiency, expertise };
         });
-        
         return { ...prev, skills: newSkills };
     });
   };
@@ -263,6 +250,21 @@ function App() {
 
 
   const handleRoll = (entry: RollEntry) => {
+    // Log to Discord if requested
+    if (entry.sendToDiscord) {
+        fetch('http://localhost:3001/api/log-roll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                characterName: character.name,
+                label: entry.label,
+                result: entry.result,
+                details: entry.details,
+                timestamp: entry.timestamp
+            })
+        }).catch(err => console.error("Failed to log roll to Discord:", err));
+    }
+
     setCharacter(prev => ({
         ...prev,
         rollHistory: [...(prev.rollHistory || []), entry]
@@ -290,13 +292,18 @@ function App() {
             skills={character.skills} 
             stats={character.stats} 
             proficiencyBonus={character.vitals.proficiencyBonus} 
-            onToggleSkill={handleSkillToggle}
+            onUpdateSkill={handleSkillUpdate}
+            allSkills={allSkills}
+            onRoll={handleRoll}
+            sendToDiscord={sendToDiscord}
           />
         </div>
         <DiceRoller 
           history={character.rollHistory || []} 
           onRoll={handleRoll} 
           style={{ flex: 1, minHeight: 0 }} // Fill remaining space (approx 1/3)
+          sendToDiscord={sendToDiscord}
+          onToggleDiscord={() => setSendToDiscord(!sendToDiscord)}
         />
       </aside>
 
@@ -328,6 +335,8 @@ function App() {
                         label={statName} 
                         score={character.stats[statName].base} 
                         onChange={(val) => handleStatChange(statName, val)}
+                        onRoll={handleRoll}
+                        sendToDiscord={sendToDiscord}
                         />
                     ))}
                 </div>
@@ -343,7 +352,32 @@ function App() {
                                 <span style={{color: isProficient ? 'var(--color-primary)' : 'inherit', fontWeight: isProficient ? 'bold' : 'normal'}}>
                                 {stat}
                                 </span>
-                                <span>{mod >= 0 ? `+${mod}` : mod}</span>
+                                <span 
+                                    className="interactive-roll"
+                                    onClick={() => {
+                                        const result = rollDice(20);
+                                        const total = result + mod;
+                                        const entry: RollEntry = {
+                                            label: `Saving Throw: ${stat}`,
+                                            result: total,
+                                            details: `(${result}) + ${mod}`,
+                                            timestamp: Date.now(),
+                                            diceType: 'd20',
+                                            sendToDiscord
+                                        };
+                                        handleRoll(entry);
+                                    }}
+                                    style={{
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold',
+                                        padding: '0 4px',
+                                        transition: 'all 0.2s',
+                                        borderRadius: '4px'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                    title="Click to Roll"
+                                >{mod >= 0 ? `+${mod}` : mod}</span>
                             </li>
                             )
                         })}

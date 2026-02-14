@@ -1,15 +1,33 @@
 import React from 'react';
-import { calculateModifier, formatModifier } from '../utils/dnd';
+import { calculateModifier, formatModifier, rollDice } from '../utils/dnd';
+import type { RollEntry } from '../types';
 
 interface AbilityScoreProps {
   label: string;
   score: number;
   onChange: (value: number) => void;
+  onRoll: (entry: RollEntry) => void;
+  sendToDiscord: boolean;
 }
 
-export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChange }) => {
+export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChange, onRoll, sendToDiscord }) => {
   const mod = calculateModifier(score);
   
+  const handleRoll = () => {
+    const result = rollDice(20);
+    const total = result + mod;
+    
+    const entry: RollEntry = {
+        label: `Ability Check: ${label}`,
+        result: total,
+        details: `(${result}) + ${mod}`,
+        timestamp: Date.now(),
+        diceType: 'd20',
+        sendToDiscord
+    };
+    onRoll(entry);
+  };
+
   return (
     <div className="ability-score-card" style={{ 
       display: 'flex', 
@@ -30,11 +48,29 @@ export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChan
         color: 'var(--color-text-muted)'
       }}>{label}</div>
       
-      <div className="modifier" style={{ 
-        fontSize: '1.75rem', 
-        fontWeight: 'bold',
-        lineHeight: 1
-      }}>
+      <div 
+        className="modifier interactive-roll" 
+        onClick={handleRoll}
+        title="Click to Roll"
+        style={{ 
+            fontSize: '1.75rem', 
+            fontWeight: 'bold',
+            lineHeight: 1,
+            cursor: 'pointer',
+            transition: 'color 0.2s',
+            userSelect: 'none'
+        }}
+        onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+            e.currentTarget.style.color = 'var(--color-primary)';
+            e.currentTarget.style.borderRadius = '4px'; // Soften edges
+        }}
+        onMouseOut={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.color = 'inherit';
+            e.currentTarget.style.borderRadius = '0';
+        }}
+      >
         {formatModifier(mod)}
       </div>
       

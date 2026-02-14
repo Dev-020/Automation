@@ -8,11 +8,14 @@ interface DiceRollerProps {
     onRoll: (entry: RollEntry) => void;
     className?: string; // Add className prop
     style?: React.CSSProperties; // Add style prop
+    sendToDiscord: boolean;
+    onToggleDiscord: () => void;
 }
 
-export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, className, style }) => {
+export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, className, style, sendToDiscord, onToggleDiscord }) => {
     const historyEndRef = useRef<HTMLDivElement>(null);
     const [pending, setPending] = useState<Record<number, number>>({});
+    // Internal sendToDiscord state removed in favor of props
 
     // Auto-scroll to bottom of history
     useEffect(() => {
@@ -55,7 +58,8 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
             label: labelParts.join(' + '),
             result: total,
             diceType: 'mixed',
-            details: detailsParts.join(' + ') // Combine groups with +
+            details: detailsParts.join(' + '), // Combine groups with +
+            sendToDiscord
         };
 
         onRoll(entry);
@@ -93,7 +97,27 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                 <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
                     Dice Roller
                 </h3>
-                <div style={{ display: 'flex', gap: '4px' }}>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <button
+                        onClick={onToggleDiscord}
+                        style={{
+                            background: sendToDiscord ? '#5865F2' : 'rgba(255,255,255,0.1)', // Discord Blurple
+                            border: '1px solid var(--glass-border)',
+                            borderRadius: '4px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            padding: '2px 8px',
+                            fontSize: '0.8rem',
+                            fontWeight: 'bold',
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginRight: '4px'
+                        }}
+                        title="Toggle sending rolls to Discord"
+                    >
+                        <span style={{ fontSize: '0.8rem' }}>{sendToDiscord}</span>
+                        Discord
+                    </button>
                      {hasPending && (
                         <button 
                             onClick={clearPool}

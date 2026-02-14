@@ -95,7 +95,7 @@
     {
       "name": "History",
       "stat": "INT",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -113,7 +113,7 @@
     {
       "name": "Investigation",
       "stat": "INT",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -131,7 +131,7 @@
     {
       "name": "Perception",
       "stat": "WIS",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -161,7 +161,7 @@
     {
       "name": "Stealth",
       "stat": "DEX",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -1193,8 +1193,7 @@
           ]
         },
         "You can use this feature twice, and you regain all expended uses of it when you finish a {@variantrule Long Rest|XPHB}."
-      ],
-      "customChoice": "LEBOMBO"
+      ]
     },
     {
       "name": "Spellcasting",
@@ -2054,6 +2053,438 @@
       "result": 13,
       "diceType": "mixed",
       "details": "(13)"
+    },
+    {
+      "timestamp": 1770826602781,
+      "label": "2d8",
+      "result": 9,
+      "diceType": "mixed",
+      "details": "(4 + 5)",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1770826609744,
+      "label": "1d20",
+      "result": 12,
+      "diceType": "mixed",
+      "details": "(12)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770826619468,
+      "label": "1d2 + 1d12 + 2d20",
+      "result": 20,
+      "diceType": "mixed",
+      "details": "(1) + (6) + (2 + 11)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770826921641,
+      "label": "5d20",
+      "result": 60,
+      "diceType": "mixed",
+      "details": "(15 + 12 + 3 + 17 + 13)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770826931589,
+      "label": "4d20",
+      "result": 59,
+      "diceType": "mixed",
+      "details": "(17 + 11 + 15 + 16)",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1770828687319,
+      "label": "1d100",
+      "result": 54,
+      "diceType": "mixed",
+      "details": "(54)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770828698367,
+      "label": "5d2 + 1d4 + 1d10",
+      "result": 12,
+      "diceType": "mixed",
+      "details": "(1 + 2 + 1 + 1 + 2) + (4) + (1)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770828713808,
+      "label": "17d8",
+      "result": 61,
+      "diceType": "mixed",
+      "details": "(5 + 1 + 8 + 2 + 1 + 7 + 3 + 2 + 1 + 2 + 2 + 4 + 8 + 3 + 3 + 3 + 6)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770828721548,
+      "label": "6d10",
+      "result": 31,
+      "diceType": "mixed",
+      "details": "(8 + 10 + 6 + 4 + 1 + 2)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1770828729274,
+      "label": "1d2 + 1d4 + 1d6 + 1d8 + 1d10 + 1d12 + 1d20 + 1d100",
+      "result": 118,
+      "diceType": "mixed",
+      "details": "(2) + (3) + (3) + (5) + (4) + (1) + (15) + (85)",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1770828735064,
+      "label": "1d2 + 1d4 + 1d6 + 1d8 + 1d10 + 1d12 + 1d20 + 1d100",
+      "result": 82,
+      "diceType": "mixed",
+      "details": "(1) + (2) + (3) + (8) + (2) + (4) + (20) + (42)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771030068708,
+      "label": "1d6",
+      "result": 5,
+      "diceType": "mixed",
+      "details": "(5)",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Acrobatics",
+      "result": 8,
+      "details": "(7) + 1",
+      "timestamp": 1771032770378,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 19,
+      "details": "(14) + 5",
+      "timestamp": 1771032775215,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 23,
+      "details": "(18) + 5",
+      "timestamp": 1771032776393,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 11,
+      "details": "(6) + 5",
+      "timestamp": 1771032777753,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 12,
+      "details": "(7) + 5",
+      "timestamp": 1771032778351,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 16,
+      "details": "(11) + 5",
+      "timestamp": 1771032778753,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 15,
+      "details": "(10) + 5",
+      "timestamp": 1771032778960,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Deception",
+      "result": 25,
+      "details": "(20) + 5",
+      "timestamp": 1771032779415,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 7,
+      "details": "(3) + 4",
+      "timestamp": 1771032782088,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Persuasion",
+      "result": 7,
+      "details": "(2) + 5",
+      "timestamp": 1771032794737,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Persuasion",
+      "result": 14,
+      "details": "(9) + 5",
+      "timestamp": 1771032802151,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 12,
+      "details": "(7) + 5",
+      "timestamp": 1771032804618,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Insight",
+      "result": 15,
+      "details": "(13) + 2",
+      "timestamp": 1771032805167,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 21,
+      "details": "(16) + 5",
+      "timestamp": 1771032808510,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 19,
+      "details": "(14) + 5",
+      "timestamp": 1771032811405,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 21,
+      "details": "(16) + 5",
+      "timestamp": 1771032811782,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 11,
+      "details": "(6) + 5",
+      "timestamp": 1771032812023,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 22,
+      "details": "(20) + 2",
+      "timestamp": 1771032842001,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 17,
+      "details": "(15) + 2",
+      "timestamp": 1771032847314,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: STR",
+      "result": 12,
+      "details": "(13) + -1",
+      "timestamp": 1771033192248,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CHA",
+      "result": 11,
+      "details": "(9) + 2",
+      "timestamp": 1771033203099,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 12,
+      "details": "(13) + -1",
+      "timestamp": 1771033203856,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 2,
+      "details": "(3) + -1",
+      "timestamp": 1771033205878,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 2,
+      "details": "(3) + -1",
+      "timestamp": 1771033206388,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 0,
+      "details": "(1) + -1",
+      "timestamp": 1771033207514,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 5,
+      "details": "(6) + -1",
+      "timestamp": 1771033215848,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 0,
+      "details": "(1) + -1",
+      "timestamp": 1771033216802,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 9,
+      "details": "(10) + -1",
+      "timestamp": 1771033217356,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 17,
+      "details": "(18) + -1",
+      "timestamp": 1771033218053,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CHA",
+      "result": 12,
+      "details": "(10) + 2",
+      "timestamp": 1771033518774,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 8,
+      "details": "(9) + -1",
+      "timestamp": 1771033522143,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 6,
+      "details": "(7) + -1",
+      "timestamp": 1771033522569,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 11,
+      "details": "(12) + -1",
+      "timestamp": 1771033522955,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: CON",
+      "result": 15,
+      "details": "(12) + 3",
+      "timestamp": 1771033528797,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: INT",
+      "result": 13,
+      "details": "(11) + 2",
+      "timestamp": 1771033530329,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: DEX",
+      "result": 7,
+      "details": "(6) + 1",
+      "timestamp": 1771033531087,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 18,
+      "details": "(12) + 6",
+      "timestamp": 1771033537468,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 13,
+      "details": "(7) + 6",
+      "timestamp": 1771033538923,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 13,
+      "details": "(7) + 6",
+      "timestamp": 1771033540010,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 16,
+      "details": "(10) + 6",
+      "timestamp": 1771033541116,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CHA",
+      "result": 18,
+      "details": "(13) + 5",
+      "timestamp": 1771033543014,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: STR",
+      "result": 15,
+      "details": "(16) + -1",
+      "timestamp": 1771033544418,
+      "diceType": "d20",
+      "sendToDiscord": true
     }
   ]
 }

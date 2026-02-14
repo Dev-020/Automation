@@ -153,4 +153,5 @@ export interface RollEntry {
   result: number;
   details?: string; // e.g. "Natural 20"
   diceType: string; // "d20"
+  sendToDiscord?: boolean;
 }

@@ -89,3 +89,17 @@ button {
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Globally Hide Scrollbar */
+html, body, #root, * {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+}
