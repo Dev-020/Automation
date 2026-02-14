@@ -12,6 +12,7 @@ import { ActionsPanel } from './components/ActionsPanel';
 import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
+import { NotesPanel } from './components/NotesPanel';
 import { rollDice } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
@@ -50,13 +51,32 @@ function App() {
             defenses: { ...initialCharacter.defenses, ...(parsed.defenses || {}) },
             conditions: parsed.conditions || initialCharacter.conditions,
             features: parsed.features || initialCharacter.features || [], // Ensure features are loaded
-            containers: parsed.containers || initialCharacter.containers || [] // Ensure containers are loaded
+            containers: parsed.containers || initialCharacter.containers || [], // Ensure containers are loaded
+            // Initialize Notes (with migration to categoryIds)
+            notes: (parsed.notes || []).map((n: any) => ({
+                ...n,
+                categoryIds: n.categoryIds || (n.categoryId ? [n.categoryId] : ['default'])
+            })),
+            noteCategories: parsed.noteCategories && parsed.noteCategories.length > 0 ? parsed.noteCategories : [
+                { id: 'default', name: 'Inbox', isDefault: true },
+                { id: 'quest', name: 'Quest Log', isDefault: false },
+                { id: 'npcs', name: 'NPCs', isDefault: false }
+            ]
         };
       } catch (e) {
         console.error("Failed to parse saved character", e);
       }
     }
-    return initialCharacter;
+    // Fallback for No LocalStorage or JSON Parse Fail
+    return {
+        ...initialCharacter,
+        notes: [],
+        noteCategories: [
+            { id: 'default', name: 'Inbox', isDefault: true },
+            { id: 'quest', name: 'Quest Log', isDefault: false },
+            { id: 'npcs', name: 'NPCs', isDefault: false }
+        ]
+    };
   });
 
   const [activeTab, setActiveTab] = useState('Actions');
@@ -448,7 +468,7 @@ function App() {
         {/* Tabbed Interface */}
         <div className="tabs-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <Tabs 
-            tabs={['Actions', 'Spells', 'Inventory', 'Features']} 
+            tabs={['Actions', 'Spells', 'Inventory', 'Features', 'Notes']} 
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
           />
@@ -466,6 +486,14 @@ function App() {
                     onUpdateContainers={handleContainersUpdate}
                 />}
                 {activeTab === 'Features' && <FeaturesPanel features={character.features} character={character} onUpdateFeatures={(updated) => setCharacter(prev => ({ ...prev, features: updated }))} />}
+                {activeTab === 'Notes' && (
+                    <NotesPanel 
+                        notes={character.notes} 
+                        categories={character.noteCategories}
+                        onUpdateNotes={notes => setCharacter(p => ({ ...p, notes }))}
+                        onUpdateCategories={cats => setCharacter(p => ({ ...p, noteCategories: cats }))}
+                    />
+                )}
             </div>
           </div>
         </div>

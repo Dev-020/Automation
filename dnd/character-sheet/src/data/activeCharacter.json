@@ -70,7 +70,7 @@
       "max": 6,
       "face": "d6"
     },
-    "ac": 12,
+    "ac": 17,
     "initiative": 1,
     "speed": 30,
     "proficiencyBonus": 3,
@@ -80,7 +80,8 @@
     },
     "acBreakdown": [
       "Leather Armor (Light): 11",
-      "Dexterity: +1"
+      "Dexterity: +1",
+      "Orion Chassis (Bonus): +5"
     ]
   },
   "skills": [
@@ -745,59 +746,6 @@
       "prepared": true
     },
     {
-      "name": "Slow",
-      "source": "XPHB",
-      "page": 318,
-      "srd52": true,
-      "basicRules2024": true,
-      "level": 3,
-      "school": "T",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "feet",
-          "amount": 120
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true,
-        "m": "a drop of molasses"
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          },
-          "concentration": true
-        }
-      ],
-      "entries": [
-        "You alter time around up to six creatures of your choice in a 40-foot {@variantrule Cube [Area of Effect]|XPHB|Cube} within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration.",
-        "An affected target's {@variantrule Speed|XPHB} is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a {@variantrule Bonus Action|XPHB}, not both, and it can make only one attack if it takes the {@action Attack|XPHB} action. If it casts a spell with a Somatic component, there is a {@chance 25|||The spell fails!|The spell does not fail.} chance the spell fails as a result of the target making the spell's gestures too slowly.",
-        "An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
-      ],
-      "savingThrow": [
-        "wisdom"
-      ],
-      "miscTags": [
-        "MAC"
-      ],
-      "areaTags": [
-        "C",
-        "MT"
-      ],
-      "prepared": true
-    },
-    {
       "name": "Message",
       "source": "XPHB",
       "page": 298,
@@ -837,49 +785,6 @@
       ],
       "areaTags": [
         "ST"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Mending",
-      "source": "XPHB",
-      "page": 297,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "BQGT",
-        "DrDe-ACfaS"
-      ],
-      "level": 0,
-      "school": "T",
-      "time": [
-        {
-          "number": 1,
-          "unit": "minute"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "touch"
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true,
-        "m": "two lodestones"
-      },
-      "duration": [
-        {
-          "type": "instant"
-        }
-      ],
-      "entries": [
-        "This spell repairs a single break or tear in an object you touch, such as a broken chain link, two halves of a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no larger than 1 foot in any dimension, you mend it, leaving no trace of the former damage.",
-        "This spell can physically repair a magic item, but it can't restore magic to such an object."
-      ],
-      "miscTags": [
-        "OBJ"
       ],
       "prepared": true
     },
@@ -1142,6 +1047,114 @@
         "Paladin"
       ],
       "prepared": true
+    },
+    {
+      "name": "Slow",
+      "source": "XPHB",
+      "page": 318,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 3,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a drop of molasses"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
+        }
+      ],
+      "entries": [
+        "You alter time around up to six creatures of your choice in a 40-foot {@variantrule Cube [Area of Effect]|XPHB|Cube} within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration.",
+        "An affected target's {@variantrule Speed|XPHB} is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a {@variantrule Bonus Action|XPHB}, not both, and it can make only one attack if it takes the {@action Attack|XPHB} action. If it casts a spell with a Somatic component, there is a {@chance 25|||The spell fails!|The spell does not fail.} chance the spell fails as a result of the target making the spell's gestures too slowly.",
+        "An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
+      ],
+      "savingThrow": [
+        "wisdom"
+      ],
+      "miscTags": [
+        "MAC"
+      ],
+      "areaTags": [
+        "C",
+        "MT"
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Mending",
+      "source": "XPHB",
+      "page": 297,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "BQGT",
+        "DrDe-ACfaS"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "minute"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "two lodestones"
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "This spell repairs a single break or tear in an object you touch, such as a broken chain link, two halves of a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no larger than 1 foot in any dimension, you mend it, leaving no trace of the former damage.",
+        "This spell can physically repair a magic item, but it can't restore magic to such an object."
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
     }
   ],
   "spellSlots": {
@@ -1159,21 +1172,6 @@
     }
   },
   "inventory": [
-    {
-      "id": "e827e0cb-0854-4a2e-93d0-3deded4521d2",
-      "name": "Leather Armor",
-      "quantity": 1,
-      "weight": 10,
-      "containerId": null,
-      "source": "XPHB",
-      "rarity": "none",
-      "type": "LA|XPHB",
-      "ac": 11,
-      "value": 1000,
-      "hasFluffImages": true,
-      "equipped": true,
-      "bonusAc": ""
-    },
     {
       "id": "a2a7082f-66e6-407b-a0c1-097981958f1c",
       "name": "Dagger",
@@ -1199,18 +1197,37 @@
       "equipped": true
     },
     {
-      "id": "01b4743b-9a2d-4241-a613-500a6bca4dd0",
-      "name": "Shield",
+      "id": "4e585d73-46ab-4ec1-aefd-117bc13906c2",
+      "name": "Leather Armor",
       "quantity": 1,
-      "weight": 6,
+      "weight": 10,
       "containerId": null,
       "source": "XPHB",
       "rarity": "none",
-      "type": "S|XPHB",
-      "ac": 2,
+      "type": "LA|XPHB",
+      "ac": 11,
       "value": 1000,
       "hasFluffImages": true,
-      "equipped": false
+      "equipped": true
+    },
+    {
+      "id": "ce3f39c5-d347-4256-9170-79c3a34a3612",
+      "name": "Orion Chassis",
+      "quantity": 1,
+      "weight": 0,
+      "containerId": null,
+      "notes": "Custom Item",
+      "type": "LA|XPHB",
+      "rarity": "artifact",
+      "reqAttune": false,
+      "properties": [],
+      "mastery": [],
+      "bonusAc": "+5",
+      "entries": [
+        "Represents the enchanced AC that Leo & Orion gets when they go into integrated mode."
+      ],
+      "equipped": true,
+      "isAttuned": false
     }
   ],
   "wealth": {
@@ -2580,6 +2597,14 @@
       "timestamp": 1771080791910,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 16,
+      "details": "(11) + 5",
+      "timestamp": 1771087776976,
+      "diceType": "d20",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -2587,7 +2612,46 @@
       "id": "5766931f-c671-452e-9c0a-c2d2756abd58",
       "name": "Arcane Repository",
       "type": "custom",
-      "ignoreContentWeight": false
+      "ignoreContentWeight": true
+    },
+    {
+      "id": "b299cc1b-3b58-4f64-a26d-e7e2b1f842cd",
+      "name": "Backpack",
+      "type": "custom"
+    }
+  ],
+  "notes": [
+    {
+      "id": "1fb30d8b-5906-41a0-a7ac-7b28cd665dfe",
+      "title": "New Note 2",
+      "subject": "Test note wandafl",
+      "content": "",
+      "categoryIds": [
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c",
+        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b"
+      ],
+      "lastModified": 1771087291682
+    },
+    {
+      "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
+      "title": "TO DO LIST:",
+      "subject": "Typa shi to do for this goofy ahh website",
+      "content": "<ol><li>Implement the background features for the character.</li><li>Implement the race features for the character.</li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.</li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li></ol>",
+      "categoryIds": [
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c"
+      ],
+      "lastModified": 1771088667775
+    }
+  ],
+  "noteCategories": [
+    {
+      "id": "6b08bbc5-07ce-4b26-97ab-690097eda12c",
+      "name": "Inbox",
+      "isDefault": true
+    },
+    {
+      "id": "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
+      "name": "Random Category #2"
     }
   ]
 }

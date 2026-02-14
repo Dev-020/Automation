@@ -5,6 +5,8 @@ import type { Item, Character, Container } from '../types';
 import { AddItemModal } from './AddItemModal';
 import { ItemDetails } from './ItemDetails';
 
+import { ConfirmDialog } from './ConfirmDialog';
+
 interface InventoryPanelProps {
   inventory: Item[];
   wealth: Character['wealth'];
@@ -26,6 +28,10 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
     const [selectedContainerId, setSelectedContainerId] = useState<string | null>(null);
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
+    // Confirm Dialog State
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+    const [containerToDelete, setContainerToDelete] = useState<string | null>(null);
+
     // Wealth Handlers
     const handleWealthChange = (currency: keyof Character['wealth'], value: string) => {
         const num = parseInt(value) || 0;
@@ -38,9 +44,16 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
         setShowAddModal(false);
     };
 
-    const handleDeleteItem = (id: string) => {
-        if (selectedItemId === id) setSelectedItemId(null);
-        onUpdateInventory(inventory.filter(i => i.id !== id));
+    const handleDeleteItemClick = (id: string) => {
+        setItemToDelete(id);
+    };
+
+    const confirmDeleteItem = () => {
+        if (itemToDelete) {
+            if (selectedItemId === itemToDelete) setSelectedItemId(null);
+            onUpdateInventory(inventory.filter(i => i.id !== itemToDelete));
+            setItemToDelete(null);
+        }
     };
 
     const handleUpdateItem = (updated: Item) => {
@@ -67,14 +80,19 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
         }
     };
 
-    const handleDeleteContainer = (id: string) => {
-        if (confirm("Delete container? Items inside will become loose.")) {
+    const handleDeleteContainerClick = (id: string) => {
+        setContainerToDelete(id);
+    };
+
+    const confirmDeleteContainer = () => {
+        if (containerToDelete) {
             // Move items to loose
             const updatedInventory = inventory.map(item => 
-                item.containerId === id ? { ...item, containerId: null } : item
+                item.containerId === containerToDelete ? { ...item, containerId: null } : item
             );
             onUpdateInventory(updatedInventory);
-            onUpdateContainers(containers.filter(c => c.id !== id));
+            onUpdateContainers(containers.filter(c => c.id !== containerToDelete));
+            setContainerToDelete(null);
         }
     };
 
@@ -179,7 +197,7 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                 title={`Equipment (Worn/Carried) - ${looseItems.reduce((acc, i) => acc + getItemWeight(i), 0).toFixed(1)} lb`}
                 items={looseItems}
                 onUpdateItem={handleUpdateItem}
-                onDeleteItem={handleDeleteItem}
+                onDeleteItem={handleDeleteItemClick}
                 containers={containers}
                 onMoveItem={handleMoveItem}
                 selectedItemId={selectedItemId}
@@ -193,10 +211,10 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                     title={`${container.name} - ${containerWeights[container.id]?.toFixed(1) || 0} lb`}
                     items={inventory.filter(i => i.containerId === container.id)}
                     onUpdateItem={handleUpdateItem}
-                    onDeleteItem={handleDeleteItem}
+                    onDeleteItem={handleDeleteItemClick}
                     containers={containers}
                     onMoveItem={handleMoveItem}
-                    onDeleteContainer={() => handleDeleteContainer(container.id)}
+                    onDeleteContainer={() => handleDeleteContainerClick(container.id)}
                     isBagOfHolding={container.ignoreContentWeight}
                     onToggleBagOfHolding={() => {
                         const updated = { ...container, ignoreContentWeight: !container.ignoreContentWeight };
@@ -233,6 +251,27 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             initialContainerId={selectedContainerId}
         />
       )}
+
+      {/* Confirmation Dialogs */}
+      <ConfirmDialog 
+        isOpen={!!itemToDelete}
+        title="Delete Item"
+        message="Are you sure you want to delete this item?"
+        confirmText="Delete"
+        isDestructive={true}
+        onConfirm={confirmDeleteItem}
+        onCancel={() => setItemToDelete(null)}
+      />
+
+      <ConfirmDialog 
+        isOpen={!!containerToDelete}
+        title="Delete Container"
+        message="Delete this container? Any items inside will become loose."
+        confirmText="Delete Container"
+        isDestructive={true}
+        onConfirm={confirmDeleteContainer}
+        onCancel={() => setContainerToDelete(null)}
+      />
     </div>
   );
 };

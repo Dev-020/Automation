@@ -4,6 +4,8 @@ import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import { NoteEditor } from './NoteEditor';
 
+import { ConfirmDialog } from './ConfirmDialog';
+
 interface NotesPanelProps {
     notes: Note[];
     categories: NoteCategory[];
@@ -11,24 +13,45 @@ interface NotesPanelProps {
     onUpdateCategories: (categories: NoteCategory[]) => void;
 }
 
-export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpdateNotes, onUpdateCategories }) => {
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string>(categories.find(c => c.isDefault)?.id || categories[0]?.id || 'default');
+export const NotesPanel: React.FC<NotesPanelProps> = ({ notes = [], categories = [], onUpdateNotes, onUpdateCategories }) => {
+    // Defensive check: Ensure we have at least one category to avoid crashes
+    const safeCategories = categories.length > 0 ? categories : [{ id: 'default', name: 'Inbox', isDefault: true }];
+    
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string>(() => {
+         const defaultCat = safeCategories.find(c => c.isDefault);
+         return defaultCat ? defaultCat.id : safeCategories[0].id;
+    });
+    
     const [editingNote, setEditingNote] = useState<Note | null>(null);
     const [newCategoryName, setNewCategoryName] = useState('');
     const [isAddingCategory, setIsAddingCategory] = useState(false);
+    const [renamingCategoryId, setRenamingCategoryId] = useState<string | null>(null);
+    const [renameValue, setRenameValue] = useState('');
+    
+    // Dialog State
+    const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
     // Derived State
-    const currentCategory = categories.find(c => c.id === selectedCategoryId);
-    const filteredNotes = notes.filter(n => n.categoryId === selectedCategoryId).sort((a, b) => b.lastModified - a.lastModified);
+    const currentCategory = safeCategories.find(c => c.id === selectedCategoryId) || safeCategories[0];
+    
+    // Filter: Check if note has the selected category ID
+    const filteredNotes = notes.filter(n => n.categoryIds.includes(selectedCategoryId)).sort((a, b) => b.lastModified - a.lastModified);
 
     // Handlers
     const handleAddNote = () => {
+        const defaultCat = safeCategories.find(c => c.isDefault) || safeCategories[0];
+        // Start with selected category AND default category (if different)
+        const initialCategories = [selectedCategoryId];
+        if (defaultCat.id !== selectedCategoryId && !initialCategories.includes(defaultCat.id)) {
+            initialCategories.push(defaultCat.id);
+        }
+
         const newNote: Note = {
             id: crypto.randomUUID(),
             title: 'New Note',
             subject: '',
             content: '',
-            categoryId: selectedCategoryId,
+            categoryIds: initialCategories, 
             lastModified: Date.now()
         };
         setEditingNote(newNote); // Open Editor immediately
@@ -57,12 +80,41 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
         setIsAddingCategory(false);
     };
 
-    const handleDeleteCategory = (catId: string) => {
-        const defaultCat = categories.find(c => c.isDefault);
-        if (!defaultCat) return; // Should not happen if data integrity is maintained
+    const handleStartRename = (cat: NoteCategory, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setRenamingCategoryId(cat.id);
+        setRenameValue(cat.name);
+    };
 
-        // Move notes to default
-        const updatedNotes = notes.map(n => n.categoryId === catId ? { ...n, categoryId: defaultCat.id } : n);
+    const handleSubmitRename = () => {
+        if (renamingCategoryId && renameValue.trim()) {
+            onUpdateCategories(categories.map(c => c.id === renamingCategoryId ? { ...c, name: renameValue.trim() } : c));
+        }
+        setRenamingCategoryId(null);
+        setRenameValue('');
+    };
+
+    const handleDeleteCategory = (catId: string) => {
+        // Find default category (either by flag or ID)
+        const defaultCat = safeCategories.find(c => c.isDefault) || safeCategories.find(c => c.id === 'default') || safeCategories[0];
+        
+        if (!defaultCat || defaultCat.id === catId) {
+             alert("Cannot delete the default Inbox category.");
+             return; 
+        }
+
+        // Logic: Remove this category ID from all notes. 
+        // If a note becomes tagless, add it to 'Inbox'.
+        const updatedNotes = notes.map(n => {
+            if (n.categoryIds.includes(catId)) {
+                const newIds = n.categoryIds.filter(id => id !== catId);
+                // Fallback to inbox if empty
+                if (newIds.length === 0) newIds.push(defaultCat.id);
+                return { ...n, categoryIds: newIds };
+            }
+            return n;
+        });
+        
         onUpdateNotes(updatedNotes);
 
         // Remove category
@@ -72,11 +124,19 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
         setSelectedCategoryId(defaultCat.id);
     };
 
-    const handleDeleteNote = (e: React.MouseEvent, noteId: string) => {
+    const handleDeleteClick = (e: React.MouseEvent, noteId: string) => {
         e.stopPropagation();
-         if (confirm('Are you sure you want to delete this note?')) {
-            onUpdateNotes(notes.filter(n => n.id !== noteId));
-         }
+        setNoteToDelete(noteId);
+    };
+
+    const confirmDeleteNote = () => {
+        if (noteToDelete) {
+            onUpdateNotes(notes.filter(n => n.id !== noteToDelete));
+            if (editingNote?.id === noteToDelete) {
+                setEditingNote(null);
+            }
+            setNoteToDelete(null);
+        }
     };
 
     return (
@@ -87,7 +147,7 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
                 <h3 style={{ margin: '0 0 0.5rem 0', paddingBottom: '0.5rem', borderBottom: '1px solid var(--color-border)', fontSize: '1rem' }}>Categories</h3>
                 
                 <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    {categories.map(cat => (
+                    {safeCategories.map(cat => (
                         <div 
                             key={cat.id}
                             onClick={() => setSelectedCategoryId(cat.id)}
@@ -97,16 +157,43 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
                                 cursor: 'pointer',
                                 background: selectedCategoryId === cat.id ? 'var(--color-primary-dark)' : 'transparent',
                                 color: selectedCategoryId === cat.id ? 'white' : 'var(--color-text-muted)',
-                                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                border: '1px solid transparent',
+                                borderColor: selectedCategoryId === cat.id ? 'var(--color-primary)' : 'transparent'
                             }}
                         >
-                            <span>{cat.name}</span>
-                            {!cat.isDefault && (
-                                <button 
-                                    onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
-                                    style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', opacity: 0.6 }}
-                                    title="Delete Category (Move notes to Default)"
-                                >×</button>
+                            {renamingCategoryId === cat.id ? (
+                                <div style={{ display: 'flex', gap: '4px', width: '100%' }} onClick={e => e.stopPropagation()}>
+                                    <input 
+                                        autoFocus
+                                        value={renameValue}
+                                        onChange={e => setRenameValue(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && handleSubmitRename()}
+                                        onBlur={handleSubmitRename}
+                                        style={{ flex: 1, padding: '2px', borderRadius: '2px', border: 'none', fontSize: 'inherit' }}
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    <span>{cat.name}</span>
+                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                        {/* Rename Button */}
+                                        <button 
+                                            onClick={(e) => handleStartRename(cat, e)}
+                                            style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', opacity: 0.6 }}
+                                            title="Rename"
+                                        >✎</button>
+                                        
+                                        {/* Delete Button (if not default) */}
+                                        {!cat.isDefault && (
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
+                                                style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', opacity: 0.6 }}
+                                                title="Delete Category"
+                                            >×</button>
+                                        )}
+                                    </div>
+                                </>
                             )}
                         </div>
                     ))}
@@ -151,7 +238,7 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
                 <div style={{ flex: 1, overflowY: 'auto' }}>
                     {filteredNotes.length === 0 ? (
                         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                            No notes in this category.
+                            No notes with this label.
                         </div>
                     ) : (
                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -177,7 +264,7 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
                                         </td>
                                         <td className="actions-cell">
                                             <button 
-                                                onClick={(e) => handleDeleteNote(e, note.id)}
+                                                onClick={(e) => handleDeleteClick(e, note.id)}
                                                 className="delete-btn"
                                                 title="Delete Note"
                                             >🗑️</button>
@@ -200,11 +287,22 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({ notes, categories, onUpd
                 {editingNote && (
                     <NoteEditor 
                         note={editingNote} 
+                        allCategories={categories}
                         onSave={handleSaveNote} 
                         onClose={() => setEditingNote(null)} 
                     />
                 )}
             </SidePanel>
+
+            <ConfirmDialog 
+                isOpen={!!noteToDelete}
+                title="Delete Note"
+                message="Are you sure you want to delete this note? This action cannot be undone."
+                confirmText="Delete"
+                isDestructive={true}
+                onConfirm={confirmDeleteNote}
+                onCancel={() => setNoteToDelete(null)}
+            />
 
             <style>{`
                 .note-row {

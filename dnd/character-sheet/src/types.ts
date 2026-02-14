@@ -237,7 +237,7 @@ export interface Note {
     title: string;
     subject: string;
     content: string; // HTML/Rich Text
-    categoryId: string;
+    categoryIds: string[]; // Changed from categoryId to support multiple labels
     lastModified: number; // Timestamp
 }
 
