@@ -1,19 +1,8 @@
 import React from 'react';
 import { Card } from './Card';
-import type { Character } from '../types';
-
-interface CharacterHeaderProps {
-  character: Character;
-  onChange: (updates: Partial<Character>) => void;
-  // Data Management Props
-  onExport: () => void;
-  onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  saveStatus?: 'saved' | 'saving' | 'error';
-}
-
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
-import type { FeatureEntry } from '../types';
+import type { Character } from '../types';
 
 interface CharacterHeaderProps {
   character: Character;

@@ -13,38 +13,56 @@
     "STR": {
       "base": 8,
       "modifier": -1,
-      "saveProficiency": false
+      "saveProficiency": false,
+      "manualModifiers": [],
+      "total": 8,
+      "breakdown": []
     },
     "DEX": {
       "base": 12,
       "modifier": 1,
-      "saveProficiency": false
+      "saveProficiency": false,
+      "manualModifiers": [],
+      "total": 12,
+      "breakdown": []
     },
     "CON": {
-      "base": 17,
-      "modifier": 3,
-      "saveProficiency": true
+      "base": 15,
+      "modifier": 2,
+      "saveProficiency": true,
+      "manualModifiers": [],
+      "total": 15,
+      "breakdown": []
     },
     "INT": {
-      "base": 14,
-      "modifier": 2,
-      "saveProficiency": false
+      "base": 13,
+      "modifier": 1,
+      "saveProficiency": false,
+      "manualModifiers": [],
+      "total": 13,
+      "breakdown": []
     },
     "WIS": {
       "base": 8,
       "modifier": -1,
-      "saveProficiency": false
+      "saveProficiency": false,
+      "manualModifiers": [],
+      "total": 8,
+      "breakdown": []
     },
     "CHA": {
       "base": 15,
       "modifier": 2,
-      "saveProficiency": true
+      "saveProficiency": true,
+      "manualModifiers": [],
+      "total": 15,
+      "breakdown": []
     }
   },
   "vitals": {
     "hp": {
-      "current": 44,
-      "max": 44,
+      "current": 38,
+      "max": 38,
       "temp": 0
     },
     "hitDice": {
@@ -59,7 +77,11 @@
     "sorceryPoints": {
       "current": 6,
       "max": 6
-    }
+    },
+    "acBreakdown": [
+      "Leather Armor (Light): 11",
+      "Dexterity: +1"
+    ]
   },
   "skills": [
     {
@@ -77,7 +99,7 @@
     {
       "name": "Arcana",
       "stat": "INT",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -89,19 +111,19 @@
     {
       "name": "Deception",
       "stat": "CHA",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
       "name": "History",
       "stat": "INT",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
       "name": "Insight",
       "stat": "WIS",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -113,7 +135,7 @@
     {
       "name": "Investigation",
       "stat": "INT",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -131,7 +153,7 @@
     {
       "name": "Perception",
       "stat": "WIS",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -143,7 +165,7 @@
     {
       "name": "Persuasion",
       "stat": "CHA",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -161,7 +183,7 @@
     {
       "name": "Stealth",
       "stat": "DEX",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -1138,31 +1160,57 @@
   },
   "inventory": [
     {
-      "id": "fd9c1760-de44-4150-bf80-6604d6d2d793",
-      "name": "Longsword",
+      "id": "e827e0cb-0854-4a2e-93d0-3deded4521d2",
+      "name": "Leather Armor",
       "quantity": 1,
-      "weight": 3,
+      "weight": 10,
+      "containerId": null,
+      "source": "XPHB",
+      "rarity": "none",
+      "type": "LA|XPHB",
+      "ac": 11,
+      "value": 1000,
+      "hasFluffImages": true,
+      "equipped": true,
+      "bonusAc": ""
+    },
+    {
+      "id": "a2a7082f-66e6-407b-a0c1-097981958f1c",
+      "name": "Dagger",
+      "quantity": 1,
+      "weight": 1,
       "containerId": null,
       "source": "XPHB",
       "rarity": "none",
       "type": "M|XPHB",
       "properties": [
-        "V|XPHB"
+        "F|XPHB",
+        "L|XPHB",
+        "T|XPHB"
       ],
       "mastery": [
-        "Sap|XPHB"
+        "Nick|XPHB"
       ],
-      "damage1": "1d8",
-      "damageType": "S",
-      "damage2": "1d10",
-      "value": 1500,
+      "range": "20/60",
+      "damage1": "1d4",
+      "damageType": "P",
+      "value": 200,
       "hasFluffImages": true,
-      "bonusAc": "+100",
-      "bonusWeapon": "+100",
-      "modifyCon": "30",
-      "attachedSpells": [
-        "NUCLEARBOMBS"
-      ]
+      "equipped": true
+    },
+    {
+      "id": "01b4743b-9a2d-4241-a613-500a6bca4dd0",
+      "name": "Shield",
+      "quantity": 1,
+      "weight": 6,
+      "containerId": null,
+      "source": "XPHB",
+      "rarity": "none",
+      "type": "S|XPHB",
+      "ac": 2,
+      "value": 1000,
+      "hasFluffImages": true,
+      "equipped": false
     }
   ],
   "wealth": {
@@ -2484,6 +2532,54 @@
       "timestamp": 1771033544418,
       "diceType": "d20",
       "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: INT",
+      "result": 4,
+      "details": "(2) + 2",
+      "timestamp": 1771077546292,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 21,
+      "details": "(16) + 5",
+      "timestamp": 1771080717290,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771080776408,
+      "label": "1d8",
+      "result": 8,
+      "diceType": "mixed",
+      "details": "(8)",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771080779351,
+      "label": "1d8",
+      "result": 6,
+      "diceType": "mixed",
+      "details": "(6)",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON",
+      "result": 4,
+      "details": "(2) + 2",
+      "timestamp": 1771080791620,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON",
+      "result": 13,
+      "details": "(11) + 2",
+      "timestamp": 1771080791910,
+      "diceType": "d20",
+      "sendToDiscord": false
     }
   ],
   "containers": [

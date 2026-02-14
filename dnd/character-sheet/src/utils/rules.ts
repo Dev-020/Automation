@@ -41,3 +41,14 @@ export const getSorceryPoints = (level: number, className: string): number => {
     if (className !== "Sorcerer" || level < 2) return 0;
     return level;
 };
+
+export const getPointBuyCost = (score: number): number => {
+    if (score < 8) return 0;
+    if (score > 15) return 9 + (score - 15) * 2; 
+    
+    const costs: Record<number, number> = {
+        8: 0, 9: 1, 10: 2, 11: 3, 
+        12: 4, 13: 5, 14: 7, 15: 9
+    };
+    return costs[score] || 0;
+};

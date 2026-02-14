@@ -3,6 +3,8 @@ import { Card } from './components/Card';
 import { CharacterHeader } from './components/CharacterHeader';
 import { Vitals } from './components/Vitals';
 import { AbilityScore } from './components/AbilityScore';
+import { AbilityScorePanel } from './components/AbilityScorePanel';
+import { SidePanel } from './components/SidePanel';
 import { Skills } from './components/Skills';
 import { Tabs } from './components/Tabs';
 import { DiceRoller } from './components/DiceRoller';
@@ -10,9 +12,10 @@ import { ActionsPanel } from './components/ActionsPanel';
 import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
-import type { Character, StatName, Spell, RollEntry } from './types';
-import { calculateModifier, rollDice } from './utils/dnd';
-import { getProficiencyBonus, calculateMaxHP, getSorceryPoints } from './utils/rules';
+import { rollDice } from './utils/dnd';
+import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
+import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
+import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost } from './utils/rules';
 import './App.css';
 
 import activeCharacterData from './data/activeCharacter.json';
@@ -63,85 +66,89 @@ function App() {
   const [allSpells, setAllSpells] = useState<Spell[]>([]);
   const [allSkills, setAllSkills] = useState<any[]>([]); // Using any for now, or define SkillRef type
   const [sendToDiscord, setSendToDiscord] = useState(false);
+  const [selectedStat, setSelectedStat] = useState<StatName | null>(null);
+
 
   // Calculate Dynamic Stats
   useEffect(() => {
-      // 1. Calculate Modifiers
-      const getMod = (score: number) => Math.floor((score - 10) / 2);
+      // 1. Calculate Effective Stats (Ability Scores)
+      const newStats = calculateEffectiveStats(character.stats, character.inventory || []);
       
-      const conScore = character.stats.CON.base; 
-      const dexScore = character.stats.DEX.base;
+      // Check for changes in stats
+      let statsChanged = JSON.stringify(newStats) !== JSON.stringify(character.stats);
       
-      const realConMod = getMod(conScore);
-      const realDexMod = getMod(dexScore);
-
+      // 2. Calculate Derived Vitals
+      const conMod = newStats.CON.modifier;
+      const dexMod = newStats.DEX.modifier;
+      
       const newProf = getProficiencyBonus(character.level);
-      const newMaxHP = calculateMaxHP(character.level, realConMod, character.class);
+      const newMaxHP = calculateMaxHP(character.level, conMod, character.class);
       const newHitDieMax = character.level;
       const newSorceryPointsMax = getSorceryPoints(character.level, character.class);
-      const newInit = realDexMod; // Baseline
+      
+      // 3. Calculate AC
+      const { total: newAC, breakdown: newACBreakdown } = calculateAC(dexMod, character.inventory || []);
 
-      let hasChanges = false;
-      const updated = { ...character, vitals: { ...character.vitals } };
+      // 4. Calculate Initiative (Baseline = Dex Mod + Alert Feat)
+      const hasAlert = character.features.some(f => f.name === 'Alert');
+      const newInit = dexMod + (hasAlert ? 5 : 0);
 
-      if (updated.vitals.proficiencyBonus !== newProf) {
-          updated.vitals.proficiencyBonus = newProf;
-          hasChanges = true;
+      // Check for Vital Changes
+      let vitalsChanged = false;
+      const updatedVitals = { ...character.vitals };
+
+      if (updatedVitals.proficiencyBonus !== newProf) {
+          updatedVitals.proficiencyBonus = newProf;
+          vitalsChanged = true;
       }
-
-      if (updated.vitals.hp.max !== newMaxHP) {
-          updated.vitals.hp.max = newMaxHP;
-          hasChanges = true;
+      if (updatedVitals.hp.max !== newMaxHP) {
+          updatedVitals.hp.max = newMaxHP;
+          vitalsChanged = true;
       }
-
-      if (updated.vitals.hitDice.max !== newHitDieMax) {
-          updated.vitals.hitDice.max = newHitDieMax;
-          hasChanges = true;
+      if (updatedVitals.hitDice.max !== newHitDieMax) {
+          updatedVitals.hitDice.max = newHitDieMax;
+          vitalsChanged = true;
+      }
+      if (updatedVitals.ac !== newAC) {
+          updatedVitals.ac = newAC;
+          vitalsChanged = true;
+      }
+      // Check breakdown change (deep compare arrays)
+      if (JSON.stringify(updatedVitals.acBreakdown) !== JSON.stringify(newACBreakdown)) {
+          updatedVitals.acBreakdown = newACBreakdown;
+          vitalsChanged = true;
+      }
+      if (updatedVitals.initiative !== newInit) {
+          updatedVitals.initiative = newInit;
+          vitalsChanged = true;
       }
 
       // Sorcery Points
       if (newSorceryPointsMax > 0) {
-          if (!updated.vitals.sorceryPoints || updated.vitals.sorceryPoints.max !== newSorceryPointsMax) {
-               updated.vitals.sorceryPoints = {
-                   current: updated.vitals.sorceryPoints?.current ?? newSorceryPointsMax,
+          if (!updatedVitals.sorceryPoints || updatedVitals.sorceryPoints.max !== newSorceryPointsMax) {
+               updatedVitals.sorceryPoints = {
+                   current: updatedVitals.sorceryPoints?.current ?? newSorceryPointsMax,
                    max: newSorceryPointsMax
                };
-               hasChanges = true;
+               vitalsChanged = true;
           }
       }
 
-      // Initiative (Baseline) - Only update if strictly diff from dex mod (unless we want to support manual overrides)
-      // If user has Alert, they might have manually set it.
-      // But user requested "dynamic".
-      // Let's assume baseline. If they have a feat, we should parse it, but that's hard.
-      // I'll leave initiative alone if it's explicitly set to something else? 
-      // No, let's update it to ensure it tracks DEX changes.
-      // But manual edits...
-      // I will only update if it matches old Dex mod? No.
-      // I'll update it.
-      if (updated.vitals.initiative !== newInit) {
-           // check for Alert feat
-           const hasAlert = character.features.some(f => f.name === 'Alert');
-           const targetInit = newInit + (hasAlert ? 5 : 0);
-           if (updated.vitals.initiative !== targetInit) {
-                updated.vitals.initiative = targetInit;
-                hasChanges = true;
-           }
-      }
-      
-      // Update AC baseline if unarmored?
-      // I wont touch AC for now as it depends on equipment. 
-
-      if (hasChanges) {
-          setCharacter(updated);
+      if (statsChanged || vitalsChanged) {
+          setCharacter(prev => ({
+              ...prev,
+              stats: newStats,
+              vitals: updatedVitals
+          }));
       }
 
   }, [
       character.level, 
       character.class, 
-      character.stats.CON.base, 
-      character.stats.DEX.base,
-      character.features // For Alert feat check
+      // Dependencies: Trigger on Base Stat changes, Manual Modifiers, or Items
+      JSON.stringify(character.stats), 
+      JSON.stringify(character.inventory),
+      JSON.stringify(character.features)
   ]);
 
   // Fetch Spells and Skills
@@ -225,18 +232,31 @@ function App() {
     event.target.value = '';
   };
 
-  const handleStatChange = (stat: StatName, newVal: number) => {
+  const handleStatChange = (stat: StatName, newBase: number) => {
     setCharacter(prev => ({
       ...prev,
       stats: {
         ...prev.stats,
         [stat]: { 
           ...prev.stats[stat], 
-          base: newVal,
-          modifier: calculateModifier(newVal) // Update derived modifier
+          base: newBase
+          // modifier and total are recalculated in useEffect
         }
       }
     }));
+  };
+
+  const handleStatModify = (stat: StatName, newModifiers: StatModifier[]) => {
+      setCharacter(prev => ({
+          ...prev,
+          stats: {
+              ...prev.stats,
+              [stat]: {
+                  ...prev.stats[stat],
+                  manualModifiers: newModifiers
+              }
+          }
+      }));
   };
 
   const handleVitalsChange = (newVitals: Character['vitals']) => {
@@ -345,19 +365,37 @@ function App() {
             {/* Stats & Saves Column */}
             <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 
+
+
                 {/* Stats Row */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.25rem' }}>
-                    {statsList.map(statName => (
-                        <AbilityScore 
-                        key={statName} 
-                        label={statName} 
-                        score={character.stats[statName].base} 
-                        onChange={(val) => handleStatChange(statName, val)}
-                        onRoll={handleRoll}
-                        sendToDiscord={sendToDiscord}
-                        />
-                    ))}
+              {statsList.map(statName => (
+                <AbilityScore 
+                  key={statName} 
+                  label={statName} 
+                  scoreData={character.stats[statName]} 
+                  onRoll={handleRoll}
+                  sendToDiscord={sendToDiscord}
+                  onOpenDetail={() => setSelectedStat(statName)}
+                />
+              ))}
                 </div>
+
+                {/* SidePanel for Ability Scores */}
+                <SidePanel
+                    isOpen={!!selectedStat}
+                    onClose={() => setSelectedStat(null)}
+                    title={selectedStat ? `${selectedStat} Ability Score` : 'Details'}
+                >
+                    {selectedStat && (
+                        <AbilityScorePanel 
+                            scoreData={character.stats[selectedStat]}
+                            onChangeBase={(val) => handleStatChange(selectedStat, val)}
+                            onUpdateModifiers={(mods) => handleStatModify(selectedStat, mods)}
+                            remainingPoints={27 - statsList.reduce((sum, stat) => sum + getPointBuyCost(character.stats[stat].base), 0)}
+                        />
+                    )}
+                </SidePanel>
 
                 {/* Saving Throws */}
                  <Card title="Saving Throws" className="saving-throws-panel" style={{ padding: '0.5rem' }}>

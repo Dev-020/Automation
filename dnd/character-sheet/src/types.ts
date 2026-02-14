@@ -1,9 +1,21 @@
 export type StatName = 'STR' | 'DEX' | 'CON' | 'INT' | 'WIS' | 'CHA';
 
+export interface StatModifier {
+  id: string;
+  source: string;     // e.g. "Race", "Item: Belt of Giant Str", "Custom: Potion"
+  value: number;
+  type: 'bonus' | 'override';
+}
+
 export interface AbilityScore {
-  base: number;
-  modifier: number;
+  base: number;       // The "Point Buy" / Rolled score (User Editable)
+  manualModifiers?: StatModifier[]; // User-added custom mods (Saved)
+  
+  // Runtime / Calculated (Optional in JSON, computed in App)
+  total: number;      
+  modifier: number;   
   saveProficiency: boolean;
+  breakdown?: StatModifier[]; // For UI tooltip/display
 }
 
 export interface Skill {
@@ -178,6 +190,7 @@ export interface Character {
     hitDice: { current: number; max: number; die: string };
     sorceryPoints?: { current: number; max: number };
     ac: number;
+    acBreakdown?: string[];
     initiative: number;
     speed: number;
     proficiencyBonus: number;
@@ -214,6 +227,24 @@ export interface Character {
   };
   features: Feature[];
   rollHistory: RollEntry[];
+  // Notes System
+  notes: Note[];
+  noteCategories: NoteCategory[];
+}
+
+export interface Note {
+    id: string;
+    title: string;
+    subject: string;
+    content: string; // HTML/Rich Text
+    categoryId: string;
+    lastModified: number; // Timestamp
+}
+
+export interface NoteCategory {
+    id: string;
+    name: string;
+    isDefault?: boolean;
 }
 
 export interface RollEntry {

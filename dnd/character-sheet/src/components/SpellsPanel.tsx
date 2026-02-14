@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
-import type { Spell, SpellSlots, FeatureEntry } from '../types';
+import type { Spell, SpellSlots } from '../types';
 
 interface SpellsPanelProps {
   spells: Spell[];

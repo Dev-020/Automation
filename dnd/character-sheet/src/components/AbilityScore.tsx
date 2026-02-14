@@ -1,18 +1,24 @@
 import React from 'react';
-import { calculateModifier, formatModifier, rollDice } from '../utils/dnd';
-import type { RollEntry } from '../types';
+import { formatModifier, rollDice } from '../utils/dnd';
+import type { RollEntry, AbilityScore as AbilityScoreType } from '../types';
+import { Tooltip } from './Tooltip';
 
 interface AbilityScoreProps {
   label: string;
-  score: number;
-  onChange: (value: number) => void;
+  scoreData: AbilityScoreType;
   onRoll: (entry: RollEntry) => void;
   sendToDiscord: boolean;
+  onOpenDetail: () => void;
 }
 
-export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChange, onRoll, sendToDiscord }) => {
-  const mod = calculateModifier(score);
+export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, scoreData, onRoll, sendToDiscord, onOpenDetail }) => {
+  // Use Total for Display & Rolling
+  const score = scoreData.total;
+  const mod = scoreData.modifier;
   
+  // Modifiers for Breakdown (Summary)
+  const modifiers = scoreData.breakdown || [];
+
   const handleRoll = () => {
     const result = rollDice(20);
     const total = result + mod;
@@ -28,6 +34,14 @@ export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChan
     onRoll(entry);
   };
 
+  const tooltipContent = (
+      <span>
+          {scoreData.base} (Base) 
+          {modifiers.map(m => ` ${m.type === 'override' ? '=' : (m.value >= 0 ? '+' : '')}${m.value}`).join('')}
+          {' = '}{scoreData.total}
+      </span>
+  );
+
   return (
     <div className="ability-score-card" style={{ 
       display: 'flex', 
@@ -39,14 +53,25 @@ export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChan
       padding: '0.5rem',
       position: 'relative'
     }}>
-      <div className="label" style={{ 
-        fontSize: '0.75rem', 
-        fontWeight: 'bold', 
-        textTransform: 'uppercase',
-        letterSpacing: '1px',
-        marginBottom: '0.25rem',
-        color: 'var(--color-text-muted)'
-      }}>{label}</div>
+      {/* Label with Hover Tooltip & Click-to-Open */}
+      <Tooltip content={tooltipContent} defaultPosition="top" delay={300}>
+        <div 
+            className="label" 
+            style={{ 
+            fontSize: '0.75rem', 
+            fontWeight: 'bold', 
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '0.25rem',
+            color: 'var(--color-text-muted)',
+            cursor: 'pointer',
+            position: 'relative'
+            }} 
+            onClick={onOpenDetail} 
+        >
+            {label} {modifiers.length > 0 && <span style={{color: 'cyan'}}>*</span>}
+        </div>
+      </Tooltip>
       
       <div 
         className="modifier interactive-roll" 
@@ -73,28 +98,21 @@ export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, score, onChan
       >
         {formatModifier(mod)}
       </div>
-      
-      <input 
-        className="score-input"
-        type="number" 
-        value={score} 
-        onChange={(e) => onChange(parseInt(e.target.value) || 10)}
-        style={{ 
-          fontSize: '0.9rem',
-          marginTop: '0.25rem',
-          background: 'rgba(0,0,0,0.3)',
-          border: '1px solid transparent',
-          borderRadius: '10px',
-          color: 'var(--color-text-main)',
-          width: '40px',
-          textAlign: 'center',
-          padding: '2px 4px',
-          outline: 'none',
-          transition: 'all 0.2s'
-        }}
-        onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
-        onBlur={(e) => e.target.style.borderColor = 'transparent'}
-      />
+
+      <div className="score-ring" style={{ 
+        border: '2px solid var(--color-border)',
+        borderRadius: '50%',
+        width: '32px',
+        height: '32px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '0.9rem',
+        background: 'var(--color-card-bg)',
+        color: 'var(--color-text-muted)'
+      }}>
+        {score}
+      </div>
     </div>
   );
 };

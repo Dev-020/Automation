@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from './Card';
+import { Tooltip } from './Tooltip';
 import type { Character } from '../types';
 
 interface VitalsProps {
@@ -41,25 +42,37 @@ export const Vitals: React.FC<VitalsProps> = ({ vitals, onChange }) => {
             {/* AC */}
             <div className="vital-box" style={{ position: 'relative' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '0.1rem' }}>ARMOR</div>
-                <div className="shield-icon" style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                fontSize: '1.2rem', 
-                fontWeight: 'bold',
-                border: '2px solid var(--color-text-muted)',
-                width: '50px', /* Increased from 40px */
-                height: '60px', /* Increased from 50px */
-                margin: '0 auto',
-                borderRadius: '50% 50% 50% 50% / 15% 15% 85% 85%' 
-                }}>
-                <input 
-                    type="number" 
-                    value={vitals.ac} 
-                    onChange={e => updateVital('ac', parseInt(e.target.value) || 0)}
-                    style={{ ...vitalInputStyle, width: '40px', borderBottom: 'none', fontSize: '1.2rem' }} /* Width 30->40 */
-                />
-                </div>
+                <Tooltip 
+                    content={
+                        <div>
+                            <div style={{ fontWeight: 'bold', marginBottom: '4px', borderBottom: '1px solid #444' }}>AC Calculation</div>
+                            {(vitals.acBreakdown || []).map((line, i) => (
+                                <div key={i}>{line}</div>
+                            ))}
+                            <div style={{ borderTop: '1px solid #444', marginTop: '4px', paddingTop: '2px', textAlign: 'right' }}>
+                                Total: {vitals.ac}
+                            </div>
+                        </div>
+                    }
+                    defaultPosition="bottom"
+                >
+                    <div className="shield-icon" title="" style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    fontSize: '1.2rem', 
+                    fontWeight: 'bold',
+                    border: '2px solid var(--color-primary)', // Highlight as special/derived
+                    width: '50px', 
+                    height: '60px', 
+                    margin: '0 auto',
+                    borderRadius: '50% 50% 50% 50% / 15% 15% 85% 85%',
+                    background: 'rgba(50, 150, 255, 0.1)',
+                    cursor: 'help'
+                    }}>
+                    <span style={{ fontSize: '1.4rem' }}>{vitals.ac}</span>
+                    </div>
+                </Tooltip>
             </div>
 
             {/* Initiative */}

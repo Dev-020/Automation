@@ -241,7 +241,7 @@ export const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onSave }) => {
                      <label style={{ display: 'block', marginBottom: '0.5rem' }}>
                         <span style={{ fontSize: '0.8rem', color: '#888' }}>Properties</span>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '4px' }}>
-                            {editedItem.properties?.map((p, i) => (
+                            {editedItem.properties?.map((p) => (
                                 <span key={p} style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     {resolvePropName(p)}
                                     <button 
@@ -295,7 +295,7 @@ export const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onSave }) => {
                     <label style={{ display: 'block', marginTop: '0.5rem' }}>
                         <span style={{ fontSize: '0.8rem', color: '#888' }}>Mastery</span>
                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '4px' }}>
-                            {editedItem.mastery?.map((m, i) => (
+                            {editedItem.mastery?.map((m) => (
                                 <span key={m} style={{ background: 'rgba(100, 200, 255, 0.2)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     {m.split('|')[0]}
                                     <button 
