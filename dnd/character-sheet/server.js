@@ -43,6 +43,10 @@ const SPELLS_SOURCE_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/g
 const OPTIONAL_FEATURES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/optionalfeatures.json';
 const FEATS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/feats.json';
 const SKILLS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/skills.json';
+const ITEMS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/items.json';
+const ITEMS_BASE_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/items-base.json';
+const MAGIC_VARIANTS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/magicvariants.json';
+const VARIANT_RULES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/variantrules.json';
 
 let spellCache = null;
 let featureCache = null; // Optional Features (Metamagic, Fighting Styles)
@@ -160,6 +164,34 @@ app.get('/api/ref/skills', (req, res) => {
     const xphbSkills = skillCache.filter(s => s.source === 'XPHB');
     res.json(xphbSkills);
 });
+
+// Serve 5eTools Data - Items
+app.get('/api/items', (req, res) => {
+    sendFileSafe(res, ITEMS_PATH);
+});
+
+app.get('/api/items-base', (req, res) => {
+    sendFileSafe(res, ITEMS_BASE_PATH);
+});
+
+app.get('/api/magic-variants', (req, res) => {
+    sendFileSafe(res, MAGIC_VARIANTS_PATH);
+});
+
+app.get('/api/variant-rules', (req, res) => {
+    sendFileSafe(res, VARIANT_RULES_PATH);
+});
+
+// Helper for sending files safely
+function sendFileSafe(res, filePath) {
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error(`File not found: ${filePath}`);
+            return res.status(404).json({ error: 'File not found' });
+        }
+        res.sendFile(filePath);
+    });
+}
 
 const DATA_FILE = path.join(__dirname, 'src', 'data', 'activeCharacter.json');
 

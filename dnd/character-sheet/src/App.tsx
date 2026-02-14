@@ -46,7 +46,8 @@ function App() {
             proficiencies: { ...initialCharacter.proficiencies, ...(parsed.proficiencies || {}) },
             defenses: { ...initialCharacter.defenses, ...(parsed.defenses || {}) },
             conditions: parsed.conditions || initialCharacter.conditions,
-            features: parsed.features || initialCharacter.features // Ensure features are loaded
+            features: parsed.features || initialCharacter.features || [], // Ensure features are loaded
+            containers: parsed.containers || initialCharacter.containers || [] // Ensure containers are loaded
         };
       } catch (e) {
         console.error("Failed to parse saved character", e);
@@ -143,12 +144,17 @@ function App() {
       character.features // For Alert feat check
   ]);
 
-  // Fetch Spells
+  // Fetch Spells and Skills
   useEffect(() => {
     fetch('http://localhost:3001/api/spells')
         .then(res => res.json())
         .then(data => setAllSpells(data))
         .catch(err => console.error("Failed to load spells:", err));
+
+    fetch('http://localhost:3001/api/ref/skills')
+        .then(res => res.json())
+        .then(data => setAllSkills(data))
+        .catch(err => console.error("Failed to load skills:", err));
   }, []);
 
   // Auto-Save Effect (Local Storage + API)
@@ -245,6 +251,18 @@ function App() {
         });
         return { ...prev, skills: newSkills };
     });
+  };
+
+  const handleWealthUpdate = (newWealth: Character['wealth']) => {
+      setCharacter(prev => ({ ...prev, wealth: newWealth }));
+  };
+
+  const handleInventoryUpdate = (newInventory: Character['inventory']) => {
+      setCharacter(prev => ({ ...prev, inventory: newInventory }));
+  };
+
+  const handleContainersUpdate = (newContainers: Character['containers']) => {
+      setCharacter(prev => ({ ...prev, containers: newContainers }));
   };
 
 
@@ -401,7 +419,14 @@ function App() {
             <div className="animate-fade-in">
                 {activeTab === 'Actions' && <ActionsPanel actions={character.actions} />}
                 {activeTab === 'Spells' && <SpellsPanel spells={character.spells} slots={character.spellSlots} allSpells={allSpells} onUpdateSpells={(updatedSpells) => setCharacter(prev => ({ ...prev, spells: updatedSpells }))} level={character.level} />}
-                {activeTab === 'Inventory' && <InventoryPanel inventory={character.inventory} wealth={character.wealth} />}
+                {activeTab === 'Inventory' && <InventoryPanel 
+                    inventory={character.inventory} 
+                    wealth={character.wealth} 
+                    containers={character.containers || []}
+                    onUpdateWealth={handleWealthUpdate}
+                    onUpdateInventory={handleInventoryUpdate}
+                    onUpdateContainers={handleContainersUpdate}
+                />}
                 {activeTab === 'Features' && <FeaturesPanel features={character.features} character={character} onUpdateFeatures={(updated) => setCharacter(prev => ({ ...prev, features: updated }))} />}
             </div>
           </div>

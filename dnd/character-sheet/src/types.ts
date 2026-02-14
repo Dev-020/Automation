@@ -52,6 +52,74 @@ export interface Item {
   weight: number;
   notes?: string;
   equipped?: boolean;
+  
+  // New Fields for Refactor
+  containerId?: string | null; // null = loose/equipped
+  value?: number; // In GP
+  isAttuned?: boolean;
+  
+  // Data from 5eTools
+  source?: string;
+  page?: number;
+  rarity?: string;
+  wondrous?: boolean;
+  reqAttune?: string | boolean;
+  type?: string; // M (Melee), R (Ranged), HA (Heavy Armor), etc.
+  ac?: number;
+  damage1?: string; // "1d8"
+  damageType?: string; // "slashing"
+  damage2?: string; // "1d10" (Versatile)
+  range?: string; // "20/60"
+  properties?: string[]; // ["Finesse", "Light"]
+  mastery?: string[]; // ["Sap|XPHB"]
+  baseItem?: string; // "longsword|xphb"
+  entries?: (string | FeatureEntry | any)[]; // Description (any for nested entries)
+  
+  // Flavor
+  hasFluffImages?: boolean;
+  lootTables?: string[];
+  
+  // Magic Item Bonuses
+  bonusAc?: string | number;
+  bonusWeapon?: string | number;
+  bonusWeaponAttack?: string | number;
+  bonusWeaponDamage?: string | number;
+  bonusSpellAttack?: string | number;
+  bonusSpellDamage?: string | number;
+  bonusSpellDC?: string | number;
+  bonusSavingThrow?: string | number;
+
+  // Ability Modifiers
+  bonusStr?: string | number;
+  bonusDex?: string | number;
+  bonusCon?: string | number;
+  bonusInt?: string | number;
+  bonusWis?: string | number;
+  bonusCha?: string | number;
+  
+  modifyStr?: string | number;
+  modifyDex?: string | number;
+  modifyCon?: string | number;
+  modifyInt?: string | number;
+  modifyWis?: string | number;
+  modifyCha?: string | number;
+  modifySpeed?: string | number;
+
+  // Effects & Features
+  charges?: string | number;
+  recharge?: string | number;
+  rechargeAmount?: string | number;
+  attachedSpells?: string[];
+  resist?: string[]; // "fire", "cold"
+  classFeatures?: string[]; // "Evasion"
+}
+
+export interface Container {
+  id: string;
+  name: string;
+  type: 'backpack' | 'pouch' | 'box' | 'bag_of_holding' | 'custom';
+  weightLimit?: number;
+  ignoreContentWeight?: boolean; // For Bag of Holding
 }
 
 // Complex Feature Structure
@@ -136,6 +204,7 @@ export interface Character {
   spells: Spell[];
   spellSlots: SpellSlots;
   inventory: Item[];
+  containers: Container[];
   wealth: {
     cp: number;
     sp: number;

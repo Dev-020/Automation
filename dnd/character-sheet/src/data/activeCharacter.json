@@ -1138,32 +1138,31 @@
   },
   "inventory": [
     {
-      "id": "i1",
-      "name": "Dagger",
-      "quantity": 1,
-      "weight": 1,
-      "equipped": true
-    },
-    {
-      "id": "i2",
-      "name": "Arcane Focus (Orb)",
+      "id": "fd9c1760-de44-4150-bf80-6604d6d2d793",
+      "name": "Longsword",
       "quantity": 1,
       "weight": 3,
-      "equipped": true
-    },
-    {
-      "id": "i3",
-      "name": "Backpack",
-      "quantity": 1,
-      "weight": 5,
-      "equipped": false
-    },
-    {
-      "id": "i4",
-      "name": "Rations (1 day)",
-      "quantity": 10,
-      "weight": 2,
-      "equipped": false
+      "containerId": null,
+      "source": "XPHB",
+      "rarity": "none",
+      "type": "M|XPHB",
+      "properties": [
+        "V|XPHB"
+      ],
+      "mastery": [
+        "Sap|XPHB"
+      ],
+      "damage1": "1d8",
+      "damageType": "S",
+      "damage2": "1d10",
+      "value": 1500,
+      "hasFluffImages": true,
+      "bonusAc": "+100",
+      "bonusWeapon": "+100",
+      "modifyCon": "30",
+      "attachedSpells": [
+        "NUCLEARBOMBS"
+      ]
     }
   ],
   "wealth": {
@@ -2485,6 +2484,14 @@
       "timestamp": 1771033544418,
       "diceType": "d20",
       "sendToDiscord": true
+    }
+  ],
+  "containers": [
+    {
+      "id": "5766931f-c671-452e-9c0a-c2d2756abd58",
+      "name": "Arcane Repository",
+      "type": "custom",
+      "ignoreContentWeight": false
     }
   ]
 }
