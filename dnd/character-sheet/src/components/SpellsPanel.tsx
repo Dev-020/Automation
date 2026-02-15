@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
-import type { Spell, SpellSlots } from '../types';
+import type { Spell, SpellSlots, Character } from '../types';
 
 interface SpellsPanelProps {
+  character: Character;
   spells: Spell[];
   slots: SpellSlots;
   allSpells: Spell[];
@@ -29,7 +30,7 @@ const getSorcererLimits = (level: number) => {
     return { cantrips, known };
 };
 
-export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpells, onUpdateSpells, level }) => {
+export const SpellsPanel: React.FC<SpellsPanelProps> = ({ character, spells, slots, allSpells, onUpdateSpells, level }) => {
   const [mode, setMode] = useState<'view' | 'manage'>('view');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClasses, setSelectedClasses] = useState<string[]>(['Sorcerer']);
@@ -41,13 +42,96 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
   const currentCantrips = spells.filter(s => s.level === 0).length;
   const currentLeveled = spells.filter(s => s.level > 0).length;
 
-  // Toggle Spell Preparation
+  // --- Feat Spell Parsing ---
+  const { featSpells, expandedSpells } = useMemo(() => {
+    const featSpellsMap: Record<string, Spell> = {};
+    const expandedSpellsMap: Record<string, Set<string>> = {}; // spellName -> Set<SourceFeatName>
+
+    if (!character.feats) return { featSpells: [], expandedSpells: expandedSpellsMap };
+
+    character.feats.forEach(feat => {
+        if (!feat._config?.spells) return;
+
+        Object.entries(feat._config.spells).forEach(([key, value]) => {
+            // Key format: group-{gIdx}-{bucket}-{level}-{freqPath...}-{idx}
+            // Value: "Spell Name|Source" or just "Spell Name"
+
+            // 1. Identify Spell
+            const spellName = (value as string).split('|')[0];
+            const baseSpell = allSpells.find(s => s.name.toLowerCase() === spellName.toLowerCase());
+            if (!baseSpell) return;
+
+            // 2. Parse Key Metadata
+            const parts = key.split('-');
+            // parts[0] = "group"
+            // parts[1] = gIdx
+            const bucket = parts[2]; // innate, known, prepared, expanded
+            // parts[3] = level ("_" or number)
+            
+            // Extract Frequency (everything between level and last index)
+            // e.g. group-0-innate-_-will-0 -> [will]
+            // e.g. group-0-innate-_-daily-1e-0 -> [daily, 1e]
+            const freqParts = parts.slice(4, -1); 
+            const freqLabel = freqParts.map(p => {
+                 const map: Record<string, string> = {
+                     'daily': 'Daily', 'rest': 'Rest', 'will': 'At Will', 'ritual': 'Ritual',
+                     '1': '1/Day', '1e': '1/Rest', 's1': '1st Level Slot', 's2': '2nd Level Slot'
+                 };
+                 return map[p] || p;
+            }).join(' ');
+
+            const sourceTag = `Feat: ${feat.name}`;
+
+            // 3. Handle Expanded vs Granted
+            if (bucket === 'expanded') {
+                if (!expandedSpellsMap[baseSpell.name]) expandedSpellsMap[baseSpell.name] = new Set();
+                expandedSpellsMap[baseSpell.name].add(sourceTag);
+            } else {
+                // Granted Spell (Innate, Known, Prepared)
+                // If already in map, append source
+                if (featSpellsMap[baseSpell.name]) {
+                    const existing = featSpellsMap[baseSpell.name];
+                    // Append source if new
+                    if (!existing.source.includes(sourceTag)) {
+                        existing.source += `, ${sourceTag}`;
+                    }
+                    // Append frequency info if disjoint? (Simplification: just concat metadata)
+                    if (freqLabel && existing.meta?.frequency && !existing.meta.frequency.includes(freqLabel)) {
+                        existing.meta.frequency += `, ${freqLabel}`;
+                    }
+                } else {
+                    // Create new entry
+                    featSpellsMap[baseSpell.name] = {
+                        ...baseSpell,
+                        source: sourceTag, // Override source to show it comes from Feat
+                        prepared: true, // Always "prepared" effectively
+                        meta: {
+                            ...baseSpell.meta,
+                            frequency: freqLabel || undefined
+                        }
+                    };
+                }
+            }
+        });
+    });
+
+    return { 
+        featSpells: Object.values(featSpellsMap), 
+        expandedSpells: expandedSpellsMap 
+    };
+  }, [character.feats, allSpells]);
+
+
+  // Toggle Spell Preparation (Only for Class Spells)
   const toggleSpell = (spell: Spell) => {
+      // Check if it's a class spell (exists in the 'spells' prop list)
       const exists = spells.find(s => s.name === spell.name);
+      
       if (exists) {
           onUpdateSpells(spells.filter(s => s.name !== spell.name));
       } else {
-          // Check limits (Relaxed: Just warn visually)
+          // Verify it's not a feat spell being toggled (though UI shouldn't allow it usually)
+          // If adding from library:
           onUpdateSpells([...spells, { ...spell, prepared: true }]);
       }
   };
@@ -75,7 +159,17 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
           ? s.classes?.some(c => selectedClasses.includes(c))
           : false; 
       
-      return matchesSearch && matchesClass;
+      // Also show if it is an EXPANDED spell from a feat, regardless of class/source filter
+      const isExpanded = !!expandedSpells[s.name];
+
+      return matchesSearch && ((matchesClass && s.source !== 'PHB') || isExpanded);
+  }).map(s => {
+      // Enrich with Expanded Source info if applicable
+      if (expandedSpells[s.name]) {
+          const sources = Array.from(expandedSpells[s.name]).join(', ');
+          return { ...s, source: `${s.source} (${sources})` };
+      }
+      return s;
   });
 
   return (
@@ -154,7 +248,10 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
       {/* Spell List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {(() => {
-            const list = mode === 'view' ? spells : filteredLibrary;
+            // View Mode: Combine Class Spells + Feat Spells
+            // Note: We keep them separate if they are duplicates between Class/Feat, as requested.
+            // But duplicates WITHIN feats are already merged in featSpells.
+            const list = mode === 'view' ? [...spells.filter(s => s.prepared), ...featSpells] : filteredLibrary;
             
             // Sort by Level then Name
             const sorted = [...list].sort((a, b) => {
@@ -194,11 +291,15 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                             {title}
                         </h3>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '0.5rem' }}>
-                            {groupSpells.map(spell => {
-                                const isPrepared = spells.some(s => s.name === spell.name);
+                            {groupSpells.map((spell, idx) => { // Added idx for key uniqueness if multiple sources
+                                const isClassPrepared = spells.some(s => s.name === spell.name);
+                                // Determine if this specific card instance is a Feat spell
+                                // We can check if the source starts with "Feat:"
+                                const isFeatSpell = spell.source.startsWith('Feat:');
+
                                 return (
                                     <Card 
-                                        key={spell.name} 
+                                        key={`${spell.name}-${idx}`} 
                                         onClick={(e) => {
                                             // Don't open SidePanel if clicking buttons
                                             if ((e.target as HTMLElement).tagName === 'BUTTON') return;
@@ -206,8 +307,8 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                                         }}
                                         style={{ 
                                             marginBottom: '0',
-                                            borderLeft: isPrepared ? '3px solid var(--color-primary)' : '3px solid transparent',
-                                            opacity: mode === 'manage' && !isPrepared ? 0.7 : 1,
+                                            borderLeft: isClassPrepared ? '3px solid var(--color-primary)' : (isFeatSpell ? '3px solid #7c3aed' : '3px solid transparent'),
+                                            opacity: mode === 'manage' && !isClassPrepared ? 0.7 : 1,
                                             padding: '0.75rem',
                                             cursor: 'pointer',
                                             transition: 'transform 0.1s',
@@ -222,29 +323,14 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                                                     {spell.duration[0]?.concentration && <span title="Concentration" style={{ fontSize: '0.7em', padding: '1px 4px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}>C</span>}
                                                 </div>
                                                 <div style={{ fontSize: '0.75rem', color: '#aaa', marginTop: '2px' }}>
+                                                    <span style={{ color: isFeatSpell ? '#d8b4fe' : 'var(--color-primary)', marginRight: '6px', fontWeight: 'bold' }}>{spell.source}</span>
                                                     {spell.school} • {spell.range.distance?.amount ? `${spell.range.distance.amount} ft` : spell.range.type}
+                                                    {spell.meta?.frequency && <span style={{ marginLeft: '6px', color: '#fbbf24' }}>[{spell.meta.frequency}]</span>}
                                                 </div>
                                             </div>
                                             
-                                            {/* Actions: Remove in View Mode OR Add/Remove in Manage Mode */}
+                                            {/* Actions: Add/Remove only in Manage Mode */}
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                {mode === 'view' && (
-                                                    <button 
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            toggleSpell(spell);
-                                                        }}
-                                                        style={{ 
-                                                            background: 'transparent', 
-                                                            border: '1px solid #ff4444', color: '#ff4444', 
-                                                            padding: '2px 8px', borderRadius: '4px', cursor: 'pointer',
-                                                            fontSize: '0.8rem'
-                                                        }}
-                                                        title="Remove Prepared Spell"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                )}
                                                 {mode === 'manage' && (
                                                     <button 
                                                         onClick={(e) => {
@@ -252,12 +338,12 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                                                             toggleSpell(spell);
                                                         }}
                                                         style={{ 
-                                                            background: isPrepared ? 'rgba(255,50,50,0.2)' : 'rgba(50,255,50,0.2)', 
-                                                            border: 'none', color: isPrepared ? '#ff8888' : '#88ff88', 
+                                                            background: isClassPrepared ? 'rgba(255,50,50,0.2)' : 'rgba(50,255,50,0.2)', 
+                                                            border: 'none', color: isClassPrepared ? '#ff8888' : '#88ff88', 
                                                             padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' 
                                                         }}
                                                     >
-                                                        {isPrepared ? 'Remove' : 'Add'}
+                                                        {isClassPrepared ? 'Remove' : 'Add'}
                                                     </button>
                                                 )}
                                             </div>
@@ -291,6 +377,7 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                         <div><strong>Range:</strong> {selectedSpell.range.distance?.amount ? `${selectedSpell.range.distance.amount} ft` : selectedSpell.range.type}</div>
                         <div><strong>Duration:</strong> {selectedSpell.duration[0].type === 'instant' ? 'Instant' : `${selectedSpell.duration[0].duration?.amount} ${selectedSpell.duration[0].duration?.type}`} {selectedSpell.duration[0].concentration && '(Conc)'}</div>
                         <div><strong>Components:</strong> {formatComponents(selectedSpell.components)}</div>
+                        <div><strong>Source:</strong> {selectedSpell.source}</div>
                      </div>
                 </div>
 
@@ -306,6 +393,29 @@ export const SpellsPanel: React.FC<SpellsPanelProps> = ({ spells, slots, allSpel
                         {selectedSpell.entriesHigherLevel.map((e, i) => (
                              <EntryRenderer key={i} entry={e.entries} />
                         ))}
+                    </div>
+                )}
+
+                {/* Footer Actions (View Mode Only) */}
+                {mode === 'view' && !selectedSpell.source.startsWith('Feat:') && (
+                    <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
+                        <button
+                            onClick={() => {
+                                toggleSpell(selectedSpell);
+                                setSelectedSpell(null); 
+                            }}
+                            style={{
+                                background: 'rgba(239,68,68,0.1)', 
+                                border: '1px solid rgba(239,68,68,0.5)', 
+                                color: '#fca5a5', 
+                                padding: '0.5rem 1rem', 
+                                borderRadius: '6px', 
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            Remove Prepared Spell
+                        </button>
                     </div>
                 )}
             </div>

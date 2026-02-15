@@ -48,7 +48,7 @@ export interface Spell {
   duration: { type: string; duration?: { type: string; amount: number }; concentration?: boolean }[];
   entries: (string | FeatureEntry)[]; // Reusing FeatureEntry for rich text
   entriesHigherLevel?: { type: string; name: string; entries: string[] }[];
-  meta?: { ritual?: boolean };
+  meta?: { ritual?: boolean; frequency?: string };
   prepared?: boolean; // UI state, not in JSON
   classes?: string[];
 }
@@ -176,6 +176,13 @@ export interface Feature extends FeatureEntry {
   additionalSpells?: any[];
   category?: string;
   prerequisite?: any[];
+  _config?: {
+      asi?: Record<string, number>;
+      spells?: Record<string, string>;
+      spellAbilities?: Record<string, string>;
+      profs?: Record<string, string>;
+      variantName?: string;
+  };
 }
 
 export interface Character {
