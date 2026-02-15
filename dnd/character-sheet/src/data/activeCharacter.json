@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "name": "Leo & Orion",
   "race": "Human",
   "class": "Sorcerer",
@@ -116,13 +117,13 @@
     {
       "name": "Acrobatics",
       "stat": "DEX",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
       "name": "Animal Handling",
       "stat": "WIS",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -134,13 +135,13 @@
     {
       "name": "Athletics",
       "stat": "STR",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
       "name": "Deception",
       "stat": "CHA",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -2641,39 +2642,652 @@
       "type": "custom"
     }
   ],
-  "notes": [
-    {
-      "id": "1fb30d8b-5906-41a0-a7ac-7b28cd665dfe",
-      "title": "New Note 2",
-      "subject": "Test note wandafl",
-      "content": "",
-      "categoryIds": [
-        "6b08bbc5-07ce-4b26-97ab-690097eda12c",
-        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b"
-      ],
-      "lastModified": 1771087291682
-    },
-    {
-      "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
-      "title": "TO DO LIST:",
-      "subject": "Typa shi to do for this goofy ahh website",
-      "content": "<ol><li>Implement the background features for the character.</li><li>Implement the race features for the character.</li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.</li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li></ol>",
-      "categoryIds": [
-        "6b08bbc5-07ce-4b26-97ab-690097eda12c"
-      ],
-      "lastModified": 1771088667775
-    }
-  ],
+  "notes": [],
   "noteCategories": [
     {
-      "id": "6b08bbc5-07ce-4b26-97ab-690097eda12c",
+      "id": "default",
       "name": "Inbox",
       "isDefault": true
     },
     {
-      "id": "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
-      "name": "Random Category #2"
+      "id": "quest",
+      "name": "Quest Log",
+      "isDefault": false
+    },
+    {
+      "id": "npcs",
+      "name": "NPCs",
+      "isDefault": false
     }
   ],
-  "feats": []
+  "feats": [
+    {
+      "name": "Drow High Magic",
+      "source": "XGE",
+      "page": 74,
+      "prerequisite": [
+        {
+          "race": [
+            {
+              "name": "elf",
+              "subrace": "drow"
+            }
+          ]
+        }
+      ],
+      "additionalSpells": [
+        {
+          "ability": "cha",
+          "innate": {
+            "_": {
+              "will": [
+                "detect magic"
+              ],
+              "daily": {
+                "1e": [
+                  "levitate",
+                  "dispel magic"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "entries": [
+        "You learn more of the magic typical of dark elves. You learn the {@spell detect magic} spell and can cast it at will, without expending a spell slot. You also learn {@spell levitate} and {@spell dispel magic}, each of which you can cast once without expending a spell slot. You regain the ability to cast those two spells in this way when you finish a long rest. Charisma is your spellcasting ability for all three spells."
+      ],
+      "_config": {
+        "asi": {},
+        "spells": {
+          "group-0-innate-_-will-0": "detect magic",
+          "group-0-innate-_-daily-1e-0": "levitate",
+          "group-0-innate-_-daily-1e-1": "dispel magic"
+        },
+        "spellAbilities": {
+          "group-0-ability": "cha"
+        },
+        "profs": {}
+      }
+    },
+    {
+      "name": "Mark of Detection",
+      "source": "EFA",
+      "page": 39,
+      "category": "D",
+      "prerequisite": [
+        {
+          "campaign": [
+            "Eberron"
+          ],
+          "exclusiveFeatCategory": [
+            "D"
+          ]
+        }
+      ],
+      "additionalSpells": [
+        {
+          "ability": {
+            "choose": [
+              "int",
+              "wis",
+              "cha"
+            ]
+          },
+          "prepared": {
+            "3": {
+              "daily": {
+                "1": [
+                  "see invisibility|xphb"
+                ]
+              }
+            },
+            "_": {
+              "daily": {
+                "1": [
+                  "detect magic|xphb"
+                ]
+              }
+            }
+          },
+          "expanded": {
+            "s1": [
+              "detect evil and good|xphb",
+              "identify|xphb"
+            ],
+            "s2": [
+              "detect thoughts|xphb",
+              "find traps|xphb"
+            ],
+            "s3": [
+              "clairvoyance|xphb",
+              "nondetection|xphb"
+            ],
+            "s4": [
+              "arcane eye|xphb",
+              "divination|xphb"
+            ],
+            "s5": [
+              "legend lore|xphb"
+            ]
+          }
+        }
+      ],
+      "entries": [
+        "You gain the following benefits.",
+        {
+          "type": "entries",
+          "name": "Deductive Intuition",
+          "entries": [
+            "When you make an Intelligence ({@skill Investigation|XPHB}) or Wisdom ({@skill Insight|XPHB}) check, you can roll {@dice 1d4} and add the number rolled to the ability check."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Magical Detection",
+          "entries": [
+            "You always have the {@spell Detect Magic|XPHB} and {@spell Detect Poison and Disease|XPHB} spells prepared. You can cast each spell once without a spell slot, and you regain the ability to cast it in that way when you finish a {@variantrule Long Rest|XPHB}. You can also cast these spells using any spell slots you have of the appropriate level. Intelligence, Wisdom, or Charisma is your spellcasting ability for these spells (choose when you select this feat).",
+            "When you reach character level 3, you also always have the {@spell See Invisibility|XPHB} spell prepared and can cast it the same way."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spells of the Mark",
+          "entries": [
+            "If you have the Spellcasting or Pact Magic class feature, the spells on the Mark of Detection Spells table are added to that feature's spell list.",
+            {
+              "type": "table",
+              "caption": "Mark of Detection Spells",
+              "colStyles": [
+                "col-2 text-center",
+                "col-10"
+              ],
+              "colLabels": [
+                "Spell Level",
+                "Spells"
+              ],
+              "rows": [
+                [
+                  "1",
+                  "{@spell Detect Evil and Good|XPHB}, {@spell Identify|XPHB}"
+                ],
+                [
+                  "2",
+                  "{@spell Detect Thoughts|XPHB}, {@spell Find Traps|XPHB}"
+                ],
+                [
+                  "3",
+                  "{@spell Clairvoyance|XPHB}, {@spell Nondetection|XPHB}"
+                ],
+                [
+                  "4",
+                  "{@spell Arcane Eye|XPHB}, {@spell Divination|XPHB}"
+                ],
+                [
+                  "5",
+                  "{@spell Legend Lore|XPHB}"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "hasFluffImages": true,
+      "_config": {
+        "asi": {},
+        "spells": {
+          "group-0-prepared-3-daily-1-0": "see invisibility|xphb",
+          "group-0-prepared-_-daily-1-0": "detect magic|xphb",
+          "group-0-expanded-s1-0": "detect evil and good|xphb",
+          "group-0-expanded-s1-1": "identify|xphb",
+          "group-0-expanded-s2-0": "detect thoughts|xphb",
+          "group-0-expanded-s2-1": "find traps|xphb",
+          "group-0-expanded-s3-0": "clairvoyance|xphb",
+          "group-0-expanded-s3-1": "nondetection|xphb",
+          "group-0-expanded-s4-0": "arcane eye|xphb",
+          "group-0-expanded-s4-1": "divination|xphb",
+          "group-0-expanded-s5-0": "legend lore|xphb"
+        },
+        "spellAbilities": {
+          "group-0-ability": "cha"
+        },
+        "profs": {}
+      }
+    },
+    {
+      "name": "Magic Initiate; Wizard",
+      "source": "XPHB",
+      "page": 201,
+      "srd52": true,
+      "basicRules2024": true,
+      "category": "O",
+      "repeatable": true,
+      "repeatableHidden": true,
+      "additionalSpells": [
+        {
+          "ability": {
+            "choose": [
+              "int",
+              "wis",
+              "cha"
+            ]
+          },
+          "innate": {
+            "_": {
+              "daily": {
+                "1": [
+                  {
+                    "choose": "level=1|class=Wizard"
+                  }
+                ]
+              }
+            }
+          },
+          "known": {
+            "_": [
+              {
+                "choose": "level=0|class=Wizard",
+                "count": 2
+              }
+            ]
+          }
+        }
+      ],
+      "entries": [
+        "You gain the following benefits.",
+        {
+          "type": "entries",
+          "name": "Two Cantrips",
+          "entries": [
+            "You learn two cantrips of your choice from the {@filter Cleric|spells|level=0;1|class=Cleric}, {@filter Druid|spells|level=0;1|class=Druid}, or {@filter Wizard|spells|level=0;1|class=Wizard} spell list. Intelligence, Wisdom, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Level 1 Spell",
+          "entries": [
+            "Choose a level 1 spell from the same list you selected for this feat's cantrips. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a {@variantrule Long Rest|XPHB}. You can also cast the spell using any spell slots you have."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spell Change",
+          "entries": [
+            "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the chosen spell list."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Repeatable",
+          "entries": [
+            "You can take this feat more than once, but you must choose a different spell list each time."
+          ]
+        }
+      ],
+      "_versions": [
+        {
+          "name": "Magic Initiate; Cleric",
+          "source": "XPHB",
+          "_mod": {
+            "entries": [
+              {
+                "mode": "replaceArr",
+                "replace": "Two Cantrips",
+                "items": {
+                  "name": "Two Cantrips",
+                  "entries": [
+                    "You learn two cantrips of your choice from the {@filter Cleric|spells|level=0;1|class=Cleric} spell list. Intelligence, Wisdom, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)."
+                  ]
+                }
+              },
+              {
+                "mode": "replaceArr",
+                "replace": "Level 1 Spell",
+                "items": {
+                  "name": "Level 1 Spell",
+                  "entries": [
+                    "Choose a level 1 spell from the {@filter Cleric|spells|level=0;1|class=Cleric} spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a {@variantrule Long Rest|XPHB}. You can also cast the spell using any spell slots you have."
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalSpells": [
+            {
+              "ability": {
+                "choose": [
+                  "int",
+                  "wis",
+                  "cha"
+                ]
+              },
+              "innate": {
+                "_": {
+                  "daily": {
+                    "1": [
+                      {
+                        "choose": "level=1|class=Cleric"
+                      }
+                    ]
+                  }
+                }
+              },
+              "known": {
+                "_": [
+                  {
+                    "choose": "level=0|class=Cleric",
+                    "count": 2
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Magic Initiate; Druid",
+          "source": "XPHB",
+          "_mod": {
+            "entries": [
+              {
+                "mode": "replaceArr",
+                "replace": "Two Cantrips",
+                "items": {
+                  "name": "Two Cantrips",
+                  "entries": [
+                    "You learn two cantrips of your choice from the {@filter Druid|spells|level=0;1|class=Druid} spell list. Intelligence, Wisdom, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)."
+                  ]
+                }
+              },
+              {
+                "mode": "replaceArr",
+                "replace": "Level 1 Spell",
+                "items": {
+                  "name": "Level 1 Spell",
+                  "entries": [
+                    "Choose a level 1 spell from the {@filter Druid|spells|level=0;1|class=Druid} spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a {@variantrule Long Rest|XPHB}. You can also cast the spell using any spell slots you have."
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalSpells": [
+            {
+              "ability": {
+                "choose": [
+                  "int",
+                  "wis",
+                  "cha"
+                ]
+              },
+              "innate": {
+                "_": {
+                  "daily": {
+                    "1": [
+                      {
+                        "choose": "level=1|class=Druid"
+                      }
+                    ]
+                  }
+                }
+              },
+              "known": {
+                "_": [
+                  {
+                    "choose": "level=0|class=Druid",
+                    "count": 2
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Magic Initiate; Wizard",
+          "source": "XPHB",
+          "_mod": {
+            "entries": [
+              {
+                "mode": "replaceArr",
+                "replace": "Two Cantrips",
+                "items": {
+                  "name": "Two Cantrips",
+                  "entries": [
+                    "You learn two cantrips of your choice from the {@filter Wizard|spells|level=0;1|class=Wizard} spell list. Intelligence, Wisdom, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)."
+                  ]
+                }
+              },
+              {
+                "mode": "replaceArr",
+                "replace": "Level 1 Spell",
+                "items": {
+                  "name": "Level 1 Spell",
+                  "entries": [
+                    "Choose a level 1 spell from the {@filter Wizard|spells|level=0;1|class=Wizard} spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a {@variantrule Long Rest|XPHB}. You can also cast the spell using any spell slots you have."
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalSpells": [
+            {
+              "ability": {
+                "choose": [
+                  "int",
+                  "wis",
+                  "cha"
+                ]
+              },
+              "innate": {
+                "_": {
+                  "daily": {
+                    "1": [
+                      {
+                        "choose": "level=1|class=Wizard"
+                      }
+                    ]
+                  }
+                }
+              },
+              "known": {
+                "_": [
+                  {
+                    "choose": "level=0|class=Wizard",
+                    "count": 2
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "_mod": {
+        "entries": [
+          {
+            "mode": "replaceArr",
+            "replace": "Two Cantrips",
+            "items": {
+              "name": "Two Cantrips",
+              "entries": [
+                "You learn two cantrips of your choice from the {@filter Wizard|spells|level=0;1|class=Wizard} spell list. Intelligence, Wisdom, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)."
+              ]
+            }
+          },
+          {
+            "mode": "replaceArr",
+            "replace": "Level 1 Spell",
+            "items": {
+              "name": "Level 1 Spell",
+              "entries": [
+                "Choose a level 1 spell from the {@filter Wizard|spells|level=0;1|class=Wizard} spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a {@variantrule Long Rest|XPHB}. You can also cast the spell using any spell slots you have."
+              ]
+            }
+          }
+        ]
+      },
+      "_config": {
+        "asi": {},
+        "spells": {
+          "group-0-known-_-0-choice-0": "Mending|XPHB",
+          "group-0-known-_-0-choice-1": "Message|XPHB",
+          "group-0-innate-_-daily-1-0-choice-0": "Shield|XPHB"
+        },
+        "spellAbilities": {
+          "group-0-ability": "cha"
+        },
+        "profs": {},
+        "variantName": "Magic Initiate; Wizard"
+      }
+    },
+    {
+      "name": "Ability Score Improvement",
+      "source": "XPHB",
+      "page": 202,
+      "srd52": true,
+      "basicRules2024": true,
+      "category": "G",
+      "prerequisite": [
+        {
+          "level": 4
+        }
+      ],
+      "repeatable": true,
+      "repeatableHidden": true,
+      "ability": [
+        {
+          "choose": {
+            "from": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ],
+            "amount": 2
+          },
+          "hidden": true
+        },
+        {
+          "choose": {
+            "from": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ],
+            "count": 2
+          },
+          "hidden": true
+        }
+      ],
+      "entries": [
+        "Increase one ability score of your choice by 2, or increase two ability scores of your choice by 1. This feat can't increase an ability score above 20.",
+        {
+          "type": "entries",
+          "name": "Repeatable",
+          "entries": [
+            "You can take this feat more than once."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {
+          "cha": 2
+        },
+        "spells": {},
+        "spellAbilities": {},
+        "profs": {}
+      }
+    },
+    {
+      "name": "Actor",
+      "source": "XPHB",
+      "page": 202,
+      "category": "G",
+      "prerequisite": [
+        {
+          "level": 4,
+          "ability": [
+            {
+              "cha": 13
+            }
+          ]
+        }
+      ],
+      "ability": [
+        {
+          "cha": 1
+        }
+      ],
+      "entries": [
+        "You gain the following benefits.",
+        {
+          "type": "entries",
+          "name": "Impersonation",
+          "entries": [
+            "While you're disguised as a real or fictional person, you have {@variantrule Advantage|XPHB} on Charisma ({@skill Deception|XPHB} or {@skill Performance|XPHB}) checks to convince others that you are that person."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Mimicry",
+          "entries": [
+            "You can mimic the sounds of other creatures, including speech. A creature that hears the mimicry must succeed on a Wisdom ({@skill Insight|XPHB}) check to determine the effect is faked ({@dc 8} plus your Charisma modifier and {@variantrule Proficiency|XPHB|Proficiency Bonus})."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {
+          "cha": 1
+        },
+        "spells": {},
+        "spellAbilities": {},
+        "profs": {}
+      }
+    },
+    {
+      "name": "Skilled",
+      "source": "XPHB",
+      "page": 201,
+      "srd52": true,
+      "basicRules2024": true,
+      "category": "O",
+      "repeatable": true,
+      "repeatableHidden": true,
+      "skillToolLanguageProficiencies": [
+        {
+          "choose": [
+            {
+              "from": [
+                "anySkill",
+                "anyTool"
+              ],
+              "count": 3
+            }
+          ]
+        }
+      ],
+      "entries": [
+        "You gain proficiency in any combination of three {@table Skill List; Skills|XPHB|skills} or {@filter tools|items|type=tool;artisan's tools;instrument;gaming set} of your choice.",
+        {
+          "type": "entries",
+          "name": "Repeatable",
+          "entries": [
+            "You can take this feat more than once."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {},
+        "spells": {},
+        "spellAbilities": {},
+        "profs": {
+          "mixed-0-0": "anyskill",
+          "mixed-0-1": "anyskill",
+          "mixed-0-2": "anytool"
+        }
+      }
+    }
+  ]
 }

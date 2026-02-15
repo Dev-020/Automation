@@ -29,7 +29,7 @@ interface AsiOption {
 }
 
 interface ProfOption {
-    type: 'skill' | 'tool' | 'language' | 'expertise';
+    type: 'skill' | 'tool' | 'language' | 'expertise' | 'mixed';
     mode: 'static' | 'choose' | 'any';
     label: string;
     items?: string[];
@@ -45,6 +45,7 @@ interface SpellOption {
     type: 'fixed' | 'choose';
     // For fixed
     spellName?: string;
+    fullValue?: string; // preserve "Name|Source"
     // For choose
     filter?: string; // raw filter string
 }
@@ -54,19 +55,24 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
     // --- State Initialization ---
     const [allSpells, setAllSpells] = useState<any[]>([]);
     const [isLoadingSpells, setIsLoadingSpells] = useState(false);
+    
+    // Config State
+    const [selectedVariantIndex, setSelectedVariantIndex] = useState<number>(-1);
+    const [asiModeIndex, setAsiModeIndex] = useState(0);
+    const [asiSelections, setAsiSelections] = useState<Record<number, string>>({});
+    const [spellSelections, setSpellSelections] = useState<Record<string, string>>({});
+    const [spellAbilitySelections, setSpellAbilitySelections] = useState<Record<string, string>>({});
+    const [profSelections, setProfSelections] = useState<Record<string, string>>({});
 
+    // Fetch Spells
     useEffect(() => {
         const fetchSpells = async () => {
             setIsLoadingSpells(true);
             try {
-                // Fetch XPHB spells (or all if needed, but XPHB is primary for this)
-                 // The server supports ?sources=XPHB but let's get all and filter locally or let server filter
-                 // Server filter: ?sources=XPHB
-                const res = await fetch('http://localhost:3001/api/spells');
+                const res = await fetch('http://localhost:3001/api/spells?sources=XPHB,PHB');
                 const data = await res.json();
                 if (Array.isArray(data)) {
-                    // Filter out PHB as requested (XPHB supersedes it)
-                    setAllSpells(data.filter((s: any) => s.source !== 'PHB'));
+                    setAllSpells(data);
                 }
             } catch (err) {
                 console.error("Failed to fetch spells:", err);
@@ -77,111 +83,63 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
         fetchSpells();
     }, []);
 
-    // 0. Variant State
-    const [selectedVariantIndex, setSelectedVariantIndex] = useState<number>(() => {
-        const savedName = (feat as any)._config?.variantName;
-        if (!savedName || savedName === feat.name) return -1;
-        if ((feat as any)._versions) {
-            const idx = (feat as any)._versions.findIndex((v: any) => v.name === savedName);
-            return idx !== -1 ? idx : -1;
-        }
-        return -1;
-    });
-
     const effectiveFeat = useMemo(() => {
-        let base = { ...feat };
         if (selectedVariantIndex !== -1 && (feat as any)._versions) {
-            const variant = (feat as any)._versions[selectedVariantIndex];
-            if (variant._mod && variant._mod.entries) {
-                let finalEntries = [...(base.entries || [])];
-                variant._mod.entries.forEach((mod: any) => {
-                    if (mod.mode === 'replaceArr' && mod.replace && mod.items) {
-                        const idx = finalEntries.findIndex((e: any) => 
-                            typeof e !== 'string' && e.name === mod.replace
-                        );
-                        if (idx !== -1) {
-                            finalEntries[idx] = mod.items;
-                        }
-                    }
-                });
-                base = { ...base, ...variant, entries: finalEntries };
-            } else {
-                 base = { ...base, ...variant };
-            }
+            const version = (feat as any)._versions[selectedVariantIndex];
+            // Simple merge handling. In reality, 5etools _versions usually fully describe the variant or modify entries.
+            // We'll treat the version as the primary source of truth, merging over base.
+            return { ...feat, ...version };
         }
-        return base;
+        return feat;
     }, [feat, selectedVariantIndex]);
 
-    // 1. ASI State
+    // --- Derived Data: ASI ---
     const asiOptions = useMemo<AsiOption[]>(() => {
         if (!effectiveFeat.ability) return [];
+        const opts: AsiOption[] = [];
+        
         const abilities = Array.isArray(effectiveFeat.ability) ? effectiveFeat.ability : [effectiveFeat.ability];
-        return abilities.map((entry: any) => {
-            if (entry.choose) {
-                const from = entry.choose.from || ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-                const count = entry.choose.count || 1;
-                const amount = entry.choose.amount || 1;
-                return {
+        
+        abilities.forEach((ab: any) => {
+            if (ab.choose) {
+                // Handle both "choose": [...] and "choose": { from: [...], count: 2 }
+                const selection = ab.choose;
+                const isObject = typeof selection === 'object' && !Array.isArray(selection);
+                const from = isObject ? (selection.from || selection) : selection;
+                const count = isObject ? (selection.count || 1) : 1;
+                const amount = isObject ? (selection.amount || 1) : 1;
+
+                opts.push({
                     type: 'choose',
-                    label: `Increase ${count === 1 ? 'one ability score' : `${count} ability scores`} by ${amount}`,
-                    from: from.map((s: string) => s.toLowerCase()),
+                    label: `Choose ${count} from ${Array.isArray(from) ? from.join(', ') : 'options'} (+${amount})`,
+                    from: Array.isArray(from) ? from : [],
                     count,
                     amount
-                };
+                });
             } else {
+                // Static
                 const stats: Partial<Record<StatName, number>> = {};
                 let labelParts: string[] = [];
-                ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(stat => {
-                    if (entry[stat]) {
-                        stats[stat as StatName] = entry[stat];
-                        labelParts.push(`+${entry[stat]} ${stat.toUpperCase()}`);
-                    }
+                Object.keys(ab).forEach(k => {
+                     if (['str','dex','con','int','wis','cha'].includes(k)) {
+                         stats[k as StatName] = ab[k];
+                         labelParts.push(`${k.toUpperCase()} +${ab[k]}`);
+                     }
                 });
-                if (labelParts.length === 0) return null;
-                return { type: 'static', label: labelParts.join(', '), stats };
+                if (labelParts.length > 0) {
+                     opts.push({
+                         type: 'static',
+                         label: labelParts.join(', '),
+                         stats
+                     });
+                }
             }
-        }).filter(Boolean) as AsiOption[];
+        });
+        
+        return opts;
     }, [effectiveFeat]);
 
-    const [asiModeIndex, setAsiModeIndex] = useState<number>(0);
-    const [asiSelections, setAsiSelections] = useState<Record<number, string>>({}); 
-
-    useEffect(() => {
-        const configAsi = (effectiveFeat as any)._config?.asi;
-        if (configAsi && asiOptions.length > 0) {
-            const stats = Object.keys(configAsi);
-            const values = Object.values(configAsi);
-            const bestIdx = asiOptions.findIndex((opt) => {
-                 if (opt.type === 'static') return false; 
-                 if (opt.type === 'choose') {
-                     const neededCount = opt.count || 1;
-                     const neededAmount = opt.amount || 1;
-                     const allValuesMatch = values.every(v => v === neededAmount);
-                     const keyCount = stats.length;
-                     return allValuesMatch && keyCount === neededCount;
-                 }
-                 return false;
-            });
-            if (bestIdx !== -1) {
-                setAsiModeIndex(bestIdx);
-                const newSels: Record<number, string> = {};
-                stats.forEach((stat, i) => { newSels[i] = stat; });
-                setAsiSelections(newSels);
-            }
-        } else {
-             setAsiModeIndex(0);
-             setAsiSelections({});
-        }
-    }, [selectedVariantIndex, asiOptions]);
-
-    
-    // 2. Spell Selections & Ability
-    // Store selections: Key = ID, Value = Spell Name (for choices) or Ability (for ability choice)
-    const [spellSelections, setSpellSelections] = useState<Record<string, string>>(() => (feat as any)._config?.spells || {});
-    const [spellAbilitySelections, setSpellAbilitySelections] = useState<Record<string, string>>(() => (feat as any)._config?.spellAbilities || {});
-    
     // --- Derived Data: Spell Groups ---
-    // Instead of flat list, we keep the structure of Groups -> Items
     const spellGroups = useMemo(() => {
         if (!effectiveFeat.additionalSpells) return [];
         
@@ -191,6 +149,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
             
             // Ability Config
             let abilityOption = null;
+            let staticAbility = null;
             if (group.ability) {
                 if (typeof group.ability === 'object' && group.ability.choose) {
                     abilityOption = {
@@ -198,7 +157,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                         from: group.ability.choose
                     };
                 } else if (typeof group.ability === 'string') {
-                    // Static ability, no choice needed
+                    staticAbility = group.ability;
                 }
             }
 
@@ -207,13 +166,11 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
             const parseBucket = (bucketName: string, bucketData: any) => {
                 if (!bucketData) return;
                 
-                // Keys like: "_", "1", "3" (levels)
                 Object.keys(bucketData).forEach(levelKey => {
                     const levelData = bucketData[levelKey];
                     
                     const parseInner = (innerData: any, path: string, labelPrefix: string) => {
                          if (Array.isArray(innerData)) {
-                             // List of spells or choices
                              innerData.forEach((item: any, idx: number) => {
                                  const itemId = `${path}-${idx}`;
                                  if (typeof item === 'string') {
@@ -222,7 +179,8 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                                          id: itemId,
                                          label: `${labelPrefix}: ${item.split('|')[0]}`,
                                          type: 'fixed',
-                                         spellName: item.split('|')[0]
+                                         spellName: item.split('|')[0],
+                                         fullValue: item 
                                      });
                                  } else if (typeof item === 'object') {
                                      if (item.choose) {
@@ -239,11 +197,10 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                                  }
                              });
                          } else if (typeof innerData === 'object') {
-                             // Nested keys (daily, rest...)
                              Object.keys(innerData).forEach(freqKey => {
                                  const freqLabel = {
                                      'daily': 'Daily', 'rest': 'Rest', 'will': 'At Will', 'ritual': 'Ritual',
-                                     '1': '1/Day', '1e': '1/Rest', 's1': 'Slot 1', 's2': 'Slot 2' // Heuristic
+                                     '1': '1/Day', '1e': '1/Rest', 's1': 'Slot 1', 's2': 'Slot 2'
                                  }[freqKey] || freqKey;
                                  
                                  parseInner(innerData[freqKey], `${path}-${freqKey}`, `${labelPrefix} [${freqLabel}]`);
@@ -264,49 +221,174 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                 id: groupId,
                 label: groupLabel,
                 abilityOption,
+                staticAbility,
                 options
             };
         });
     }, [effectiveFeat]);
 
 
-    // 3. Proficiencies
-     const [profSelections, setProfSelections] = useState<Record<string, string>>(() => (feat as any)._config?.profs || {});
-     const profOptions = useMemo<ProfOption[]>(() => {
-        const options: ProfOption[] = [];
-        const parseProf = (type: 'skill' | 'tool' | 'language' | 'expertise', list: any[]) => {
-            if (!list) return;
-            list.forEach((entry: any, index: number) => {
-                const staticItems = Object.keys(entry).filter(k => k !== 'choose' && k !== 'any' && k !== 'anyProficientSkill');
-                if (staticItems.length > 0) {
-                     options.push({
-                         type, mode: 'static', label: `Gain proficiency in: ${staticItems.join(', ')}`, items: staticItems
-                     });
-                }
-                if (entry.choose) {
-                    options.push({
-                        type, mode: 'choose', label: `Choose ${entry.choose.count || 1} ${type === 'expertise' ? 'skill(s) for Expertise' : type + '(s)'}`,
-                        from: entry.choose.from || [], count: entry.choose.count || 1
-                    });
-                }
-                if (entry.any) {
-                    options.push({ type, mode: 'any', label: `Choose any ${entry.any} ${type}(s)`, anyCount: entry.any });
-                }
-                if (entry.anyProficientSkill) {
-                     options.push({ type: 'expertise', mode: 'any', label: `Choose ${entry.anyProficientSkill} skill(s) for Expertise`, anyCount: entry.anyProficientSkill });
+    // --- Derived Data: Proficiencies ---
+    const profOptions = useMemo<ProfOption[]>(() => {
+        const opts: ProfOption[] = [];
+        
+        const parseProfs = (data: any[], type: 'skill' | 'tool' | 'language') => {
+            if (!data) return;
+            data.forEach(p => {
+                if (typeof p === 'object') {
+                    if (p.choose) {
+                        const selection = p.choose;
+                        const isObject = typeof selection === 'object' && !Array.isArray(selection);
+                        const from = isObject ? (selection.from || selection) : selection;
+                        const count = isObject ? (selection.count || 1) : 1;
+
+                        opts.push({
+                            type,
+                            mode: 'choose',
+                            label: `Choose ${count} ${type}(s)`,
+                            from: Array.isArray(from) ? from : [],
+                            count
+                        });
+                    } else if (p.any) {
+                         opts.push({
+                            type,
+                            mode: 'any',
+                            label: `Any ${p.any} ${type}(s)`,
+                            anyCount: p.any
+                        });
+                    } else {
+                        // Static dictionary like { "athletics": true }
+                        const items = Object.keys(p).filter(k => p[k] === true);
+                        if (items.length) {
+                             opts.push({
+                                 type,
+                                 mode: 'static',
+                                 label: `${type}s: ${items.join(', ')}`,
+                                 items
+                             });
+                        }
+                    }
                 }
             });
         };
-        parseProf('skill', (effectiveFeat as any).skillProficiencies);
-        parseProf('tool', (effectiveFeat as any).toolProficiencies);
-        parseProf('language', (effectiveFeat as any).languageProficiencies);
-        parseProf('expertise', (effectiveFeat as any).expertise);
-        return options;
+
+        if (effectiveFeat.skillProficiencies) parseProfs(effectiveFeat.skillProficiencies, 'skill');
+        if (effectiveFeat.toolProficiencies) parseProfs(effectiveFeat.toolProficiencies, 'tool');
+        if (effectiveFeat.languageProficiencies) parseProfs(effectiveFeat.languageProficiencies, 'language');
+        
+        // Expertise
+        if (effectiveFeat.expertise) {
+             effectiveFeat.expertise.forEach((p: any) => {
+                 if (p.choose) {
+                      opts.push({
+                          type: 'expertise',
+                          mode: 'choose',
+                          label: `Expertise: Choose ${p.choose.count || 1}`,
+                          from: p.choose.from, 
+                          count: p.choose.count
+                      });
+                 } else if (p.anyProficientSkill) {
+                      opts.push({
+                          type: 'expertise',
+                          mode: 'choose', 
+                          label: `Expertise: Choose ${p.anyProficientSkill} Skill(s)`,
+                          from: undefined, 
+                          count: p.anyProficientSkill
+                      });
+                 }
+             });
+        }
+
+        // SkillToolLanguageProficiencies (Mixed)
+        if (effectiveFeat.skillToolLanguageProficiencies) {
+            effectiveFeat.skillToolLanguageProficiencies.forEach((p: any) => {
+                if (p.choose) {
+                     // Handle: "choose": [{ "from": ["anySkill", "anyTool"], "count": 3 }]
+                     const config = Array.isArray(p.choose) ? p.choose[0] : p.choose;
+                     if (config) {
+                         const count = config.count || 1;
+                         const from = config.from || [];
+                         
+                         opts.push({
+                             type: 'mixed', 
+                             mode: 'choose',
+                             label: `Choose ${count} Proficiencies (Skill/Tool)`,
+                             from: from,
+                             count: count
+                         });
+                     }
+                }
+            });
+        }
+
+        return opts;
     }, [effectiveFeat]);
+    
+    // --- Render Helpers ---
+    const getProficiencyList = (opt: ProfOption) => {
+        // Handle mixed lists
+        if (opt.from && (opt.from.includes('anySkill') || opt.from.includes('anyTool'))) {
+            let baseList: string[] = [];
+            if (opt.from.includes('anySkill')) baseList = [...baseList, ...SKILLS_LIST];
+            if (opt.from.includes('anyTool')) baseList = [...baseList, ...TOOLS_LIST];
+            return baseList.sort();
+        }
+
+        if (opt.type === 'skill') return SKILLS_LIST;
+        if (opt.type === 'tool') return TOOLS_LIST;
+        if (opt.type === 'language') return LANGUAGES_LIST;
+        if (opt.type === 'mixed') return [...SKILLS_LIST, ...TOOLS_LIST].sort(); // Fallback if no 'from'
+        if (opt.type === 'expertise') {
+             // Return currently proficient skills that don't have expertise yet
+             return character.skills
+                .filter(s => s.proficiency && !s.expertise)
+                .map(s => s.name);
+        }
+        return [];
+    };
+
+    // --- EFFECT: Initialize State from Config ---
+    useEffect(() => {
+        if ((feat as any)._config) {
+            const cfg = (feat as any)._config;
+            if (cfg.asi) {
+                // Heuristic to restore ASI mode index could be complex, 
+                // but we can at least restore the selections if they match the current mode.
+                // For now, simpler to just restore the values if possible.
+                // If it's a choose-based ASI, we need to reverse-map stats to indices or just set them.
+                // The current 'asiSelections' is index -> stat.
+                // The config stores stat -> amount.
+                // This mapping is lossy (doesn't know which index picked which stat), 
+                // so we might need to just fill the slots greedily.
+                const activeAsi = asiOptions.find(o => o.type === 'choose');
+                if (activeAsi && activeAsi.count) {
+                    const loadedSelections: Record<number, string> = {};
+                    let slot = 0;
+                    Object.entries(cfg.asi).forEach(([stat, amount]) => {
+                        // Assuming +1 per slot for now as per standard feat rules
+                        for(let k=0; k < (amount as number); k++) {
+                            if (slot < activeAsi.count!) {
+                                loadedSelections[slot++] = stat;
+                            }
+                        }
+                    });
+                    setAsiSelections(loadedSelections);
+                }
+            }
+            if (cfg.spells) setSpellSelections(prev => ({...prev, ...cfg.spells}));
+            if (cfg.spellAbilities) setSpellAbilitySelections(prev => ({...prev, ...cfg.spellAbilities}));
+            if (cfg.profs) setProfSelections(prev => ({...prev, ...cfg.profs}));
+            if (cfg.variantName) {
+                 const vIdx = (feat as any)._versions?.findIndex((v:any) => v.name === cfg.variantName);
+                 if (vIdx !== undefined && vIdx !== -1) setSelectedVariantIndex(vIdx);
+            }
+        }
+    }, [feat]); // Run once on mount (or if feat prop changes completely)
 
 
     // --- Handlers ---
     const handleSave = () => {
+        // 1. ASI
         const activeAsiOption = asiOptions[asiModeIndex];
         const finalAsi: Partial<Record<StatName, number>> = {};
         if (activeAsiOption) {
@@ -320,13 +402,42 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
             }
         }
 
+        // 2. Spells (Merge static + chosen)
+        const finalSpellSelections = { ...spellSelections };
+        const finalSpellAbilitySelections = { ...spellAbilitySelections };
+        
+        spellGroups.forEach(group => {
+            // Static Ability
+            if (group.staticAbility) {
+                finalSpellAbilitySelections[`${group.id}-ability`] = group.staticAbility;
+            }
+            // Fixed Spells
+            group.options.forEach(opt => {
+                if (opt.type === 'fixed' && opt.fullValue) {
+                    finalSpellSelections[opt.id] = opt.fullValue;
+                }
+            });
+        });
+
+        // 3. Proficiencies (Merge static + chosen)
+        const finalProfSelections = { ...profSelections };
+        profOptions.forEach((opt, optIdx) => {
+            if (opt.mode === 'static' && opt.items) {
+                opt.items.forEach((item, itemIdx) => {
+                    // Use a deterministic ID for static profs
+                    const staticId = `${opt.type}-static-${optIdx}-${itemIdx}`;
+                    finalProfSelections[staticId] = item.toLowerCase();
+                });
+            }
+        });
+
         const configuredFeat = {
             ...effectiveFeat, 
             _config: {
                 asi: finalAsi,
-                spells: spellSelections,
-                spellAbilities: spellAbilitySelections,
-                profs: profSelections,
+                spells: finalSpellSelections,
+                spellAbilities: finalSpellAbilitySelections,
+                profs: finalProfSelections,
                 variantName: selectedVariantIndex !== -1 ? effectiveFeat.name : undefined 
             }
         };
@@ -373,13 +484,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
     };
     
     // --- Render Helpers ---
-    const getProficiencyList = (opt: ProfOption) => {
-        if (opt.type === 'skill') return SKILLS_LIST;
-        if (opt.type === 'tool') return TOOLS_LIST;
-        if (opt.type === 'language') return LANGUAGES_LIST;
-        if (opt.type === 'expertise') return character.skills.filter(s => s.proficiency && !s.expertise).map(s => s.name);
-        return [];
-    };
+
 
     return (
         <div style={{ paddingBottom: '2rem' }}>
@@ -467,7 +572,9 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                 {/* Proficiency Selectors */}
                 {profOptions.map((opt, idx) => (
                     <div key={idx} style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px' }}>
-                        <h4 style={{ margin: '0 0 1rem 0', color: '#e2e8f0', textTransform: 'capitalize' }}>{opt.type} Selection</h4>
+                        <h4 style={{ margin: '0 0 1rem 0', color: '#e2e8f0', textTransform: 'capitalize' }}>
+                            {opt.type === 'mixed' ? 'Proficiency' : opt.type} Selection
+                        </h4>
                         {opt.mode === 'static' && <div style={{ padding: '0.5rem', color: '#4ade80', background: 'rgba(74, 222, 128, 0.1)', borderRadius: '4px' }}>{opt.label}</div>}
                         {(opt.mode === 'choose' || opt.mode === 'any') && (
                              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
