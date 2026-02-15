@@ -13,6 +13,7 @@ import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
 import { NotesPanel } from './components/NotesPanel';
+import { HomebrewPanel } from './components/HomebrewPanel';
 import { FeatsTab } from './components/FeatsTab';
 import { rollDice } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
@@ -469,7 +470,7 @@ function App() {
         {/* Tabbed Interface */}
         <div className="tabs-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <Tabs 
-            tabs={['Actions', 'Spells', 'Inventory', 'Feats', 'Features', 'Notes']} 
+            tabs={['Actions', 'Spells', 'Inventory', 'Feats', 'Features', 'Notes', 'Homebrew']} 
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
           />
@@ -494,6 +495,12 @@ function App() {
                         categories={character.noteCategories}
                         onUpdateNotes={notes => setCharacter(p => ({ ...p, notes }))}
                         onUpdateCategories={cats => setCharacter(p => ({ ...p, noteCategories: cats }))}
+                    />
+                )}
+                {activeTab === 'Homebrew' && (
+                    <HomebrewPanel 
+                        homebrew={character.homebrew || { features: [], feats: [], spells: [], blueprints: [] }}
+                        onUpdateHomebrew={(hb) => setCharacter(prev => ({ ...prev, homebrew: hb }))}
                     />
                 )}
             </div>

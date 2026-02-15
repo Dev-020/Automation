@@ -165,6 +165,7 @@ export interface FeatureEntry {
   srd52?: boolean;
   basicRules2024?: boolean;
   prerequisite?: any[];
+  collapsible?: boolean;
 }
 
 export interface Feature extends FeatureEntry {
@@ -242,6 +243,26 @@ export interface Character {
   // Notes System
   notes: Note[];
   noteCategories: NoteCategory[];
+  
+  // Homebrew System (Standalone)
+  homebrew?: {
+      features: Feature[];
+      feats: Feature[];
+      spells: Spell[];
+      blueprints: Blueprint[];
+  };
+}
+
+export interface Blueprint {
+    id: string;
+    name: string;
+    type: 'Magical' | 'Non-Magical' | 'Consumable' | 'Other';
+    source: string;
+    rarity?: string;
+    description: string;
+    properties?: Record<string, string>; // e.g. "Weight": "6 lb"
+    infusableItems?: string[];
+    entries?: (string | FeatureEntry)[];
 }
 
 export interface Note {

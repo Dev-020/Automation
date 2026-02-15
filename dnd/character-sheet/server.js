@@ -215,6 +215,32 @@ app.get('/api/variant-rules', (req, res) => {
     sendFileSafe(res, VARIANT_RULES_PATH);
 });
 
+// Homebrew Data Endpoint
+const HOMEBREW_DIR = path.join(__dirname, '../Homebrew');
+
+app.get('/api/homebrew', async (req, res) => {
+    try {
+        const subclassPath = path.join(HOMEBREW_DIR, 'Homebrew_Subclass.md');
+        const blueprintsPath = path.join(HOMEBREW_DIR, 'Blueprints.md');
+
+        // Check if files exist
+        const [subclassExists, blueprintsExists] = await Promise.all([
+            fs.promises.access(subclassPath).then(() => true).catch(() => false),
+            fs.promises.access(blueprintsPath).then(() => true).catch(() => false)
+        ]);
+
+        const response = {
+            subclass: subclassExists ? await fs.promises.readFile(subclassPath, 'utf8') : '',
+            blueprints: blueprintsExists ? await fs.promises.readFile(blueprintsPath, 'utf8') : ''
+        };
+
+        res.json(response);
+    } catch (error) {
+        console.error("Error reading homebrew files:", error);
+        res.status(500).json({ error: "Failed to read homebrew files" });
+    }
+});
+
 // Helper for sending files safely
 function sendFileSafe(res, filePath) {
     fs.access(filePath, fs.constants.F_OK, (err) => {
