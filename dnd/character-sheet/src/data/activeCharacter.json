@@ -33,7 +33,7 @@
       "saveProficiency": true,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771152696018-1",
+          "id": "bg-asi-1771166900898-1",
           "source": "Background",
           "value": 1,
           "type": "bonus"
@@ -42,7 +42,7 @@
       "total": 16,
       "breakdown": [
         {
-          "id": "bg-asi-1771152696018-1",
+          "id": "bg-asi-1771166900898-1",
           "source": "Background",
           "value": 1,
           "type": "bonus"
@@ -55,7 +55,7 @@
       "saveProficiency": false,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771152696018-0",
+          "id": "bg-asi-1771166900898-0",
           "source": "Background",
           "value": 2,
           "type": "bonus"
@@ -64,7 +64,7 @@
       "total": 15,
       "breakdown": [
         {
-          "id": "bg-asi-1771152696018-0",
+          "id": "bg-asi-1771166900898-0",
           "source": "Background",
           "value": 2,
           "type": "bonus"
@@ -117,13 +117,13 @@
     {
       "name": "Acrobatics",
       "stat": "DEX",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
       "name": "Animal Handling",
       "stat": "WIS",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -135,13 +135,13 @@
     {
       "name": "Athletics",
       "stat": "STR",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
       "name": "Deception",
       "stat": "CHA",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false
     },
     {
@@ -2642,22 +2642,38 @@
       "type": "custom"
     }
   ],
-  "notes": [],
+  "notes": [
+    {
+      "id": "1fb30d8b-5906-41a0-a7ac-7b28cd665dfe",
+      "title": "New Note 2",
+      "subject": "Test note wandafl",
+      "content": "",
+      "categoryIds": [
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c",
+        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b"
+      ],
+      "lastModified": 1771087291682
+    },
+    {
+      "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
+      "title": "TO DO LIST:",
+      "subject": "Typa shi to do for this goofy ahh website",
+      "content": "<ol><li>Implement the background features for the character.</li><li>Implement the race features for the character.</li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.</li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li></ol>",
+      "categoryIds": [
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c"
+      ],
+      "lastModified": 1771088667775
+    }
+  ],
   "noteCategories": [
     {
-      "id": "default",
+      "id": "6b08bbc5-07ce-4b26-97ab-690097eda12c",
       "name": "Inbox",
       "isDefault": true
     },
     {
-      "id": "quest",
-      "name": "Quest Log",
-      "isDefault": false
-    },
-    {
-      "id": "npcs",
-      "name": "NPCs",
-      "isDefault": false
+      "id": "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
+      "name": "Random Category #2"
     }
   ],
   "feats": [
@@ -3247,45 +3263,66 @@
       }
     },
     {
-      "name": "Skilled",
-      "source": "XPHB",
-      "page": 201,
-      "srd52": true,
-      "basicRules2024": true,
-      "category": "O",
-      "repeatable": true,
-      "repeatableHidden": true,
-      "skillToolLanguageProficiencies": [
+      "name": "Boon of Terror",
+      "source": "FRHoF",
+      "page": 43,
+      "category": "EB",
+      "prerequisite": [
         {
-          "choose": [
-            {
-              "from": [
-                "anySkill",
-                "anyTool"
-              ],
-              "count": 3
-            }
-          ]
+          "level": 19
         }
       ],
+      "ability": [
+        {
+          "cha": 1,
+          "max": 30
+        }
+      ],
+      "skillProficiencies": [
+        {
+          "intimidation": true
+        }
+      ],
+      "expertise": [
+        {
+          "intimidation": true
+        }
+      ],
+      "conditionImmune": [
+        "frightened"
+      ],
       "entries": [
-        "You gain proficiency in any combination of three {@table Skill List; Skills|XPHB|skills} or {@filter tools|items|type=tool;artisan's tools;instrument;gaming set} of your choice.",
+        "You gain the following benefits.",
         {
           "type": "entries",
-          "name": "Repeatable",
+          "name": "Fearless",
           "entries": [
-            "You can take this feat more than once."
+            "You have {@variantrule Immunity|XPHB} to the {@condition Frightened|XPHB} condition."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Flee, Fools!",
+          "entries": [
+            "When a creature with the {@condition Frightened|XPHB} condition starts its turn within 60 feet of you, you can take a {@variantrule Reaction|XPHB} to stoke its terror, provided you can see the creature and it isn't behind {@variantrule Cover|XPHB|Total Cover}. If you do so, the creature must succeed on a Wisdom saving throw (DC 8 plus your Charisma modifier and your {@variantrule Proficiency|XPHB|Proficiency Bonus}) or spend its turn moving away from you by the fastest available means. Once you use this benefit, you can't use it again until you finish a {@variantrule Short Rest|XPHB|Short} or {@variantrule Long Rest|XPHB}."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Intimidating",
+          "entries": [
+            "You gain {@variantrule Proficiency|XPHB} in the {@skill Intimidation|XPHB} skill if you don't already have it. You also gain {@variantrule Expertise|XPHB} in {@skill Intimidation|XPHB}."
           ]
         }
       ],
       "_config": {
-        "asi": {},
+        "asi": {
+          "cha": 1
+        },
         "spells": {},
         "spellAbilities": {},
         "profs": {
-          "mixed-0-0": "anyskill",
-          "mixed-0-1": "anyskill",
-          "mixed-0-2": "anytool"
+          "skill-static-0-0": "intimidation"
         }
       }
     }
