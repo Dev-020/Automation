@@ -38,7 +38,8 @@ app.use(cors());
 app.use(express.json());
 
 // External Data Paths
-const SPELLS_TECH_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/spells/spells-xphb.json';
+const SPELLS_DIR = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/spells';
+const SPELLS_INDEX_PATH = path.join(SPELLS_DIR, 'index.json');
 const SPELLS_SOURCE_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/generated/gendata-spell-source-lookup.json';
 const OPTIONAL_FEATURES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/optionalfeatures.json';
 const FEATS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/feats.json';
@@ -48,7 +49,7 @@ const ITEMS_BASE_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/item
 const MAGIC_VARIANTS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/magicvariants.json';
 const VARIANT_RULES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/variantrules.json';
 
-let spellCache = null;
+let spellCache = null; // Array of all enriched spells
 let featureCache = null; // Optional Features (Metamagic, Fighting Styles)
 let featCache = null;    // Feats
 let skillCache = null;   // Skills
@@ -61,11 +62,30 @@ async function loadData() {
     try {
         console.log('Loading dnd data...');
         
-        // Spells
-        const techRaw = await fs.promises.readFile(SPELLS_TECH_PATH, 'utf8');
+        // 1. Load Spell Index & Source Lookup
+        const indexRaw = await fs.promises.readFile(SPELLS_INDEX_PATH, 'utf8');
         const sourceRaw = await fs.promises.readFile(SPELLS_SOURCE_PATH, 'utf8');
-        const techData = JSON.parse(techRaw);
-        const sourceData = JSON.parse(sourceRaw);
+        const spellIndex = JSON.parse(indexRaw); // Maps Source -> Filename
+        const sourceData = JSON.parse(sourceRaw); // Maps Source -> Name -> Class Info
+
+        // 2. Load All Spell Files
+        let allSpellsRaw = [];
+        const spellFiles = Object.values(spellIndex);
+        
+        console.log(`Discovered ${spellFiles.length} spell sources. Loading...`);
+
+        for (const filename of spellFiles) {
+            const filePath = path.join(SPELLS_DIR, filename);
+            try {
+                const fileContent = await fs.promises.readFile(filePath, 'utf8');
+                const json = JSON.parse(fileContent);
+                if (json.spell) {
+                    allSpellsRaw.push(...json.spell);
+                }
+            } catch (err) {
+                console.warn(`Failed to load spell file: ${filename}`, err.message);
+            }
+        }
         
         // Features & Conditions
         const optFeatRaw = await fs.promises.readFile(OPTIONAL_FEATURES_PATH, 'utf8');
@@ -84,23 +104,25 @@ async function loadData() {
             ...(conditionsData.status || [])
         ];
 
-        console.log(`Loaded ${techData.spell.length} spells, ${featureCache.length} optional features, ${featCache.length} feats, ${conditionCache.length} conditions.`);
+        console.log(`Loaded ${allSpellsRaw.length} raw spells, ${featureCache.length} optional features, ${featCache.length} feats, ${conditionCache.length} conditions.`);
         
-        // Process all spells to attach Class info
-        const allSpells = techData.spell.map(spell => {
+        // 3. Enrich Spells with Class Info
+        const enrichedSpells = allSpellsRaw.map(spell => {
             const lookupName = spell.name.toLowerCase();
-            const sourceKey = spell.source.toLowerCase();
-            const sourceEntry = sourceData[sourceKey]?.[lookupName];
+            const sourceKey = spell.source; // keep case for lookup? usually Source is exact match in keys
+            // The lookup file uses keys like "phb", "xphb" (lowercase) for sources?
+            // Let's check a sample. Usually 5etools uses lowercase source keys in generated data.
+            const sourceKeyLower = sourceKey.toLowerCase();
+
+            const sourceEntry = sourceData[sourceKeyLower]?.[lookupName];
             
             const classes = [];
             if (sourceEntry && sourceEntry.class) {
-                // Check XPHB and PHB for class definitions
-                ['XPHB', 'PHB', 'TCE', 'XGE'].forEach(src => {
-                    if (sourceEntry.class[src]) {
-                        Object.keys(sourceEntry.class[src]).forEach(cls => {
-                            if (!classes.includes(cls)) classes.push(cls);
-                        });
-                    }
+                // Iterate over all source versions (PHB, TCE, XPHB, etc) in the lookup
+                Object.values(sourceEntry.class).forEach(classObj => {
+                    Object.keys(classObj).forEach(cls => {
+                        if (!classes.includes(cls)) classes.push(cls);
+                    });
                 });
             }
             
@@ -108,8 +130,8 @@ async function loadData() {
             return { ...spell, classes };
         });
         
-        console.log(`Loaded ${allSpells.length} spells with class info.`);
-        spellCache = allSpells;
+        console.log(`Enriched ${enrichedSpells.length} spells with class info.`);
+        spellCache = enrichedSpells;
         
     } catch (error) {
         console.error('Failed to load data:', error);
@@ -119,9 +141,20 @@ async function loadData() {
 // Load data on start
 loadData();
 
-// Get filtered spells (Sorcerer)
+// Get filtered spells (Optional: ?sources=PHB,XPHB)
 app.get('/api/spells', (req, res) => {
     if (!spellCache) return res.status(503).json({ error: 'Data loading...' });
+    
+    const { sources } = req.query;
+    
+    if (sources) {
+        // e.g. "PHB,XPHB"
+        const allowed = sources.split(',').map(s => s.trim().toUpperCase());
+        const filtered = spellCache.filter(s => allowed.includes(s.source));
+        console.log(`Filtering spells by source [${allowed.join(', ')}]: ${filtered.length} results`);
+        return res.json(filtered);
+    }
+
     res.json(spellCache);
 });
 

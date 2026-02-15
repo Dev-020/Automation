@@ -32,7 +32,7 @@
       "saveProficiency": true,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771141149804-1",
+          "id": "bg-asi-1771152696018-1",
           "source": "Background",
           "value": 1,
           "type": "bonus"
@@ -41,7 +41,7 @@
       "total": 16,
       "breakdown": [
         {
-          "id": "bg-asi-1771141149804-1",
+          "id": "bg-asi-1771152696018-1",
           "source": "Background",
           "value": 1,
           "type": "bonus"
@@ -54,7 +54,7 @@
       "saveProficiency": false,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771141149804-0",
+          "id": "bg-asi-1771152696018-0",
           "source": "Background",
           "value": 2,
           "type": "bonus"
@@ -63,7 +63,7 @@
       "total": 15,
       "breakdown": [
         {
-          "id": "bg-asi-1771141149804-0",
+          "id": "bg-asi-1771152696018-0",
           "source": "Background",
           "value": 2,
           "type": "bonus"
@@ -2641,184 +2641,39 @@
       "type": "custom"
     }
   ],
-  "notes": [],
+  "notes": [
+    {
+      "id": "1fb30d8b-5906-41a0-a7ac-7b28cd665dfe",
+      "title": "New Note 2",
+      "subject": "Test note wandafl",
+      "content": "",
+      "categoryIds": [
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c",
+        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b"
+      ],
+      "lastModified": 1771087291682
+    },
+    {
+      "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
+      "title": "TO DO LIST:",
+      "subject": "Typa shi to do for this goofy ahh website",
+      "content": "<ol><li>Implement the background features for the character.</li><li>Implement the race features for the character.</li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.</li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li></ol>",
+      "categoryIds": [
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c"
+      ],
+      "lastModified": 1771088667775
+    }
+  ],
   "noteCategories": [
     {
-      "id": "default",
+      "id": "6b08bbc5-07ce-4b26-97ab-690097eda12c",
       "name": "Inbox",
       "isDefault": true
     },
     {
-      "id": "quest",
-      "name": "Quest Log",
-      "isDefault": false
-    },
-    {
-      "id": "npcs",
-      "name": "NPCs",
-      "isDefault": false
+      "id": "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
+      "name": "Random Category #2"
     }
   ],
-  "feats": [
-    {
-      "name": "Ability Score Improvement",
-      "source": "XPHB",
-      "page": 202,
-      "srd52": true,
-      "basicRules2024": true,
-      "category": "G",
-      "prerequisite": [
-        {
-          "level": 4
-        }
-      ],
-      "repeatable": true,
-      "repeatableHidden": true,
-      "ability": [
-        {
-          "choose": {
-            "from": [
-              "str",
-              "dex",
-              "con",
-              "int",
-              "wis",
-              "cha"
-            ],
-            "amount": 2
-          },
-          "hidden": true
-        },
-        {
-          "choose": {
-            "from": [
-              "str",
-              "dex",
-              "con",
-              "int",
-              "wis",
-              "cha"
-            ],
-            "count": 2
-          },
-          "hidden": true
-        }
-      ],
-      "entries": [
-        "Increase one ability score of your choice by 2, or increase two ability scores of your choice by 1. This feat can't increase an ability score above 20.",
-        {
-          "type": "entries",
-          "name": "Repeatable",
-          "entries": [
-            "You can take this feat more than once."
-          ]
-        }
-      ],
-      "_config": {
-        "asi": {
-          "str": 1,
-          "dex": 1
-        },
-        "spells": {}
-      }
-    },
-    {
-      "name": "Skill Expert",
-      "source": "XPHB",
-      "page": 207,
-      "category": "G",
-      "prerequisite": [
-        {
-          "level": 4
-        }
-      ],
-      "ability": [
-        {
-          "choose": {
-            "from": [
-              "str",
-              "dex",
-              "con",
-              "int",
-              "wis",
-              "cha"
-            ]
-          }
-        }
-      ],
-      "skillProficiencies": [
-        {
-          "any": 1
-        }
-      ],
-      "expertise": [
-        {
-          "anyProficientSkill": 1
-        }
-      ],
-      "entries": [
-        "You gain the following benefits.",
-        {
-          "type": "entries",
-          "name": "Skill Proficiency",
-          "entries": [
-            "You gain proficiency in one skill of your choice."
-          ]
-        },
-        {
-          "type": "entries",
-          "name": "Expertise",
-          "entries": [
-            "Choose one skill in which you have proficiency but lack {@variantrule Expertise|XPHB}. You gain {@variantrule Expertise|XPHB} with that skill."
-          ]
-        }
-      ],
-      "_config": {
-        "asi": {
-          "str": 1
-        },
-        "spells": {},
-        "profs": {
-          "skill-0-0": "acrobatics",
-          "expertise-1-0": "arcana"
-        }
-      }
-    },
-    {
-      "name": "Linguist",
-      "source": "PHB",
-      "page": 167,
-      "ability": [
-        {
-          "int": 1
-        }
-      ],
-      "languageProficiencies": [
-        {
-          "any": 3
-        }
-      ],
-      "entries": [
-        "You have studied languages and codes, gaining the following benefits:",
-        {
-          "type": "list",
-          "items": [
-            "You learn three languages of your choice.",
-            "You can ably create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC equal to your Intelligence score + your proficiency bonus), or they use magic to decipher it."
-          ]
-        }
-      ],
-      "_config": {
-        "asi": {
-          "int": 1
-        },
-        "spells": {},
-        "profs": {
-          "language-0-0": "common",
-          "language-0-1": "abyssal",
-          "language-0-2": "deep speech"
-        }
-      }
-    }
-  ]
+  "feats": []
 }

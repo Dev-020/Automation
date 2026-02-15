@@ -69,7 +69,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
 
     // --- Render ---
     const filteredFeats = ALL_FEATS.filter((f: any) => 
-        f.name.toLowerCase().includes(searchTerm.toLowerCase())
+        f.name && f.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
