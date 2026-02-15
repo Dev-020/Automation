@@ -2658,11 +2658,11 @@
       "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
       "title": "TO DO LIST:",
       "subject": "Typa shi to do for this goofy ahh website",
-      "content": "<ol><li>Implement the background features for the character.</li><li>Implement the race features for the character.</li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.</li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li></ol>",
+      "content": "<ol><li>Implement the background features for the character. (PARTIALLY DONE)</li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\">(PARTIALLY DONE)</span></li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\">(PARTIALLY DONE; Expertise Bullshit left)</span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Refine Spell Section to be more useful</li></ol>",
       "categoryIds": [
         "6b08bbc5-07ce-4b26-97ab-690097eda12c"
       ],
-      "lastModified": 1771088667775
+      "lastModified": 1771168058290
     }
   ],
   "noteCategories": [

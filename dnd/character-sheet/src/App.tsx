@@ -71,8 +71,8 @@ function App() {
     // Fallback for No LocalStorage or JSON Parse Fail
     return {
         ...initialCharacter,
-        notes: [],
-        noteCategories: [
+        notes: initialCharacter.notes || [],
+        noteCategories: (initialCharacter.noteCategories && initialCharacter.noteCategories.length > 0) ? initialCharacter.noteCategories : [
             { id: 'default', name: 'Inbox', isDefault: true },
             { id: 'quest', name: 'Quest Log', isDefault: false },
             { id: 'npcs', name: 'NPCs', isDefault: false }
