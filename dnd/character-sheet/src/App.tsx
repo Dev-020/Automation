@@ -13,6 +13,7 @@ import { SpellsPanel } from './components/SpellsPanel';
 import { InventoryPanel } from './components/InventoryPanel';
 import { FeaturesPanel } from './components/FeaturesPanel';
 import { NotesPanel } from './components/NotesPanel';
+import { FeatsTab } from './components/FeatsTab';
 import { rollDice } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
@@ -468,7 +469,7 @@ function App() {
         {/* Tabbed Interface */}
         <div className="tabs-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <Tabs 
-            tabs={['Actions', 'Spells', 'Inventory', 'Features', 'Notes']} 
+            tabs={['Actions', 'Spells', 'Inventory', 'Feats', 'Features', 'Notes']} 
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
           />
@@ -485,6 +486,7 @@ function App() {
                     onUpdateInventory={handleInventoryUpdate}
                     onUpdateContainers={handleContainersUpdate}
                 />}
+                {activeTab === 'Feats' && <FeatsTab character={character} onChange={(updates) => setCharacter(prev => ({ ...prev, ...updates }))} />}
                 {activeTab === 'Features' && <FeaturesPanel features={character.features} character={character} onUpdateFeatures={(updated) => setCharacter(prev => ({ ...prev, features: updated }))} />}
                 {activeTab === 'Notes' && (
                     <NotesPanel 

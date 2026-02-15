@@ -172,6 +172,10 @@ export interface Feature extends FeatureEntry {
   source: string;
   page: number;
   level: number;
+  ability?: any;
+  additionalSpells?: any[];
+  category?: string;
+  prerequisite?: any[];
 }
 
 export interface Character {
@@ -226,6 +230,7 @@ export interface Character {
     pp: number;
   };
   features: Feature[];
+  feats: Feature[]; // Dedicated list for Feats (distinct from generic features)
   rollHistory: RollEntry[];
   // Notes System
   notes: Note[];

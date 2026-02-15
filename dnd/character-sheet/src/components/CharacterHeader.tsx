@@ -3,6 +3,14 @@ import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
 import type { Character } from '../types';
+import racesData from '../../../5etools/5etools-src/data/races.json';
+
+import { BackgroundPanel } from './BackgroundPanel';
+
+// Filter for XPHB (2024 PHB) content
+const XPHB_RACES = (racesData.race || []).filter((r: any) => r.source === 'XPHB' && !r._copy);
+
+
 
 interface CharacterHeaderProps {
   character: Character;
@@ -52,17 +60,24 @@ const ConditionItem = ({ condition, isActive, onToggle }: { condition: any, isAc
 };
 
 export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onChange, onExport, onImport, saveStatus = 'saved' }) => {
-  const [showConditions, setShowConditions] = React.useState(false);
+  const [activePanel, setActivePanel] = React.useState<'race' | 'background' | 'conditions' | null>(null);
   const [availableConditions, setAvailableConditions] = React.useState<any[]>([]);
+  
+  // Selected Data (derived from character or defaults)
+  const selectedRaceConfig = React.useMemo(() => 
+      XPHB_RACES.find((r: any) => r.name === character.race) || XPHB_RACES[0], 
+  [character.race]);
+
+
 
   React.useEffect(() => {
-      if (showConditions && availableConditions.length === 0) {
+      if (activePanel === 'conditions' && availableConditions.length === 0) {
           fetch('http://localhost:3001/api/conditions')
             .then(res => res.json())
             .then(data => setAvailableConditions(data))
             .catch(err => console.error("Failed to load conditions:", err));
       }
-  }, [showConditions]);
+  }, [activePanel]);
 
   const toggleCondition = (conditionName: string) => {
       const current = character.conditions || [];
@@ -164,9 +179,19 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                </span>
                <input value={character.class} onChange={e => onChange({ class: e.target.value })} style={{...inputStyle, flex: 1, minWidth: '80px'}} placeholder="Class" />
                |
-               <input value={character.race} onChange={e => onChange({ race: e.target.value })} style={{...inputStyle, flex: 1, minWidth: '80px'}} placeholder="Race" />
+               <button 
+                  onClick={() => setActivePanel('race')}
+                  style={{...inputStyle, flex: 1, minWidth: '80px', textAlign: 'left', cursor: 'pointer', color: character.race ? 'inherit' : '#777'}}
+               >
+                  {character.race || "Select Race"}
+               </button>
                |
-               <input value={character.background} onChange={e => onChange({ background: e.target.value })} style={{...inputStyle, flex: 1, minWidth: '80px'}} placeholder="Background" />
+               <button 
+                  onClick={() => setActivePanel('background')}
+                  style={{...inputStyle, flex: 1, minWidth: '80px', textAlign: 'left', cursor: 'pointer', color: character.background ? 'inherit' : '#777'}}
+               >
+                  {character.background || "Select Background"}
+               </button>
             </div>
         </div>
 
@@ -271,7 +296,7 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                     <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 'bold', borderLeft: '3px solid #eab308', paddingLeft: '8px', letterSpacing: '0.05em', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         CONDITIONS
                         <button 
-                            onClick={() => setShowConditions(true)}
+                            onClick={() => setActivePanel('conditions')}
                             style={{ background: 'transparent', border: '1px solid var(--color-primary)', color: 'var(--color-primary)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', padding: '1px 6px' }}
                         >
                             + Manage
@@ -298,8 +323,8 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
             </div>
 
             <SidePanel 
-                isOpen={showConditions} 
-                onClose={() => setShowConditions(false)} 
+                isOpen={activePanel === 'conditions'} 
+                onClose={() => setActivePanel(null)} 
                 title="Manage Conditions"
                 width="500px"
             >
@@ -314,6 +339,76 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                     ))}
                 </div>
             </SidePanel>
+
+            {/* Race Selection Panel */}
+            <SidePanel
+                isOpen={activePanel === 'race'}
+                onClose={() => setActivePanel(null)}
+                title="Race Details"
+                width="600px"
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {/* Selection Header */}
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+                            SELECT RACE (XPHB)
+                        </label>
+                        <select 
+                            value={character.race}
+                            onChange={(e) => onChange({ race: e.target.value })}
+                            style={{ 
+                                width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.5)', 
+                                border: '1px solid var(--color-primary)', borderRadius: '4px', 
+                                color: 'white', fontSize: '1rem' 
+                            }}
+                        >
+                            <option value="">-- Choose a Race --</option>
+                            {XPHB_RACES.map((r: any) => (
+                                <option key={r.name} value={r.name}>{r.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {selectedRaceConfig && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
+                                 <div style={{ background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '4px' }}>
+                                    <strong style={{ color: 'var(--color-primary)' }}>Speed:</strong> {
+                                        typeof selectedRaceConfig.speed === 'number' ? `${selectedRaceConfig.speed} ft.` : 
+                                        typeof selectedRaceConfig.speed === 'object' ? Object.entries(selectedRaceConfig.speed).map(([k,v]) => `${k} ${v} ft.`).join(', ') : '30 ft.'
+                                    }
+                                 </div>
+                                 <div style={{ background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '4px' }}>
+                                    <strong style={{ color: 'var(--color-primary)' }}>Size:</strong> {
+                                        Array.isArray(selectedRaceConfig.size) ? selectedRaceConfig.size.map((s: string) => s === 'S' ? 'Small' : s === 'M' ? 'Medium' : s).join(' or ') : 'Medium'
+                                    }
+                                 </div>
+                             </div>
+                             
+                             {selectedRaceConfig.entries && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {selectedRaceConfig.entries.map((entry: any, i: number) => (
+                                        <div key={i} style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px' }}>
+                                            <h4 style={{ margin: '0 0 0.5rem 0', color: '#eab308' }}>{entry.name}</h4>
+                                            <div style={{ fontSize: '0.9rem', lineHeight: 1.6, color: '#ccc' }}>
+                                                <EntryRenderer entry={entry.entries} />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                             )}
+                        </div>
+                    )}
+                </div>
+            </SidePanel>
+
+            {/* Background Selection Panel */}
+            <BackgroundPanel 
+                isOpen={activePanel === 'background'}
+                onClose={() => setActivePanel(null)}
+                character={character}
+                onChange={onChange}
+            />
 
         </div>
 

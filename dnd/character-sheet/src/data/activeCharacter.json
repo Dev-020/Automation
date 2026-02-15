@@ -28,19 +28,47 @@
     },
     "CON": {
       "base": 15,
-      "modifier": 2,
+      "modifier": 3,
       "saveProficiency": true,
-      "manualModifiers": [],
-      "total": 15,
-      "breakdown": []
+      "manualModifiers": [
+        {
+          "id": "bg-asi-1771141149804-1",
+          "source": "Background",
+          "value": 1,
+          "type": "bonus"
+        }
+      ],
+      "total": 16,
+      "breakdown": [
+        {
+          "id": "bg-asi-1771141149804-1",
+          "source": "Background",
+          "value": 1,
+          "type": "bonus"
+        }
+      ]
     },
     "INT": {
       "base": 13,
-      "modifier": 1,
+      "modifier": 2,
       "saveProficiency": false,
-      "manualModifiers": [],
-      "total": 13,
-      "breakdown": []
+      "manualModifiers": [
+        {
+          "id": "bg-asi-1771141149804-0",
+          "source": "Background",
+          "value": 2,
+          "type": "bonus"
+        }
+      ],
+      "total": 15,
+      "breakdown": [
+        {
+          "id": "bg-asi-1771141149804-0",
+          "source": "Background",
+          "value": 2,
+          "type": "bonus"
+        }
+      ]
     },
     "WIS": {
       "base": 8,
@@ -61,8 +89,8 @@
   },
   "vitals": {
     "hp": {
-      "current": 38,
-      "max": 38,
+      "current": 44,
+      "max": 44,
       "temp": 0
     },
     "hitDice": {
@@ -100,7 +128,7 @@
     {
       "name": "Arcana",
       "stat": "INT",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -118,7 +146,7 @@
     {
       "name": "History",
       "stat": "INT",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -207,10 +235,10 @@
       "Simple Weapons"
     ],
     "tools": [
-      "Calligrapher's Supplies"
+      "calligrapher's supplies"
     ],
     "languages": [
-      "Common"
+      ""
     ]
   },
   "defenses": {
@@ -990,65 +1018,6 @@
       "prepared": true
     },
     {
-      "name": "Cure Wounds",
-      "source": "XPHB",
-      "page": 259,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "UtHftLH"
-      ],
-      "level": 1,
-      "school": "A",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "touch"
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true
-      },
-      "duration": [
-        {
-          "type": "instant"
-        }
-      ],
-      "entries": [
-        "A creature you touch regains a number of {@variantrule Hit Points|XPHB} equal to {@dice 2d8} plus your spellcasting ability modifier."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "Using a Higher-Level Spell Slot",
-          "entries": [
-            "The healing increases by {@scaledice 2d8|1-9|2d8} for each spell slot level above 1."
-          ]
-        }
-      ],
-      "miscTags": [
-        "HL"
-      ],
-      "areaTags": [
-        "ST"
-      ],
-      "classes": [
-        "Bard",
-        "Cleric",
-        "Druid",
-        "Ranger",
-        "Paladin"
-      ],
-      "prepared": true
-    },
-    {
       "name": "Slow",
       "source": "XPHB",
       "page": 318,
@@ -1228,6 +1197,50 @@
       ],
       "equipped": true,
       "isAttuned": false
+    },
+    {
+      "id": "9361fece-8277-431d-a035-081d56fffe98",
+      "name": "Sun Blade",
+      "quantity": 1,
+      "weight": 3,
+      "containerId": null,
+      "source": "XDMG",
+      "rarity": "rare",
+      "reqAttune": "true",
+      "type": "M|XPHB",
+      "properties": [
+        "F|XPHB",
+        "V|XPHB"
+      ],
+      "mastery": [
+        "Sap|XPHB"
+      ],
+      "baseItem": "longsword|xphb",
+      "damage1": "1d8",
+      "damageType": "R",
+      "damage2": "1d10",
+      "entries": [
+        "This item appears to be a sword hilt.",
+        {
+          "type": "entries",
+          "name": "Blade of Radiance",
+          "entries": [
+            "While grasping the hilt, you can take a {@variantrule Bonus Action|XPHB} to cause a blade of pure radiance to spring into existence or make the blade disappear. While the blade exists, this magic weapon functions as a Longsword with {@itemProperty F|XPHB|Finesse}. If you are proficient with Longswords or Shortswords, you are proficient with the Sun Blade.",
+            "You gain a +2 bonus to attack rolls and damage rolls made with this weapon, which deals Radiant damage instead of Slashing damage. When you hit an Undead with it, that target takes an extra {@damage 1d8} Radiant damage."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Sunlight",
+          "entries": [
+            "The sword's luminous blade emits {@variantrule Bright Light|XPHB} in a 15-foot radius and {@variantrule Dim Light|XPHB} for an additional 15 feet. The light is sunlight. While the blade persists, you can take a {@action Magic|XPHB} action to expand or reduce its radius of {@variantrule Bright Light|XPHB} and {@variantrule Dim Light|XPHB} by 5 feet each, to a maximum of 30 feet each or a minimum of 10 feet each."
+          ]
+        }
+      ],
+      "lootTables": [
+        "Armaments - Rare|XDMG"
+      ],
+      "hasFluffImages": true
     }
   ],
   "wealth": {
@@ -2605,6 +2618,14 @@
       "timestamp": 1771087776976,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON",
+      "result": 5,
+      "details": "(2) + 3",
+      "timestamp": 1771136171547,
+      "diceType": "d20",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -2620,38 +2641,184 @@
       "type": "custom"
     }
   ],
-  "notes": [
-    {
-      "id": "1fb30d8b-5906-41a0-a7ac-7b28cd665dfe",
-      "title": "New Note 2",
-      "subject": "Test note wandafl",
-      "content": "",
-      "categoryIds": [
-        "6b08bbc5-07ce-4b26-97ab-690097eda12c",
-        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b"
-      ],
-      "lastModified": 1771087291682
-    },
-    {
-      "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
-      "title": "TO DO LIST:",
-      "subject": "Typa shi to do for this goofy ahh website",
-      "content": "<ol><li>Implement the background features for the character.</li><li>Implement the race features for the character.</li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.</li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li></ol>",
-      "categoryIds": [
-        "6b08bbc5-07ce-4b26-97ab-690097eda12c"
-      ],
-      "lastModified": 1771088667775
-    }
-  ],
+  "notes": [],
   "noteCategories": [
     {
-      "id": "6b08bbc5-07ce-4b26-97ab-690097eda12c",
+      "id": "default",
       "name": "Inbox",
       "isDefault": true
     },
     {
-      "id": "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
-      "name": "Random Category #2"
+      "id": "quest",
+      "name": "Quest Log",
+      "isDefault": false
+    },
+    {
+      "id": "npcs",
+      "name": "NPCs",
+      "isDefault": false
+    }
+  ],
+  "feats": [
+    {
+      "name": "Ability Score Improvement",
+      "source": "XPHB",
+      "page": 202,
+      "srd52": true,
+      "basicRules2024": true,
+      "category": "G",
+      "prerequisite": [
+        {
+          "level": 4
+        }
+      ],
+      "repeatable": true,
+      "repeatableHidden": true,
+      "ability": [
+        {
+          "choose": {
+            "from": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ],
+            "amount": 2
+          },
+          "hidden": true
+        },
+        {
+          "choose": {
+            "from": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ],
+            "count": 2
+          },
+          "hidden": true
+        }
+      ],
+      "entries": [
+        "Increase one ability score of your choice by 2, or increase two ability scores of your choice by 1. This feat can't increase an ability score above 20.",
+        {
+          "type": "entries",
+          "name": "Repeatable",
+          "entries": [
+            "You can take this feat more than once."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {
+          "str": 1,
+          "dex": 1
+        },
+        "spells": {}
+      }
+    },
+    {
+      "name": "Skill Expert",
+      "source": "XPHB",
+      "page": 207,
+      "category": "G",
+      "prerequisite": [
+        {
+          "level": 4
+        }
+      ],
+      "ability": [
+        {
+          "choose": {
+            "from": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ]
+          }
+        }
+      ],
+      "skillProficiencies": [
+        {
+          "any": 1
+        }
+      ],
+      "expertise": [
+        {
+          "anyProficientSkill": 1
+        }
+      ],
+      "entries": [
+        "You gain the following benefits.",
+        {
+          "type": "entries",
+          "name": "Skill Proficiency",
+          "entries": [
+            "You gain proficiency in one skill of your choice."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Expertise",
+          "entries": [
+            "Choose one skill in which you have proficiency but lack {@variantrule Expertise|XPHB}. You gain {@variantrule Expertise|XPHB} with that skill."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {
+          "str": 1
+        },
+        "spells": {},
+        "profs": {
+          "skill-0-0": "acrobatics",
+          "expertise-1-0": "arcana"
+        }
+      }
+    },
+    {
+      "name": "Linguist",
+      "source": "PHB",
+      "page": 167,
+      "ability": [
+        {
+          "int": 1
+        }
+      ],
+      "languageProficiencies": [
+        {
+          "any": 3
+        }
+      ],
+      "entries": [
+        "You have studied languages and codes, gaining the following benefits:",
+        {
+          "type": "list",
+          "items": [
+            "You learn three languages of your choice.",
+            "You can ably create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC equal to your Intelligence score + your proficiency bonus), or they use magic to decipher it."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {
+          "int": 1
+        },
+        "spells": {},
+        "profs": {
+          "language-0-0": "common",
+          "language-0-1": "abyssal",
+          "language-0-2": "deep speech"
+        }
+      }
     }
   ]
 }
