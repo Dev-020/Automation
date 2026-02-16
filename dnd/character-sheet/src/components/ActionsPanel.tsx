@@ -5,6 +5,8 @@ import { SidePanel } from './SidePanel';
 import type { Action, Spell, SpellSlots, AbilityScore, StatName, Feature, RollEntry, Resource } from '../types';
 import { rollFormula, formatModifier } from '../utils/dnd';
 import { ResourceManager } from './ResourceManager';
+import { ActionList } from './ActionList';
+import { HomebrewActionsPanel } from './HomebrewActionsPanel';
 
 interface ActionsPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,11 +23,16 @@ interface ActionsPanelProps {
   sendToDiscord: boolean;
   character: any; 
   onUpdateResources: (resources: Resource[]) => void;
+  // Callback for updating full character state if needed (mainly for homebrew)
+  onUpdateCharacter?: (updates: any) => void;
 }
 
 export const ActionsPanel: React.FC<ActionsPanelProps> = ({ 
-    actions, spells, spellSlots, stats, onUpdateSlots, characterClass, level, allSpells, feats, onRoll, sendToDiscord, character, onUpdateResources 
+    actions, spells, spellSlots, stats, onUpdateSlots, characterClass, level, allSpells, feats, onRoll, sendToDiscord, character, onUpdateResources, onUpdateCharacter 
 }) => {
+    // View Mode State
+    const [actionViewMode, setActionViewMode] = useState<'Standard' | 'Homebrew'>('Standard');
+
     const [standardActions, setStandardActions] = useState<any[]>([]);
     const [selectedAction, setSelectedAction] = useState<any | null>(null);
     
@@ -43,11 +50,6 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
             })
             .catch(err => console.error("Failed to load standard actions:", err));
     }, []);
-
-    const handleActionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const action = standardActions.find(a => a.name === e.target.value);
-        setSelectedAction(action || null);
-    };
 
     // --- Feat Spell Parsing (Replicated from SpellsPanel) ---
     const { featSpells } = useMemo(() => {
@@ -270,53 +272,43 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1fr 1fr', gap: '1rem', height: '100%', overflow: 'hidden' }}>
             
-            {/* Column 1: Actions (Standard) */}
+            {/* Column 1: Actions (Standard / Homebrew Switch) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'hidden', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)' }}>
-                 <h3 style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: 0 }}>Actions</h3>
-                 <div style={{ paddingBottom: '0.5rem' }}>
-                    <select 
-                        value={selectedAction?.name || ''} 
-                        onChange={handleActionChange}
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
+                    <h3 style={{ margin: 0 }}>{actionViewMode === 'Standard' ? 'Actions' : 'Homebrew'}</h3>
+                    <button 
+                        onClick={() => setActionViewMode(prev => prev === 'Standard' ? 'Homebrew' : 'Standard')}
                         style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            backgroundColor: '#1f2937', 
-                            color: 'var(--color-text-primary)',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: '6px',
-                            fontSize: '1rem',
+                            background: 'transparent',
+                            border: '1px solid var(--glass-border)',
+                            borderRadius: '4px',
+                            color: actionViewMode === 'Homebrew' ? 'var(--color-primary)' : 'var(--color-text-muted)',
                             cursor: 'pointer',
-                            outline: 'none',
-                            appearance: 'none',
-                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                            backgroundPosition: 'right 0.5rem center',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: '1.5em 1.5em'
+                            fontSize: '0.8rem',
+                            padding: '2px 8px',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
                         }}
+                        title={actionViewMode === 'Standard' ? "Switch to Homebrew Actions" : "Switch to Standard Actions"}
                     >
-                        {standardActions.map((action, idx) => (
-                            <option key={idx} value={action.name} style={{ backgroundColor: '#1f2937' }}>{action.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div style={{ overflowY: 'auto', flex: 1, paddingRight: '0.5rem' }}>
-                    {selectedAction && (
-                        <Card className="action-detail-view" style={{ border: 'none', background: 'transparent', padding: 0, boxShadow: 'none' } as any}>
-                            <div style={{ marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
-                                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-primary-light)' }}>
-                                    {selectedAction.name}
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                                    <span>{selectedAction.time?.[0]?.number} {selectedAction.time?.[0]?.unit}</span>
-                                    <span>{selectedAction.source} • p.{selectedAction.page}</span>
-                                </div>
-                            </div>
-                            <div style={{ lineHeight: 1.6, fontSize: '0.95rem' }}>
-                                <EntryRenderer entry={selectedAction.entries} />
-                            </div>
-                        </Card>
-                    )}
-                </div>
+                        {actionViewMode === 'Standard' ? '↺ Swap' : '↩ Return'}
+                    </button>
+                 </div>
+                 
+                 {actionViewMode === 'Standard' ? (
+                     <ActionList 
+                        actions={standardActions} 
+                        selectedAction={selectedAction} 
+                        onSelectAction={setSelectedAction} 
+                     />
+                 ) : (
+                     <HomebrewActionsPanel 
+                        character={character} 
+                        onUpdateCharacter={onUpdateCharacter || (() => {})} 
+                     />
+                 )}
             </div>
 
             {/* Column 2: Spellcasting Setup */}

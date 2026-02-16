@@ -44,7 +44,27 @@ export interface Action {
   damage: string; // e.g. "1d8 + 3"
   damageType: string;
   notes?: string;
+  // Extended fields
+  time?: { number: number; unit: string }[];
+  source?: string;
+  page?: number;
+  entries?: (string | FeatureEntry)[];
 }
+
+export interface GeminiState {
+    mode: 'Integrated' | 'Autonomous';
+    activeToggles: {
+        coreCasting: boolean;
+        singularity: boolean;
+    };
+    adaptiveSpell?: {
+        name: string;
+        targetName: string;
+    };
+}
+
+// ... existing interfaces ...
+
 
 export interface Spell {
   name: string;
@@ -263,6 +283,7 @@ export interface Character {
       feats: Feature[];
       spells: Spell[];
       blueprints: Blueprint[];
+      gemini?: GeminiState;
   };
 }
 
