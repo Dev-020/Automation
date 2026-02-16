@@ -2,8 +2,9 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Card } from './Card';
 import EntryRenderer from './EntryRenderer';
 import { SidePanel } from './SidePanel';
-import type { Action, Spell, SpellSlots, AbilityScore, StatName, Feature, RollEntry } from '../types';
+import type { Action, Spell, SpellSlots, AbilityScore, StatName, Feature, RollEntry, Resource } from '../types';
 import { rollFormula, formatModifier } from '../utils/dnd';
+import { ResourceManager } from './ResourceManager';
 
 interface ActionsPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -18,9 +19,13 @@ interface ActionsPanelProps {
   feats: Feature[];
   onRoll: (entry: RollEntry) => void;
   sendToDiscord: boolean;
+  character: any; 
+  onUpdateResources: (resources: Resource[]) => void;
 }
 
-export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spellSlots, stats, onUpdateSlots, characterClass, level, allSpells, feats, onRoll, sendToDiscord }) => {
+export const ActionsPanel: React.FC<ActionsPanelProps> = ({ 
+    actions, spells, spellSlots, stats, onUpdateSlots, characterClass, level, allSpells, feats, onRoll, sendToDiscord, character, onUpdateResources 
+}) => {
     const [standardActions, setStandardActions] = useState<any[]>([]);
     const [selectedAction, setSelectedAction] = useState<any | null>(null);
     
@@ -497,11 +502,15 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
                 </div>
             </div>
 
-            {/* Column 3: Limited Use Features (Placeholder) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <h3 style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: 0 }}>Limited Use</h3>
-                <div style={{ padding: '1rem', border: '1px dashed var(--glass-border)', borderRadius: '8px', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                    Limited Use Features Pending...
+            {/* Column 3: Limited Use Features */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'hidden', paddingRight: '0.5rem' }}>
+                <h3 style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: 0 }}>Resources</h3>
+                <div style={{ flex: 1, overflow: 'hidden' }}>
+                    <ResourceManager 
+                        resources={character.resources || []} 
+                        character={character} 
+                        onChange={onUpdateResources} 
+                    />
                 </div>
             </div>
 

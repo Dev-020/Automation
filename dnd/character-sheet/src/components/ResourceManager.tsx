@@ -130,81 +130,126 @@ export const ResourceManager: React.FC<ResourceManagerProps> = ({ resources, cha
 
 
     return (
-        <div className="resource-manager" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {resources.map(res => (
-                <div key={res.id} style={{ 
-                    border: '1px solid #333', 
-                    padding: '0.5rem', 
-                    borderRadius: '4px',
-                    background: 'rgba(0,0,0,0.2)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '4px'
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                         <span style={{ fontWeight: 'bold' }}>{res.name}</span>
-                         <button onClick={() => handleRemove(res.id)} style={{ color: '#ff4444', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
-                    </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                            {/* Simple Counter UI */}
-                            <button 
-                                onClick={() => handleUpdate(res.id, { current: Math.max(0, res.current - 1) })}
-                                style={{ width: '24px', height: '24px', background: '#333', border: '1px solid #555', color: 'white' }}
-                            >-</button>
-                            <span style={{ minWidth: '40px', textAlign: 'center' }}>
-                                {res.current} / {res.max}
-                            </span>
-                            <button 
-                                onClick={() => handleUpdate(res.id, { current: Math.min(res.max, res.current + 1) })}
-                                style={{ width: '24px', height: '24px', background: '#333', border: '1px solid #555', color: 'white' }}
-                            >+</button>
-                        </div>
-                        <span style={{ fontSize: '0.8rem', opacity: 0.7 }}>Reset: {res.reset}</span>
-                    </div>
-                </div>
-            ))}
-
-            <div style={{ position: 'relative', marginTop: '1rem' }}>
+        <div className="resource-manager" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {/* Header / Add Button */}
+            <div style={{ paddingBottom: '1rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '1rem', position: 'relative' }}>
                 <button 
                     onClick={() => setShowAddMenu(!showAddMenu)}
-                    style={{ width: '100%', padding: '0.5rem', background: '#333', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        backgroundColor: '#1f2937', 
+                        color: 'var(--color-text-primary)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '6px',
+                        fontSize: '1rem',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        outline: 'none',
+                        position: 'relative',
+                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                        backgroundPosition: 'right 0.5rem center',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: '1.5em 1.5em'
+                    }}
                 >
-                    + Add Resource
+                    {showAddMenu ? 'Select Resource...' : '+ Add Resource'}
                 </button>
                 
                 {showAddMenu && (
                     <div style={{ 
                         position: 'absolute', 
-                        bottom: '100%', 
+                        top: '100%', // Open downwards
                         left: 0, 
                         right: 0, 
-                        background: '#222', 
-                        border: '1px solid #444', 
-                        borderRadius: '4px',
-                        zIndex: 100,
+                        marginTop: '0.25rem',
+                        backgroundColor: '#1f2937', 
+                        border: '1px solid var(--glass-border)', 
+                        borderRadius: '6px',
+                        zIndex: 1000,
                         display: 'flex',
-                        flexDirection: 'column'
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.5)',
+                        maxHeight: '300px',
+                        overflowY: 'auto'
                     }}>
                         <button onClick={() => handleAdd('InnateSorcery')} style={presetBtnStyle}>Innate Sorcery (2)</button>
                         <button onClick={() => handleAdd('SorceryPoints')} style={presetBtnStyle}>Sorcery Points (Std)</button>
                         <button onClick={() => handleAdd('SorceryPointsHomebrew')} style={presetBtnStyle}>Sorcery Points (Homebrew)</button>
                         <button onClick={() => handleAdd('CoreStrains')} style={presetBtnStyle}>Core Strains (Con+PB)</button>
-                        <button onClick={() => handleAdd('Custom')} style={presetBtnStyle}>Custom Resource</button>
+                        <button onClick={() => handleAdd('Custom')} style={{ ...presetBtnStyle, borderBottom: 'none' }}>Custom Resource</button>
                     </div>
                 )}
+            </div>
+
+            {/* Scrollable List */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingRight: '0.5rem' }}>
+                {resources.length === 0 && (
+                    <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontStyle: 'italic', padding: '1rem' }}>
+                        No resources tracked.
+                    </div>
+                )}
+                {resources.map(res => (
+                    <div key={res.id} style={{ 
+                        border: '1px solid var(--glass-border)', 
+                        padding: '0.75rem', 
+                        borderRadius: '6px',
+                        background: 'rgba(0,0,0,0.2)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                             <span style={{ fontWeight: 'bold', color: 'var(--color-text-primary)' }}>{res.name}</span>
+                             <button 
+                                onClick={() => handleRemove(res.id)} 
+                                style={{ 
+                                    color: '#ef4444', 
+                                    background: 'none', 
+                                    border: 'none', 
+                                    cursor: 'pointer', 
+                                    fontSize: '1.2rem',
+                                    padding: '0 4px',
+                                    lineHeight: 1
+                                }}
+                                title="Remove Resource"
+                             >
+                                 &times;
+                             </button>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '4px' }}>
+                            <button 
+                                onClick={() => handleUpdate(res.id, { current: Math.max(0, res.current - 1) })}
+                                style={{ width: '28px', height: '28px', background: '#374151', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+                            >-</button>
+                            <span style={{ fontWeight: 'bold', fontSize: '1rem' }}>
+                                {res.current} <span style={{ color: 'var(--color-text-muted)', fontWeight: 'normal' }}>/ {res.max}</span>
+                            </span>
+                            <button 
+                                onClick={() => handleUpdate(res.id, { current: Math.min(res.max, res.current + 1) })}
+                                style={{ width: '28px', height: '28px', background: '#374151', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+                            >+</button>
+                        </div>
+                        <div style={{ textAlign: 'right', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                            Reset: {res.reset}
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
 
 const presetBtnStyle = {
-    padding: '0.5rem',
+    padding: '0.75rem',
     textAlign: 'left' as const,
-    background: 'none',
+    background: 'transparent',
     border: 'none',
-    color: '#ddd',
+    color: 'var(--color-text-primary)',
     cursor: 'pointer',
-    borderBottom: '1px solid #333'
+    borderBottom: '1px solid var(--glass-border)',
+    fontSize: '0.9rem',
+    transition: 'background 0.2s'
 };
