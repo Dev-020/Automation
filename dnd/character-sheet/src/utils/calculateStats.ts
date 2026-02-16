@@ -76,7 +76,8 @@ export function calculateEffectiveStats(
 
 export function calculateAC(
     dexMod: number,
-    items: Item[]
+    items: Item[],
+    gemini?: { mode: 'Integrated' | 'Autonomous', conMod: number, chaMod: number }
 ): { total: number, breakdown: string[] } {
     
     let armorAC = 10 + dexMod; // Default: Unarmored (Base 10 + Dex)
@@ -157,6 +158,14 @@ export function calculateAC(
         }
     });
 
-    const total = armorAC + shieldAC + magicBonus;
+    // 4. Gemini Protocol: Integrated Mode
+    let geminiBonus = 0;
+    if (gemini && gemini.mode === 'Integrated') {
+        // "Enhanced Defense Matrices (+CON/CHA to AC)"
+        geminiBonus = gemini.conMod + gemini.chaMod;
+        breakdown.push(`Gemini Integrated: +${geminiBonus} (CON+CHA)`);
+    }
+
+    const total = armorAC + shieldAC + magicBonus + geminiBonus;
     return { total, breakdown };
 }

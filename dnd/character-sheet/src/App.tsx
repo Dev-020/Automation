@@ -102,6 +102,7 @@ function App() {
       // 2. Calculate Derived Vitals
       const conMod = newStats.CON.modifier;
       const dexMod = newStats.DEX.modifier;
+      const chaMod = newStats.CHA.modifier;
       
       const newProf = getProficiencyBonus(character.level);
       const newMaxHP = calculateMaxHP(character.level, conMod, character.class);
@@ -109,7 +110,13 @@ function App() {
       const newSorceryPointsMax = getSorceryPoints(character.level, character.class);
       
       // 3. Calculate AC
-      const { total: newAC, breakdown: newACBreakdown } = calculateAC(dexMod, character.inventory || []);
+      const geminiConfig = character.homebrew?.gemini ? {
+          mode: character.homebrew.gemini.mode,
+          conMod,
+          chaMod
+      } : undefined;
+
+      const { total: newAC, breakdown: newACBreakdown } = calculateAC(dexMod, character.inventory || [], geminiConfig);
 
       // 4. Calculate Initiative (Baseline = Dex Mod + Alert Feat)
       const hasAlert = character.features.some(f => f.name === 'Alert');
@@ -175,7 +182,8 @@ function App() {
       // Dependencies: Trigger on Base Stat changes, Manual Modifiers, or Items
       JSON.stringify(character.stats), 
       JSON.stringify(character.inventory),
-      JSON.stringify(character.features)
+      JSON.stringify(character.features),
+      JSON.stringify(character.homebrew)
   ]);
 
   // Fetch Spells and Skills
@@ -507,6 +515,7 @@ function App() {
                     sendToDiscord={sendToDiscord}
                     character={character}
                     onUpdateResources={(resources) => setCharacter(prev => ({ ...prev, resources }))}
+                    onUpdateCharacter={(updates) => setCharacter(prev => ({ ...prev, ...updates }))}
                 />}
                 {activeTab === 'Spells' && <SpellsPanel character={character} spells={character.spells} slots={character.spellSlots} allSpells={allSpells} onUpdateSpells={(updatedSpells) => setCharacter(prev => ({ ...prev, spells: updatedSpells }))} level={character.level} />}
                 {activeTab === 'Inventory' && <InventoryPanel 

@@ -21,7 +21,19 @@ export const GeminiProtocolPanel: React.FC<GeminiProtocolPanelProps> = ({ gemini
     };
 
     const handleModeSwitch = (mode: 'Integrated' | 'Autonomous') => {
-        onChange({ ...state, mode });
+        // When switching to Autonomous, Singularity Field must be disabled
+        if (mode === 'Autonomous') {
+             onChange({ 
+                 ...state, 
+                 mode,
+                 activeToggles: {
+                     ...state.activeToggles,
+                     singularity: false // Force disable
+                 }
+             });
+        } else {
+            onChange({ ...state, mode });
+        }
     };
 
     const toggleFeature = (feature: keyof GeminiState['activeToggles']) => {
@@ -111,15 +123,27 @@ export const GeminiProtocolPanel: React.FC<GeminiProtocolPanelProps> = ({ gemini
                         <span style={{ fontWeight: 'bold', color: 'var(--color-text-primary)' }}>Singularity Field</span>
                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Gravity Well & Flight (+1 Strain/turn)</span>
                     </div>
-                    <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                    <label 
+                        className="switch" 
+                        style={{ 
+                            position: 'relative', 
+                            display: 'inline-block', 
+                            width: '44px', 
+                            height: '24px',
+                            opacity: state.mode === 'Autonomous' ? 0.5 : 1,
+                            cursor: state.mode === 'Autonomous' ? 'not-allowed' : 'pointer'
+                        }}
+                        title={state.mode === 'Autonomous' ? 'Disabled in Autonomous Mode' : 'Toggle Singularity Field'}
+                    >
                         <input 
                             type="checkbox" 
                             checked={state.activeToggles.singularity} 
+                            disabled={state.mode === 'Autonomous'}
                             onChange={() => toggleFeature('singularity')}
                             style={{ opacity: 0, width: 0, height: 0 }}
                         />
                         <span style={{
-                            position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
+                            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                             backgroundColor: state.activeToggles.singularity ? 'var(--color-primary)' : '#4b5563',
                             transition: '.3s', borderRadius: '24px'
                         }}>
