@@ -117,13 +117,18 @@ async function loadData() {
             const sourceEntry = sourceData[sourceKeyLower]?.[lookupName];
             
             const classes = [];
-            if (sourceEntry && sourceEntry.class) {
-                // Iterate over all source versions (PHB, TCE, XPHB, etc) in the lookup
-                Object.values(sourceEntry.class).forEach(classObj => {
+            const extractClasses = (sourceObj) => {
+                if (!sourceObj) return;
+                Object.values(sourceObj).forEach(classObj => {
                     Object.keys(classObj).forEach(cls => {
                         if (!classes.includes(cls)) classes.push(cls);
                     });
                 });
+            };
+
+            if (sourceEntry) {
+                if (sourceEntry.class) extractClasses(sourceEntry.class);
+                if (sourceEntry.classVariant) extractClasses(sourceEntry.classVariant);
             }
             
             // Return enriched spell
