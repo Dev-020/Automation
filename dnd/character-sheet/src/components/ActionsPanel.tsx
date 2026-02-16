@@ -79,6 +79,88 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
     const spellAttack = modifier + profBonus;
     const saveDC = 8 + modifier + profBonus;
 
+    // Upcasting State
+    const [castLevels, setCastLevels] = useState<Record<string, number>>({});
+
+    const handleCastLevelChange = (spellName: string, level: number) => {
+        setCastLevels(prev => ({ ...prev, [spellName]: level }));
+    };
+
+    const getUpcastFormula = (spell: Spell, castLevel: number): string | null => {
+        const baseFormula = getEffectFormula(spell);
+        if (!baseFormula) return null;
+
+        // Cantrip Scaling (Level 0)
+        if (spell.level === 0) {
+             if (spell.scalingLevelDice && spell.scalingLevelDice.scaling) {
+                 const levels = Object.keys(spell.scalingLevelDice.scaling).map(Number).sort((a, b) => a - b);
+                 // Find highest threshold <= character level
+                 // e.g. for level 5 char: [1, 5, 11, 17] -> 5 is valid.
+                 // reverse to find first match from top
+                 for (let i = levels.length - 1; i >= 0; i--) {
+                     if (level >= levels[i]) {
+                         return spell.scalingLevelDice.scaling[levels[i]];
+                     }
+                 }
+             }
+             return baseFormula;
+        }
+
+        // Leveled Spells Upcasting
+        if (castLevel > spell.level && spell.entriesHigherLevel) {
+            const higherLevelEntry = spell.entriesHigherLevel[0];
+            if (higherLevelEntry) {
+                 const text = JSON.stringify(higherLevelEntry.entries);
+                 
+                 // Pattern: {@scaledice 2d8|1-9|1d8} or {@scaledamage 8d6|3-9|1d6}
+                 // Format: {@tag BASE|RANGE|STEP}
+                 // match[1] = step (the 3rd part)
+                 const scaleMatch = text.match(/{@(?:scaledice|scaledamage)\s+[^|]+\|[^|]+\|([^}]+)}/i);
+                 
+                 if (scaleMatch) {
+                     const extraDiceStr = scaleMatch[1]; // e.g. "1d8" or "1d6"
+                     const extraLevels = castLevel - spell.level;
+                     
+                     // Parse dice string (e.g. "1d6")
+                     const parts = extraDiceStr.split('d');
+                     if (parts.length === 2) {
+                         const count = parseInt(parts[0]) || 1;
+                         const face = parts[1]; 
+                         
+                         // Calculate total extra dice
+                         const totalExtraCount = count * extraLevels;
+                         
+                         return `${baseFormula} + ${totalExtraCount}d${face}`;
+                     }
+                 }
+
+                 // Fallback for simple "increases by {@damage ...}" text if no scale tag
+                 const damageMatch = text.match(/increases by (?:{@damage|{@dice)\s+([^}]+)}/i);
+                 if (damageMatch) {
+                     const extraDiceStr = damageMatch[1]; // e.g. "1d6"
+                     const extraLevels = castLevel - spell.level;
+                     
+                     // Parse dice string (e.g. "1d6")
+                     const parts = extraDiceStr.split('d');
+                     if (parts.length === 2) {
+                         const count = parseInt(parts[0]) || 1;
+                         const face = parts[1]; 
+                         
+                         // Calculate total extra dice
+                         const totalExtraCount = count * extraLevels;
+                         
+                         // Return combined formula: "8d6 + 1d6"
+                         // Ideally we'd sum the counts if faces match, but simple concatenation is safer 
+                         // and supported by our DiceRoller ("3d6 + 2d6").
+                         return `${baseFormula} + ${totalExtraCount}d${face}`;
+                     }
+                 }
+            }
+        }
+        
+        return baseFormula;
+    };
+
     const toggleSlot = (level: number, index: number) => {
         const current = spellSlots[level]?.current || 0;
         const max = spellSlots[level]?.max || 0;
@@ -130,6 +212,10 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
     const handleActiveSpellChange = (level: number, spellName: string) => {
         const spell = spellsByLevel[level]?.find(s => s.name === spellName) || null;
         setActiveSpellsByLevel(prev => ({ ...prev, [level]: spell }));
+        // Reset cast level when switching spell
+        if (spell) {
+             setCastLevels(prev => ({ ...prev, [spell.name]: spell.level }));
+        }
     };
 
     const getSpellEffectType = (spell: Spell): string => {
@@ -153,34 +239,27 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
         onRoll(result);
     };
 
-    const handleEffectRoll = (spell: Spell) => {
-        // Simple Parser for "{@damage 1d8}" or "{@dice 1d20}"
-        // Finds first occurrence of dice tag
-        // TODO: Handle cantrip scaling (scalingLevelDice) and upcasting later
-        let formula = '';
+    const getEffectFormula = (spell: Spell): string | null => {
         const entryStr = JSON.stringify(spell.entries || []);
         const damageMatch = entryStr.match(/{@damage\s+([^}]+)}/);
         const diceMatch = entryStr.match(/{@dice\s+([^}]+)}/);
-        
-        if (damageMatch) {
-            formula = damageMatch[1];
-        } else if (diceMatch) {
-            formula = diceMatch[1];
-        }
+        return damageMatch ? damageMatch[1] : (diceMatch ? diceMatch[1] : null);
+   };
+
+    const handleEffectRoll = (spell: Spell) => {
+        // Use Upcast Logic
+        const castLevel = castLevels[spell.name] || spell.level;
+        const formula = getUpcastFormula(spell, castLevel);
 
         if (formula) {
-            const result = rollFormula(formula, `Effect: ${spell.name}`, sendToDiscord);
+            const label = castLevel > spell.level 
+                ? `Effect: ${spell.name} (Lvl ${castLevel})` 
+                : `Effect: ${spell.name}`;
+            const result = rollFormula(formula, label, sendToDiscord);
             onRoll(result);
         } else {
             alert("No dice formula found for this spell.");
         }
-    };
-    
-    const getEffectFormula = (spell: Spell): string | null => {
-         const entryStr = JSON.stringify(spell.entries || []);
-         const damageMatch = entryStr.match(/{@damage\s+([^}]+)}/);
-         const diceMatch = entryStr.match(/{@dice\s+([^}]+)}/);
-         return damageMatch ? damageMatch[1] : (diceMatch ? diceMatch[1] : null);
     };
 
     return (
@@ -357,6 +436,31 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
                                                     
                                                     {/* Contextual Roll Button or Type */}
                                                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                        {/* Cast Level Selector for Leveled Spells */}
+                                                        {activeSpell.level > 0 && getEffectFormula(activeSpell) && spellSlots && (
+                                                            <select
+                                                                value={castLevels[activeSpell.name] || activeSpell.level}
+                                                                onChange={(e) => handleCastLevelChange(activeSpell.name, parseInt(e.target.value))}
+                                                                style={{
+                                                                    background: '#1f2937',
+                                                                    color: 'var(--color-text-primary)',
+                                                                    border: '1px solid var(--glass-border)',
+                                                                    borderRadius: '4px',
+                                                                    padding: '2px 4px',
+                                                                    fontSize: '0.8rem',
+                                                                    outline: 'none',
+                                                                    cursor: 'pointer'
+                                                                }}
+                                                                title="Cast at Level"
+                                                            >
+                                                                {[1, 2, 3, 4, 5, 6, 7, 8, 9]
+                                                                    .filter(l => l >= activeSpell.level && (spellSlots[l]?.max > 0))
+                                                                    .map(l => (
+                                                                    <option key={l} value={l}>Lvl {l}</option>
+                                                                ))}
+                                                            </select>
+                                                        )}
+
                                                         {getEffectFormula(activeSpell) ? (
                                                             <button
                                                                 onClick={() => handleEffectRoll(activeSpell)}
@@ -372,7 +476,7 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
                                                                 }}
                                                                 title="Click to Roll"
                                                             >
-                                                                {getEffectFormula(activeSpell)}
+                                                                {getUpcastFormula(activeSpell, castLevels[activeSpell.name] || activeSpell.level) || getEffectFormula(activeSpell)}
                                                             </button>
                                                         ) : (
                                                             <div style={{ fontSize: '0.75rem', fontStyle: 'italic', opacity: 0.7 }}>

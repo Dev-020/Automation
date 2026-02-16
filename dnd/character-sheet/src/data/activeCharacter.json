@@ -1222,6 +1222,137 @@
         "Wizard"
       ],
       "prepared": true
+    },
+    {
+      "name": "Burning Hands",
+      "source": "XPHB",
+      "page": 248,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 1,
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "cone",
+        "distance": {
+          "type": "feet",
+          "amount": 15
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "A thin sheet of flames shoots forth from you. Each creature in a 15-foot {@variantrule Cone [Area of Effect]|XPHB|Cone} makes a Dexterity saving throw, taking {@damage 3d6} Fire damage on a failed save or half as much damage on a successful one.",
+        "Flammable objects in the {@variantrule Cone [Area of Effect]|XPHB|Cone} that aren't being worn or carried start {@hazard burning|XPHB}."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "The damage increases by {@scaledamage 3d6|1-9|1d6} for each spell slot level above 1."
+          ]
+        }
+      ],
+      "damageInflict": [
+        "fire"
+      ],
+      "savingThrow": [
+        "dexterity"
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "areaTags": [
+        "N"
+      ],
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Catapult",
+      "source": "XGE",
+      "page": 150,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 15
+        }
+      ],
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 1,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 60
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "Choose one object weighing 1 to 5 pounds within range that isn't being worn or carried. The object flies in a straight line up to 90 feet in a direction you choose before falling to the ground, stopping early if it impacts against a solid surface. If the object would strike a creature, that creature must make a Dexterity saving throw. On a failed save, the object strikes the target and stops moving. When the object strikes something, the object and what it strikes each take {@damage 3d8} bludgeoning damage."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "At Higher Levels",
+          "entries": [
+            "When you cast this spell using a spell slot of 2nd level or higher, the maximum weight of objects that you can target with this spell increases by 5 pounds, and the damage increases by {@scaledamage 3d8|1-9|1d8}, for each slot level above 1st."
+          ]
+        }
+      ],
+      "damageInflict": [
+        "bludgeoning"
+      ],
+      "savingThrow": [
+        "dexterity"
+      ],
+      "miscTags": [
+        "OBJ"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "classes": [
+        "Sorcerer",
+        "Wizard",
+        "Artificer"
+      ],
+      "prepared": true
     }
   ],
   "spellSlots": {
@@ -3355,6 +3486,430 @@
       "timestamp": 1771215578735,
       "diceType": "d4",
       "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 34,
+      "details": "(4 + 6 + 4 + 4 + 6 + 2 + 2 + 6)",
+      "timestamp": 1771217912410,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 21,
+      "details": "16 + 5",
+      "timestamp": 1771217962122,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 24,
+      "details": "19 + 5",
+      "timestamp": 1771218174739,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 15,
+      "details": "(8 + 7)",
+      "timestamp": 1771218789600,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 6,
+      "details": "(3 + 3)",
+      "timestamp": 1771218830509,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 3,
+      "details": "(2 + 1)",
+      "timestamp": 1771218832683,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 11,
+      "details": "(7 + 4)",
+      "timestamp": 1771218837267,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 12,
+      "details": "(5 + 7)",
+      "timestamp": 1771218883953,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 6,
+      "details": "6",
+      "timestamp": 1771218887201,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 12,
+      "details": "(4 + 8)",
+      "timestamp": 1771218890105,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 4,
+      "details": "(2 + 2)",
+      "timestamp": 1771219095062,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 5,
+      "details": "(1 + 4)",
+      "timestamp": 1771221053741,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 13,
+      "details": "(3 + 6) + 4",
+      "timestamp": 1771225322814,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 14,
+      "details": "(6 + 4) + 4",
+      "timestamp": 1771225326882,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 14,
+      "details": "(8 + 2) + 4",
+      "timestamp": 1771225327674,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 12,
+      "details": "(1 + 7) + 4",
+      "timestamp": 1771225328279,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 2)",
+      "result": 13,
+      "details": "(4 + 7) + 2",
+      "timestamp": 1771225353357,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 7,
+      "details": "(1 + 2) + 4",
+      "timestamp": 1771225356476,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 5,
+      "details": "(1 + 4)",
+      "timestamp": 1771225360487,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Magic Missile (Lvl 3)",
+      "result": 5,
+      "details": "4 + 1",
+      "timestamp": 1771225397435,
+      "diceType": "d4",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Magic Missile",
+      "result": 4,
+      "details": "3 + 1",
+      "timestamp": 1771225399382,
+      "diceType": "d4",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 6,
+      "details": "(3 + 3)",
+      "timestamp": 1771225404534,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 2)",
+      "result": 12,
+      "details": "(5 + 5) + 2",
+      "timestamp": 1771225406314,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 11,
+      "details": "(2 + 5) + 4",
+      "timestamp": 1771225411461,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 29,
+      "details": "(4 + 4 + 4 + 5 + 5 + 3 + 3 + 1)",
+      "timestamp": 1771225425237,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 14,
+      "details": "(5 + 5) + 4",
+      "timestamp": 1771225429360,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 3)",
+      "result": 16,
+      "details": "(4 + 4 + 6) + 2",
+      "timestamp": 1771225537573,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 3)",
+      "result": 12,
+      "details": "(6 + 3 + 1) + 2",
+      "timestamp": 1771225543962,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 2)",
+      "result": 10,
+      "details": "(2 + 1 + 6) + 1",
+      "timestamp": 1771225547472,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands",
+      "result": 11,
+      "details": "(3 + 5 + 3)",
+      "timestamp": 1771225549657,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 2)",
+      "result": 14,
+      "details": "(5 + 4 + 4) + 1",
+      "timestamp": 1771225558150,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 3)",
+      "result": 11,
+      "details": "(2 + 6 + 1) + 2",
+      "timestamp": 1771225560545,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771225728764,
+      "label": "4d2",
+      "result": 6,
+      "diceType": "mixed",
+      "details": "(2 + 1 + 2 + 1)",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 5,
+      "details": "(1 + 4)",
+      "timestamp": 1771225734091,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 11,
+      "details": "(4 + 7)",
+      "timestamp": 1771225734184,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 2)",
+      "result": 20,
+      "details": "(2 + 5) + (8 + 5)",
+      "timestamp": 1771225736145,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 31,
+      "details": "(5 + 3) + (2 + 6 + 8 + 7)",
+      "timestamp": 1771225738396,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands",
+      "result": 16,
+      "details": "(4 + 6 + 6)",
+      "timestamp": 1771225834963,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 2)",
+      "result": 17,
+      "details": "(5 + 3 + 3) + 6",
+      "timestamp": 1771225837073,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 3)",
+      "result": 21,
+      "details": "(6 + 2 + 6) + (2 + 5)",
+      "timestamp": 1771225840559,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Catapult (Lvl 2)",
+      "result": 18,
+      "details": "(5 + 2 + 7) + 4",
+      "timestamp": 1771225849417,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Catapult (Lvl 3)",
+      "result": 21,
+      "details": "(8 + 2 + 3) + (5 + 3)",
+      "timestamp": 1771225851781,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 7,
+      "details": "(5 + 2)",
+      "timestamp": 1771225872437,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 2)",
+      "result": 15,
+      "details": "(1 + 6) + (2 + 6)",
+      "timestamp": 1771225873885,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 34,
+      "details": "(8 + 3) + (6 + 4 + 6 + 7)",
+      "timestamp": 1771225875499,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 29,
+      "details": "(6 + 3 + 5 + 2 + 3 + 4 + 4 + 2)",
+      "timestamp": 1771225921860,
+      "diceType": "d6",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 10,
+      "details": "(8 + 2)",
+      "timestamp": 1771228302559,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 10,
+      "details": "(4 + 6)",
+      "timestamp": 1771228304404,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 33,
+      "details": "(6 + 5) + (5 + 1 + 8 + 8)",
+      "timestamp": 1771228346727,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 2)",
+      "result": 15,
+      "details": "(2 + 4) + (2 + 7)",
+      "timestamp": 1771228348473,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 7,
+      "details": "(3 + 4)",
+      "timestamp": 1771228350388,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands",
+      "result": 12,
+      "details": "(5 + 4 + 3)",
+      "timestamp": 1771228372783,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 2)",
+      "result": 13,
+      "details": "(3 + 4 + 2) + 4",
+      "timestamp": 1771228374306,
+      "diceType": "d6",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -3386,11 +3941,11 @@
       "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
       "title": "TO DO LIST:",
       "subject": "Typa shi to do for this goofy ahh website",
-      "content": "<ol><li>Implement the background features for the character. <b>(PARTIALLY DONE)</b></li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE)</b></span></li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE; Skilled and Expertise Bullshit left)</b></span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Refine Spell Section to be more useful</li><li>Add spell modifier, attack, save DC in spell section.</li><li>Show hit/dc and effect on each spell card</li><li>Add homebrew section <b>(PARTIALLY DONE)</b></li><li>Implement class feature for the character.</li></ol>",
+      "content": "<ol><li>Implement the background features for the character. <b>(PARTIALLY DONE)</b></li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE)</b></span></li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE; Skilled and Expertise Bullshit left)</b></span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Refine Spell Section to be more useful</li><li>Add spell modifier, attack, save DC in spell section.</li><li>Show hit/dc and effect on each spell card</li><li>Add homebrew section <b>(PARTIALLY DONE)</b></li><li>Implement class feature for the character.</li></ol><div><br></div><div><b>FINISHED:<br></b><ol style=\"color: rgb(241, 242, 244);\"><li>Add spell modifier, attack, save DC in spell section.&nbsp;<b>(DONE)</b></li><li>Show hit/dc and effect on each spell card&nbsp;<b>(DONE)</b></li></ol></div>",
       "categoryIds": [
         "6b08bbc5-07ce-4b26-97ab-690097eda12c"
       ],
-      "lastModified": 1771178093098
+      "lastModified": 1771226112437
     }
   ],
   "noteCategories": [
@@ -4328,5 +4883,6 @@
         }
       }
     ]
-  }
+  },
+  "resources": []
 }

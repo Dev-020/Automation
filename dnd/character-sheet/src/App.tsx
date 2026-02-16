@@ -115,6 +115,11 @@ function App() {
       const hasAlert = character.features.some(f => f.name === 'Alert');
       const newInit = dexMod + (hasAlert ? 5 : 0);
 
+      // 1. Validate / Initialize Data
+      if (!character.resources) {
+        setCharacter(prev => ({ ...prev, resources: [] }));
+      }
+
       // Check for Vital Changes
       let vitalsChanged = false;
       const updatedVitals = { ...character.vitals };
@@ -475,8 +480,19 @@ function App() {
             onTabChange={setActiveTab} 
           />
           
-          <div className="tab-content" style={{ overflowY: 'auto', flex: 1, paddingRight: '0.5rem', marginTop: '1rem' }}>
-            <div className="animate-fade-in">
+          <div className="tab-content" style={{ 
+            overflowY: activeTab === 'Actions' ? 'hidden' : 'auto', 
+            flex: 1, 
+            paddingRight: '0.5rem', 
+            marginTop: '1rem', 
+            display: 'flex', 
+            flexDirection: 'column',
+            height: activeTab === 'Actions' ? '100%' : 'auto'
+          }}>
+            <div className="animate-fade-in" style={{ 
+                height: activeTab === 'Actions' ? '100%' : 'auto', 
+                overflow: activeTab === 'Actions' ? 'hidden' : 'visible' 
+            }}>
                 {activeTab === 'Actions' && <ActionsPanel 
                     actions={character.actions} 
                     spells={character.spells}
@@ -489,6 +505,8 @@ function App() {
                     feats={character.feats}
                     onRoll={handleRoll}
                     sendToDiscord={sendToDiscord}
+                    character={character}
+                    onUpdateResources={(resources) => setCharacter(prev => ({ ...prev, resources }))}
                 />}
                 {activeTab === 'Spells' && <SpellsPanel character={character} spells={character.spells} slots={character.spellSlots} allSpells={allSpells} onUpdateSpells={(updatedSpells) => setCharacter(prev => ({ ...prev, spells: updatedSpells }))} level={character.level} />}
                 {activeTab === 'Inventory' && <InventoryPanel 

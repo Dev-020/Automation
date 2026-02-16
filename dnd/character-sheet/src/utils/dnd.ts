@@ -18,29 +18,65 @@ export const formatModifier = (mod: number): string => {
  * Returns a RollEntry object typical for the app's history.
  */
 export const rollFormula = (formula: string, label?: string, sendToDiscord = false): RollEntry => {
-    // 1. Parse Formula: Supports simple XdY +/- Z format
-    // Regex matches: (Count)d(Sides) (Optional: +/- Mod)
-    const regex = /(\d+)d(\d+)\s*([+-]?)\s*(\d*)/i;
-    const match = formula.replace(/\s/g, '').match(regex);
+    // 1. Normalize formula: "1d20 + 5 - 2d6"
+    // Remove all spaces for clean regex matching
+    const cleanFormula = formula.replace(/\s+/g, '');
+    
+    // Regex to split into terms: 
+    // Captures: ([+-]?) (\d+) d (\d+)  -> Dice Term
+    // Captures: ([+-]?) (\d+)          -> Flat Term
+    // We'll iterate through matches
+    
+    const termRegex = /([+-]?)(?:(\d+)d(\d+)|(\d+))/gi;
+    let match;
+    
+    let total = 0;
+    let detailsParts: string[] = [];
+    let mainDiceType = 'd20'; // Default
+    let hasDice = false;
 
-    if (!match) {
-        // Fallback or Error handling (Input might be just "5" or invalid)
-        // Check if plain number
-        const plainNum = parseInt(formula);
-        if (!isNaN(plainNum)) {
-             return {
-                label: label || `Flat Change`,
-                result: plainNum,
-                details: `${plainNum}`,
-                timestamp: Date.now(),
-                diceType: 'd20', // Generic icon
-                sendToDiscord
-            };
-        }
+    while ((match = termRegex.exec(cleanFormula)) !== null) {
+        // match[0] = full term (e.g. "+2d6")
+        // match[1] = operator ("+" or "-" or "")
+        // match[2] = dice count
+        // match[3] = dice sides
+        // match[4] = flat amount
         
-        // Invalid
-        console.warn("Invalid dice formula:", formula);
-        return {
+        const op = match[1] === '-' ? -1 : 1;
+        const opStr = match[1] === '-' ? '- ' : '+ ';
+        
+        if (match[2] && match[3]) {
+            // It's a dice roll
+            hasDice = true;
+            const count = parseInt(match[2]);
+            const sides = parseInt(match[3]);
+            mainDiceType = `d${sides}`; // Update to last seen dice type
+            
+            const rolls: number[] = [];
+            let termTotal = 0;
+            for (let i = 0; i < count; i++) {
+                const r = rollDice(sides);
+                rolls.push(r);
+                termTotal += r;
+            }
+            
+            total += (termTotal * op);
+            
+            // Format details: " + (3 + 5)"
+            const termDetail = count > 1 ? `(${rolls.join(' + ')})` : `${rolls[0]}`;
+            detailsParts.push(`${opStr}${termDetail}`);
+            
+        } else if (match[4]) {
+            // It's a flat number
+            const val = parseInt(match[4]);
+            total += (val * op);
+            detailsParts.push(`${opStr}${val}`);
+        }
+    }
+
+    if (detailsParts.length === 0) {
+        // Fallback for empty or invalid input
+         return {
             label: label || 'Invalid Roll',
             result: 0,
             details: 'Error',
@@ -50,61 +86,24 @@ export const rollFormula = (formula: string, label?: string, sendToDiscord = fal
         };
     }
 
-    const count = parseInt(match[1]);
-    const sides = parseInt(match[2]);
-    const op = match[3]; // + or - or empty
-    const mod = match[4] ? parseInt(match[4]) : 0;
-
-    // 2. Execute Rolls
-    let total = 0;
-    const rolls: number[] = [];
+    // Clean up the first operator if it's "+"
+    // e.g. "+ (5 + 2) + 3" -> "(5 + 2) + 3"
+    let details = detailsParts.join(' ');
+    if (details.startsWith('+ ')) {
+        details = details.substring(2);
+    }
     
-    for (let i = 0; i < count; i++) {
-        const r = rollDice(sides);
-        rolls.push(r);
-        total += r;
-    }
-
-    // 3. Apply Modifier
-    let finalTotal = total;
-    let modStr = '';
-
-    // Handle operator (initial calculation)
-    if (op === '-') {
-        finalTotal -= mod;
-    } else if (op === '+' || (op === '' && mod > 0)) {
-        finalTotal += mod;
-    }
-
-    // Fix for double signs + - or + + due to input formatting quirks
-    // Example: "1d20 + -3" should become "1d20 - 3"
-    // We re-evaluate the modStr based on actual math if the input op was ambiguous
-    // but the regex logic above is standard.
-    // However, if the user sees (15) + +5, it implies modStr = " + +5" or something.
-    // This happens if 'mod' is somehow negative despite regex \d*.
-    // Or if previous code had a bug.
-    // Let's force consistent formatting:
-    
-    // Recalculate based on effective modifier
-    const effectiveMod = (op === '-') ? -mod : mod;
-    if (effectiveMod > 0) {
-        modStr = ` + ${effectiveMod}`;
-    } else if (effectiveMod < 0) {
-        modStr = ` - ${Math.abs(effectiveMod)}`;
-    } else {
-        modStr = '';
-    }
-
-    // 4. Construct Details String: "(r1 + r2) + mod"
-    const rollsStr = count > 1 ? `(${rolls.join(' + ')})` : `${rolls[0]}`;
-    const details = `${rollsStr}${modStr}`;
+    // Determine strict dice type if mixed? 
+    // If mixed, maybe just "d20" or "mixed"? 
+    // For now, let's stick with the last valid dice type found, or d20 if only flat mods.
+    if (!hasDice) mainDiceType = 'd20';
 
     return {
-        label: label || formula, // Use formula as default label
-        result: finalTotal,
+        label: label || formula, 
+        result: total,
         details: details,
         timestamp: Date.now(),
-        diceType: `d${sides}`,
+        diceType: mainDiceType,
         sendToDiscord
     };
 };

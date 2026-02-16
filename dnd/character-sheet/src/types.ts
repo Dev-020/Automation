@@ -18,6 +18,16 @@ export interface AbilityScore {
   breakdown?: StatModifier[]; // For UI tooltip/display
 }
 
+export interface Resource {
+  id: string;
+  name: string;
+  current: number;
+  max: number;
+  reset: 'Short' | 'Long';
+  type: 'manual' | 'calculated';
+  maxFormula?: string; // e.g. "SorceryPointsHomebrew", "CoreStrains"
+}
+
 export interface Skill {
   name: string;
   stat: StatName;
@@ -48,6 +58,8 @@ export interface Spell {
   duration: { type: string; duration?: { type: string; amount: number }; concentration?: boolean }[];
   entries: (string | FeatureEntry)[]; // Reusing FeatureEntry for rich text
   entriesHigherLevel?: { type: string; name: string; entries: string[] }[];
+  scalingLevelDice?: { label: string; scaling: Record<string, string> };
+  damageInflict?: string[];
   meta?: { ritual?: boolean; frequency?: string };
   prepared?: boolean; // UI state, not in JSON
   classes?: string[];
@@ -239,6 +251,7 @@ export interface Character {
   };
   features: Feature[];
   feats: Feature[]; // Dedicated list for Feats (distinct from generic features)
+  resources: Resource[]; // Limited Use Resources (Manual/Homebrew)
   rollHistory: RollEntry[];
   // Notes System
   notes: Note[];
