@@ -87,6 +87,13 @@ export const ResourceManager: React.FC<ResourceManagerProps> = ({ resources, cha
                 newResource.max = calculateMax({ ...newResource, maxFormula: 'SorceryPointsHomebrew' } as Resource);
                 newResource.current = newResource.max;
                 break;
+            case 'Indomitable':
+                newResource.name = 'Indomitable';
+                newResource.max = 1;
+                newResource.current = 1;
+                newResource.type = 'manual';
+                newResource.reset = 'Long';
+                break;
             case 'Custom':
                 newResource.name = 'New Resource';
                 newResource.max = 1;
@@ -178,6 +185,7 @@ export const ResourceManager: React.FC<ResourceManagerProps> = ({ resources, cha
                         <button onClick={() => handleAdd('SorceryPoints')} style={presetBtnStyle}>Sorcery Points (Std)</button>
                         <button onClick={() => handleAdd('SorceryPointsHomebrew')} style={presetBtnStyle}>Sorcery Points (Homebrew)</button>
                         <button onClick={() => handleAdd('CoreStrains')} style={presetBtnStyle}>Core Strains (Con+PB)</button>
+                        <button onClick={() => handleAdd('Indomitable')} style={presetBtnStyle}>Indomitable (1/Long)</button>
                         <button onClick={() => handleAdd('Custom')} style={{ ...presetBtnStyle, borderBottom: 'none' }}>Custom Resource</button>
                     </div>
                 )}

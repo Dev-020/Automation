@@ -4944,7 +4944,12 @@
         "singularity": false,
         "coolant": false
       },
-      "turnSpells": []
+      "turnSpells": [],
+      "indomitable": {
+        "active": false,
+        "withheldStrain": 2,
+        "used": true
+      }
     }
   },
   "resources": [
@@ -4973,6 +4978,14 @@
       "reset": "Long",
       "type": "calculated",
       "maxFormula": "SorceryPointsHomebrew"
+    },
+    {
+      "id": "ae2589fa-64f5-415a-a83c-4b7abb7a3d1d",
+      "name": "Indomitable",
+      "current": 1,
+      "max": 1,
+      "reset": "Long",
+      "type": "manual"
     }
   ]
 }

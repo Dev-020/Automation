@@ -307,6 +307,7 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
                      <HomebrewActionsPanel 
                         character={character} 
                         onUpdateCharacter={onUpdateCharacter || (() => {})} 
+                        allKnownSpells={[...spells, ...featSpells]} // Pass both Class and Feat spells
                      />
                  )}
             </div>
@@ -501,7 +502,82 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
                     <ResourceManager 
                         resources={character.resources || []} 
                         character={character} 
-                        onChange={onUpdateResources} 
+                        onChange={(newResources) => {
+                            const oldResources = character.resources || [];
+                            
+                            // Detect Indomitable usage: was 1 (or more), now 0
+                            const oldIndom = oldResources.find((r: any) => r.name === 'Indomitable');
+                            const newIndom = newResources.find((r: any) => r.name === 'Indomitable');
+                            
+                            if (oldIndom && newIndom && oldIndom.current > 0 && newIndom.current === 0) {
+                                // Indomitable was just used — trigger Homebrew logic
+                                const coreStrains = newResources.find((r: any) => r.name === 'Core Strains');
+                                if (coreStrains && onUpdateCharacter) {
+                                    const currentVal = coreStrains.current;
+                                    const maxVal = coreStrains.max;
+                                    const doubledVal = currentVal * 2;
+                                    // Withheld = only the amount ABOVE the max limit
+                                    const withheld = Math.max(0, doubledVal - maxVal);
+                                    
+                                    // Double the Core Strains in the resource list
+                                    const updatedResources = newResources.map((r: any) => {
+                                        if (r.name === 'Core Strains') {
+                                            return { ...r, current: doubledVal };
+                                        }
+                                        return r;
+                                    });
+                                    
+                                    // Full character update: resources + gemini state
+                                    onUpdateCharacter({
+                                        ...character,
+                                        resources: updatedResources,
+                                        homebrew: {
+                                            ...character.homebrew,
+                                            gemini: {
+                                                ...(character.homebrew?.gemini || {
+                                                    mode: 'Integrated',
+                                                    activeToggles: { singularity: false, coolant: false },
+                                                    turnSpells: []
+                                                }),
+                                                mode: 'Integrated', // Forced Integrated Mode
+                                                indomitable: {
+                                                    active: doubledVal > maxVal, // Unstable Overload if exceeds max
+                                                    withheldStrain: withheld,
+                                                    used: true
+                                                }
+                                            }
+                                        }
+                                    });
+                                    return; // Skip normal resource update
+                                }
+                            }
+                            
+                            // Check if Core Strains dropped to <= max → auto-deactivate Unstable Overload
+                            const geminiState = character.homebrew?.gemini;
+                            if (geminiState?.indomitable?.active && onUpdateCharacter) {
+                                const newCoreStrains = newResources.find((r: any) => r.name === 'Core Strains');
+                                if (newCoreStrains && newCoreStrains.current <= newCoreStrains.max) {
+                                    onUpdateCharacter({
+                                        ...character,
+                                        resources: newResources,
+                                        homebrew: {
+                                            ...character.homebrew,
+                                            gemini: {
+                                                ...geminiState,
+                                                indomitable: {
+                                                    ...geminiState.indomitable,
+                                                    active: false // Unstable state ends
+                                                }
+                                            }
+                                        }
+                                    });
+                                    return;
+                                }
+                            }
+                            
+                            // Normal resource update
+                            onUpdateResources(newResources);
+                        }} 
                     />
                 </div>
             </div>

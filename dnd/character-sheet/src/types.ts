@@ -57,7 +57,12 @@ export interface GeminiState {
         singularity: boolean;
         coolant: boolean; // New: Coolant Flush toggle
     };
-    turnSpells: string[]; // New: List of spells cast this turn
+    turnSpells: { name: string; level: number }[]; 
+    indomitable?: {
+        active: boolean; // Is Unstable Overload active?
+        withheldStrain: number; 
+        used: boolean; // Long rest tracker
+    };
     adaptiveSpell?: {
         name: string;
         targetName: string;
