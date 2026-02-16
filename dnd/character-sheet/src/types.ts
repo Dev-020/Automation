@@ -54,9 +54,10 @@ export interface Action {
 export interface GeminiState {
     mode: 'Integrated' | 'Autonomous';
     activeToggles: {
-        coreCasting: boolean;
         singularity: boolean;
+        coolant: boolean; // New: Coolant Flush toggle
     };
+    turnSpells: string[]; // New: List of spells cast this turn
     adaptiveSpell?: {
         name: string;
         targetName: string;

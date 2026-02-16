@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from './Card';
+
+import { GeminiProtocolPanel } from './GeminiProtocolPanel';
+import type { GeminiState } from '../types';
 
 interface HomebrewActionsPanelProps {
     character: any;
@@ -12,6 +14,21 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
     // Placeholder groups for now
     const groups = ['Gemini Protocol'];
 
+    const handleGeminiUpdate = (newState: GeminiState) => {
+        onUpdateCharacter({
+            ...character,
+            homebrew: {
+                ...character.homebrew,
+                gemini: newState
+            }
+        });
+    };
+
+    // Find Core Strains resource
+    const coreStrains = character.resources?.find((r: any) => r.name === 'Core Strains');
+    const currentStrain = coreStrains?.current || 0;
+    const maxStrain = coreStrains?.max || 0;
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', overflowY: 'hidden' }}>
             {/* Group Selector */}
@@ -23,7 +40,7 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
                         width: '100%',
                         padding: '0.75rem',
                         backgroundColor: '#1f2937', 
-                        color: 'var(--color-primary-light)', // Distinct color for Homebrew
+                        color: 'var(--color-primary)', // Distinct color for Homebrew
                         border: '1px solid var(--color-primary)', // Distinct border
                         borderRadius: '6px',
                         fontSize: '1rem',
@@ -45,13 +62,12 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
             {/* Content Area */}
             <div style={{ overflowY: 'auto', flex: 1, paddingRight: '0.5rem' }}>
                 {selectedGroup === 'Gemini Protocol' ? (
-                    <Card title="Gemini Protocol" style={{ height: '100%', border: '1px dashed var(--color-primary)', background: 'rgba(139, 92, 246, 0.05)' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--color-text-muted)' }}>
-                            <div style={{ fontSize: '2rem' }}>⚛️</div>
-                            <div>Gemini Protocol Panel</div>
-                            <div style={{ fontSize: '0.8rem' }}>Phase 2 Implementation Pending</div>
-                        </div>
-                    </Card>
+                    <GeminiProtocolPanel 
+                        geminiState={character.homebrew?.gemini}
+                        onChange={handleGeminiUpdate}
+                        currentStrain={currentStrain}
+                        maxStrain={maxStrain}
+                    />
                 ) : (
                     <div style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>Select a Homebrew Group</div>
                 )}
