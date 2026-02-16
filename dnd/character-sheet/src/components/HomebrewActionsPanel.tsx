@@ -39,7 +39,7 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
     const maxStrain = coreStrains?.max || 0;
 
     // Find Sorcery Points resource
-    const sorceryPoints = character.resources?.find((r: any) => r.name === 'Sorcery Points');
+    const sorceryPoints = character.resources?.find((r: any) => r.name === 'Sorcery Points (HB)');
     const currentSP = sorceryPoints?.current || 0;
 
     const handleOverload = () => {
@@ -141,19 +141,36 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
              });
         }
 
-        // Coolant: if active and strain would exceed max, spend 1 SP to block overload damage
-        if (coolantActive && wouldExceedMax && currentSP > 0) {
-            newResources = newResources.map((r: any) => {
-                if (r.name === 'Sorcery Points') {
-                    return { ...r, current: r.current - 1 };
-                }
-                return r;
-            });
+        // Overload damage: only triggers when strain is GAINED this turn AND exceeds max
+        // Coolant negates this damage for 1 SP
+        let newVitals = { ...character.vitals };
+
+        if (wouldExceedMax && totalStrainAdded > 0) {
+            if (coolantActive && currentSP > 0) {
+                // Coolant active: spend 1 SP, no damage
+                newResources = newResources.map((r: any) => {
+                    if (r.name === 'Sorcery Points (HB)') {
+                        return { ...r, current: r.current - 1 };
+                    }
+                    return r;
+                });
+            } else {
+                // No Coolant: take overload damage equal to projected strain total
+                const overloadDamage = projectedTotal;
+                newVitals = {
+                    ...newVitals,
+                    hp: {
+                        ...newVitals.hp,
+                        current: Math.max(0, newVitals.hp.current - overloadDamage)
+                    }
+                };
+            }
         }
 
         // Reset Turn Log and coolant toggle
         onUpdateCharacter({
             ...character,
+            vitals: newVitals,
             resources: newResources,
             homebrew: {
                 ...character.homebrew,

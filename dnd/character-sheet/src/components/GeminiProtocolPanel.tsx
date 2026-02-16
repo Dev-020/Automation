@@ -123,9 +123,9 @@ export const GeminiProtocolPanel: React.FC<GeminiProtocolPanelProps> = ({ gemini
     const singularityStrain = state.activeToggles.singularity ? 1 : 0;
     const projectedStrain = spellStrain + singularityStrain - adaptiveStrain;
     const projectedTotal = currentStrain + projectedStrain;
-    const wouldExceedMax = projectedTotal > maxStrain;
+    const wouldExceedMax = projectedTotal > maxStrain && projectedStrain > 0;
 
-    // Coolant availability: only when projected strain would exceed max AND has SP
+    // Coolant availability: only when strain is gained this turn, would exceed max, AND has SP
     const coolantAvailable = wouldExceedMax && currentSorceryPoints > 0;
     const coolantActive = state.activeToggles.coolant;
 
@@ -571,35 +571,53 @@ export const GeminiProtocolPanel: React.FC<GeminiProtocolPanelProps> = ({ gemini
                     </button>
 
                     {/* End Turn Button */}
-                    <button 
-                        onClick={onEndTurn}
-                        style={{ 
-                            flex: 1,
-                            padding: '0.75rem', 
-                            background: coolantActive ? '#1d4ed8' : projectedStrain > 0 ? '#374151' : 'transparent', 
-                            color: coolantActive ? 'white' : 'var(--color-text-primary)', 
-                            border: `1px solid ${coolantActive ? '#3b82f6' : 'var(--glass-border)'}`, 
-                            borderRadius: '6px', 
-                            fontWeight: 'bold', 
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            transition: 'all 0.2s',
-                        }}
-                        onMouseEnter={(e) => {
-                            if (!coolantActive) e.currentTarget.style.background = '#4b5563';
-                        }}
-                        onMouseLeave={(e) => {
-                            if (!coolantActive) e.currentTarget.style.background = projectedStrain > 0 ? '#374151' : 'transparent';
-                        }}
-                    >
-                        {coolantActive ? '❄️' : '⏳'} End Turn 
-                        {projectedStrain !== 0 ? ` (${projectedStrain > 0 ? '+' : ''}${projectedStrain} Strain)` : ''}
-                        {coolantActive ? ' — Coolant (1 SP)' : ''}
-                    </button>
+                    {(() => {
+                        const wouldOverload = (currentStrain + projectedStrain) > maxStrain;
+                        const btnBg = coolantActive ? '#1d4ed8'
+                            : wouldOverload ? '#991b1b'
+                            : projectedStrain > 0 ? '#374151'
+                            : 'transparent';
+                        const btnBorder = coolantActive ? '#3b82f6'
+                            : wouldOverload ? '#ef4444'
+                            : 'var(--glass-border)';
+                        const btnColor = coolantActive ? 'white'
+                            : wouldOverload ? '#fca5a5'
+                            : 'var(--color-text-primary)';
+                        const hoverBg = coolantActive ? '#1d4ed8'
+                            : wouldOverload ? '#b91c1c'
+                            : '#4b5563';
+                        return (
+                            <button 
+                                onClick={onEndTurn}
+                                style={{ 
+                                    flex: 1,
+                                    padding: '0.75rem', 
+                                    background: btnBg, 
+                                    color: btnColor, 
+                                    border: `1px solid ${btnBorder}`, 
+                                    borderRadius: '6px', 
+                                    fontWeight: 'bold', 
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.5rem',
+                                    transition: 'all 0.2s',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = hoverBg;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = btnBg;
+                                }}
+                            >
+                                {coolantActive ? '❄️' : wouldOverload ? '⚠️' : '⏳'} End Turn 
+                                {projectedStrain !== 0 ? ` (${projectedStrain > 0 ? '+' : ''}${projectedStrain} Strain)` : ''}
+                                {coolantActive ? ' — Coolant (1 SP)' : ''}
+                            </button>
+                        );
+                    })()}
                 </div>
             </Card>
 
