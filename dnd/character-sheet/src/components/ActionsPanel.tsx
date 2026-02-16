@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Card } from './Card';
 import EntryRenderer from './EntryRenderer';
 import { SidePanel } from './SidePanel';
-import type { Action, Spell, SpellSlots, AbilityScore, StatName, Feature } from '../types';
+import type { Action, Spell, SpellSlots, AbilityScore, StatName, Feature, RollEntry } from '../types';
+import { rollFormula, formatModifier } from '../utils/dnd';
 
 interface ActionsPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,9 +16,11 @@ interface ActionsPanelProps {
   level: number;
   allSpells: Spell[];
   feats: Feature[];
+  onRoll: (entry: RollEntry) => void;
+  sendToDiscord: boolean;
 }
 
-export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spellSlots, stats, onUpdateSlots, characterClass, level, allSpells, feats }) => {
+export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spellSlots, stats, onUpdateSlots, characterClass, level, allSpells, feats, onRoll, sendToDiscord }) => {
     const [standardActions, setStandardActions] = useState<any[]>([]);
     const [selectedAction, setSelectedAction] = useState<any | null>(null);
     
@@ -130,6 +133,7 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
     };
 
     const getSpellEffectType = (spell: Spell): string => {
+        if (!spell.entries) return spell.school || 'Utility';
         if (spell.entries.some((e: any) => typeof e === 'string' && e.toLowerCase().includes('damage'))) return 'Damage';
         if (spell.entries.some((e: any) => typeof e === 'string' && e.toLowerCase().includes('heal'))) return 'Heal';
         return spell.school || 'Utility'; 
@@ -141,6 +145,42 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
         if (c.s) parts.push('S');
         if (c.m) parts.push(`M (${typeof c.m === 'string' ? c.m : 'material'})`);
         return parts.join(', ');
+    };
+
+    // --- Roll Handlers ---
+    const handleAttackRoll = (spellName: string) => {
+        const result = rollFormula(`1d20 ${formatModifier(spellAttack)}`, `Attack: ${spellName}`, sendToDiscord);
+        onRoll(result);
+    };
+
+    const handleEffectRoll = (spell: Spell) => {
+        // Simple Parser for "{@damage 1d8}" or "{@dice 1d20}"
+        // Finds first occurrence of dice tag
+        // TODO: Handle cantrip scaling (scalingLevelDice) and upcasting later
+        let formula = '';
+        const entryStr = JSON.stringify(spell.entries || []);
+        const damageMatch = entryStr.match(/{@damage\s+([^}]+)}/);
+        const diceMatch = entryStr.match(/{@dice\s+([^}]+)}/);
+        
+        if (damageMatch) {
+            formula = damageMatch[1];
+        } else if (diceMatch) {
+            formula = diceMatch[1];
+        }
+
+        if (formula) {
+            const result = rollFormula(formula, `Effect: ${spell.name}`, sendToDiscord);
+            onRoll(result);
+        } else {
+            alert("No dice formula found for this spell.");
+        }
+    };
+    
+    const getEffectFormula = (spell: Spell): string | null => {
+         const entryStr = JSON.stringify(spell.entries || []);
+         const damageMatch = entryStr.match(/{@damage\s+([^}]+)}/);
+         const diceMatch = entryStr.match(/{@dice\s+([^}]+)}/);
+         return damageMatch ? damageMatch[1] : (diceMatch ? diceMatch[1] : null);
     };
 
     return (
@@ -196,14 +236,21 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
             </div>
 
             {/* Column 2: Spellcasting Setup */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)', overflowY: 'hidden' }}>
                 <h3 style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: 0 }}>Spellcasting</h3>
                 
                 {/* Stats Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '6px' }}>
-                    <div style={{ textAlign: 'center' }}>
+                    <div 
+                        className="interactive-header"
+                        style={{ textAlign: 'center', cursor: 'pointer', userSelect: 'none', transition: 'background 0.2s', borderRadius: '4px', padding: '0.25rem' }}
+                        onClick={() => handleAttackRoll('Spell Attack')}
+                        title="Click to roll Spell Attack"
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
                         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Attack</div>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>+{spellAttack}</div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--color-primary-light)' }}>+{spellAttack}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Save DC</div>
@@ -216,7 +263,7 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
                 </div>
 
                 {/* Spell Rows (Including Cantrips which are Level 0) */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', flex: 1, paddingRight: '0.5rem' }}>
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(lvl => {
                         const slots = spellSlots[lvl];
                         const spellsAtLevel = spellsByLevel[lvl] || [];
@@ -305,10 +352,34 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({ actions, spells, spe
                                             </div>
                                             
                                             {activeSpell && (
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                                                     <div>{activeSpell.time?.[0]?.number} {activeSpell.time?.[0]?.unit}</div>
-                                                    <div>Dc {saveDC} / Hit +{spellAttack}</div> 
-                                                    <div>{getSpellEffectType(activeSpell)}</div>
+                                                    
+                                                    {/* Contextual Roll Button or Type */}
+                                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                        {getEffectFormula(activeSpell) ? (
+                                                            <button
+                                                                onClick={() => handleEffectRoll(activeSpell)}
+                                                                style={{
+                                                                    background: 'var(--color-primary)',
+                                                                    border: '1px solid var(--glass-border)',
+                                                                    borderRadius: '4px',
+                                                                    color: 'white',
+                                                                    cursor: 'pointer',
+                                                                    padding: '2px 6px',
+                                                                    fontSize: '0.8rem',
+                                                                    fontWeight: 'bold'
+                                                                }}
+                                                                title="Click to Roll"
+                                                            >
+                                                                {getEffectFormula(activeSpell)}
+                                                            </button>
+                                                        ) : (
+                                                            <div style={{ fontSize: '0.75rem', fontStyle: 'italic', opacity: 0.7 }}>
+                                                                {getSpellEffectType(activeSpell)}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
                                         </>

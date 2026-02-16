@@ -487,6 +487,8 @@ function App() {
                     level={character.level}
                     allSpells={allSpells}
                     feats={character.feats}
+                    onRoll={handleRoll}
+                    sendToDiscord={sendToDiscord}
                 />}
                 {activeTab === 'Spells' && <SpellsPanel character={character} spells={character.spells} slots={character.spellSlots} allSpells={allSpells} onUpdateSpells={(updatedSpells) => setCharacter(prev => ({ ...prev, spells: updatedSpells }))} level={character.level} />}
                 {activeTab === 'Inventory' && <InventoryPanel 

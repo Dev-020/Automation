@@ -1176,6 +1176,52 @@
         "Wizard"
       ],
       "prepared": true
+    },
+    {
+      "name": "Silvery Barbs",
+      "source": "SCC",
+      "page": 38,
+      "level": 1,
+      "school": "E",
+      "time": [
+        {
+          "number": 1,
+          "unit": "reaction",
+          "condition": "which you take when a creature you can see within 60 feet of yourself succeeds on an attack roll, an ability check, or a saving throw"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 60
+        }
+      },
+      "components": {
+        "v": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You magically distract the triggering creature and turn its momentary uncertainty into encouragement for another creature. The triggering creature must reroll the {@dice d20} and use the lower roll.",
+        "You can then choose a different creature you can see within range (you can choose yourself). The chosen creature has advantage on the next attack roll, ability check, or saving throw it makes within 1 minute. A creature can be empowered by only one use of this spell at a time."
+      ],
+      "miscTags": [
+        "ADV",
+        "SGT"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
     }
   ],
   "spellSlots": {
@@ -2749,6 +2795,566 @@
       "timestamp": 1771210664607,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Control Flames",
+      "result": 13,
+      "details": "8 + 5",
+      "timestamp": 1771213177780,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 2,
+      "details": "2",
+      "timestamp": 1771213187824,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 3,
+      "details": "3",
+      "timestamp": 1771213193209,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 1,
+      "details": "1",
+      "timestamp": 1771213193791,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 4,
+      "details": "4",
+      "timestamp": 1771213201765,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 5,
+      "details": "5",
+      "timestamp": 1771213202359,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 5,
+      "details": "5",
+      "timestamp": 1771213203009,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 1,
+      "details": "1",
+      "timestamp": 1771213203589,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 6,
+      "details": "6",
+      "timestamp": 1771213204083,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 3,
+      "details": "3",
+      "timestamp": 1771213204351,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 6,
+      "details": "6",
+      "timestamp": 1771213204877,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 3,
+      "details": "3",
+      "timestamp": 1771213205391,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Sorcerous Burst",
+      "result": 18,
+      "details": "13 + 5",
+      "timestamp": 1771213212696,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 6,
+      "details": "(2 + 4)",
+      "timestamp": 1771213360010,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 11,
+      "details": "(7 + 4)",
+      "timestamp": 1771213361685,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 10,
+      "details": "(7 + 3)",
+      "timestamp": 1771213364843,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 23,
+      "details": "(1 + 5 + 1 + 4 + 1 + 5 + 1 + 5)",
+      "timestamp": 1771213374345,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 30,
+      "details": "(4 + 4 + 5 + 3 + 6 + 1 + 1 + 6)",
+      "timestamp": 1771213391938,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 14,
+      "details": "(7 + 7)",
+      "timestamp": 1771213566027,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 10,
+      "details": "(6 + 4)",
+      "timestamp": 1771213567051,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 22,
+      "details": "17 + 5",
+      "timestamp": 1771213742266,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 24,
+      "details": "19 + 5",
+      "timestamp": 1771213744047,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 18,
+      "details": "13 + 5",
+      "timestamp": 1771213777257,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 18,
+      "details": "13 + 5",
+      "timestamp": 1771213785068,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 10,
+      "details": "5 + 5",
+      "timestamp": 1771213785475,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771213790579,
+      "label": "1d4",
+      "result": 3,
+      "diceType": "mixed",
+      "details": "(3)",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 2,
+      "details": "2",
+      "timestamp": 1771213809316,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 5,
+      "details": "5",
+      "timestamp": 1771213811847,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 1,
+      "details": "1",
+      "timestamp": 1771213812567,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 6,
+      "details": "6",
+      "timestamp": 1771213812722,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 22,
+      "details": "(3 + 6 + 4 + 1 + 3 + 3 + 1 + 1)",
+      "timestamp": 1771213818921,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Acrobatics",
+      "result": 10,
+      "details": "(9) + 1",
+      "timestamp": 1771213920627,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 8,
+      "details": "3 + 5",
+      "timestamp": 1771214545188,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 6,
+      "details": "6",
+      "timestamp": 1771214558405,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 8,
+      "details": "8",
+      "timestamp": 1771214559534,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 36,
+      "details": "(5 + 5 + 5 + 6 + 2 + 2 + 6 + 5)",
+      "timestamp": 1771214572484,
+      "diceType": "d6",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 16,
+      "details": "11 + 5",
+      "timestamp": 1771214594032,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 5,
+      "details": "5",
+      "timestamp": 1771214601919,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 4,
+      "details": "4",
+      "timestamp": 1771214602443,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Sorcerous Burst",
+      "result": 6,
+      "details": "6",
+      "timestamp": 1771214602939,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 24,
+      "details": "19 + 5",
+      "timestamp": 1771214629615,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214637905,
+      "label": "1d20",
+      "result": 7,
+      "diceType": "mixed",
+      "details": "(7)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214644809,
+      "label": "1d20 + +5",
+      "result": 23,
+      "diceType": "mixed",
+      "details": "(18) + +5",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214694398,
+      "label": "1d20 + -3",
+      "result": 17,
+      "diceType": "mixed",
+      "details": "(20) + -3",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214756670,
+      "label": "1d20",
+      "result": 20,
+      "diceType": "mixed",
+      "details": "(20)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214758967,
+      "label": "2d20",
+      "result": 29,
+      "diceType": "mixed",
+      "details": "(13 + 16)",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214762904,
+      "label": "2d20 + -1",
+      "result": 22,
+      "diceType": "mixed",
+      "details": "(12 + 11) + -1",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771214987910,
+      "label": "1d20 + +4",
+      "result": 5,
+      "diceType": "mixed",
+      "details": "(1) + +4",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771215003092,
+      "label": "1d6 + +3",
+      "result": 4,
+      "diceType": "mixed",
+      "details": "(1) + +3",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771215011787,
+      "label": "1d6 + -4",
+      "result": 0,
+      "diceType": "mixed",
+      "details": "(4) + -4",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771215029696,
+      "label": "1d8 + +4",
+      "result": 6,
+      "diceType": "mixed",
+      "details": "(2) + +4",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 26,
+      "details": "(20) + 6",
+      "timestamp": 1771215034890,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA",
+      "result": 17,
+      "details": "(12) + 5",
+      "timestamp": 1771215038411,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771215042092,
+      "label": "1d20 + -4",
+      "result": 2,
+      "diceType": "mixed",
+      "details": "(6) + -4",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 14,
+      "details": "9 + 5",
+      "timestamp": 1771215043234,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771215097304,
+      "label": "1d2 + +2",
+      "result": 4,
+      "diceType": "mixed",
+      "details": "(2) + +2",
+      "sendToDiscord": false
+    },
+    {
+      "timestamp": 1771215174865,
+      "label": "2d4 + +3",
+      "result": 7,
+      "diceType": "mixed",
+      "details": "(2 + 2) + +3",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771215287561,
+      "label": "2d4 + +3",
+      "result": 8,
+      "diceType": "mixed",
+      "details": "(4 + 1) + 3",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771215291388,
+      "label": "2d4 + +3",
+      "result": 8,
+      "diceType": "mixed",
+      "details": "(3 + 2) + 3",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771215296566,
+      "label": "2d4 + -3",
+      "result": 3,
+      "diceType": "mixed",
+      "details": "(2 + 4) - 3",
+      "sendToDiscord": true
+    },
+    {
+      "timestamp": 1771215307451,
+      "label": "1d100 + -50",
+      "result": -30,
+      "diceType": "mixed",
+      "details": "(20) - 50",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 18,
+      "details": "(1 + 4 + 1 + 2 + 2 + 1 + 3 + 4)",
+      "timestamp": 1771215329269,
+      "diceType": "d6",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 22,
+      "details": "(2 + 3 + 1 + 4 + 2 + 4 + 1 + 5)",
+      "timestamp": 1771215329721,
+      "diceType": "d6",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 37,
+      "details": "(4 + 4 + 5 + 4 + 6 + 2 + 6 + 6)",
+      "timestamp": 1771215330244,
+      "diceType": "d6",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Fireball",
+      "result": 20,
+      "details": "(2 + 5 + 2 + 1 + 2 + 1 + 1 + 6)",
+      "timestamp": 1771215330621,
+      "diceType": "d6",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Magic Missile",
+      "result": 2,
+      "details": "1 + 1",
+      "timestamp": 1771215571746,
+      "diceType": "d4",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Magic Missile",
+      "result": 5,
+      "details": "4 + 1",
+      "timestamp": 1771215574050,
+      "diceType": "d4",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Magic Missile",
+      "result": 3,
+      "details": "2 + 1",
+      "timestamp": 1771215577875,
+      "diceType": "d4",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Magic Missile",
+      "result": 2,
+      "details": "1 + 1",
+      "timestamp": 1771215578301,
+      "diceType": "d4",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Magic Missile",
+      "result": 4,
+      "details": "3 + 1",
+      "timestamp": 1771215578735,
+      "diceType": "d4",
+      "sendToDiscord": true
     }
   ],
   "containers": [

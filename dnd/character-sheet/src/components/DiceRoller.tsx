@@ -1,13 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
 import type { RollEntry } from '../types';
-// Removed Card import usage for layout control
-// import { Card } from './Card'; 
+import { formatModifier } from '../utils/dnd';
 
 interface DiceRollerProps {
     history: RollEntry[];
     onRoll: (entry: RollEntry) => void;
-    className?: string; // Add className prop
-    style?: React.CSSProperties; // Add style prop
+    className?: string; 
+    style?: React.CSSProperties; 
     sendToDiscord: boolean;
     onToggleDiscord: () => void;
 }
@@ -15,7 +14,7 @@ interface DiceRollerProps {
 export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, className, style, sendToDiscord, onToggleDiscord }) => {
     const historyEndRef = useRef<HTMLDivElement>(null);
     const [pending, setPending] = useState<Record<number, number>>({});
-    // Internal sendToDiscord state removed in favor of props
+    const [modifier, setModifier] = useState<string>('0');
 
     // Auto-scroll to bottom of history
     useEffect(() => {
@@ -29,12 +28,39 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
         }));
     };
 
-    const clearPool = () => setPending({});
+    const clearPool = () => {
+        setPending({});
+        setModifier('0');
+    };
 
     const executeRoll = () => {
         const sidesList = Object.keys(pending).map(Number);
         if (sidesList.length === 0) return;
 
+        // Build Formula from Pool (e.g. 2d6 + 1d8)
+        const parts: string[] = [];
+        sidesList.forEach(sides => {
+             const count = pending[sides];
+             parts.push(`${count}d${sides}`);
+        });
+
+        // Add Modifier
+        const modVal = parseInt(modifier) || 0;
+        let formula = parts.join(' + ');
+        if (modVal !== 0) {
+            formula += ` ${modVal >= 0 ? '+' : '-'} ${Math.abs(modVal)}`;
+        }
+
+        // Use rollFormula for Logic (iterative to handle multiple different dice types if needed, 
+        // but rollFormula currently handles 1 type. So we must loop here OR improve rollFormula. 
+        // Given current rollFormula handles "XdY+Z", we can just loop for each dice type and sum them up?)
+        
+        // Actually, users typically roll "2d6 + 3" (one type). 
+        // Mixed dice "1d6 + 1d8" is rarer but supported by the previous logic.
+        // Let's keep the previous logic BUT apply the modifier at the end.
+        
+        // REVERTING LOGIC to keep consistent with previous Mixed Dice support, but adding Modifier.
+        
         let total = 0;
         const detailsParts: string[] = [];
         const labelParts: string[] = [];
@@ -45,32 +71,64 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
             
             const rolls = [];
             for (let i = 0; i < count; i++) {
-                const r = Math.floor(Math.random() * sides) + 1;
+                const r = Math.floor(Math.random() * sides) + 1; // Inline rollDice for now or import
                 rolls.push(r);
                 total += r;
             }
-            // Format: (r1 + r2)
             detailsParts.push(`(${rolls.join(' + ')})`);
         });
+        
+        // Apply Modifier
+        if (modVal !== 0) {
+            total += modVal;
+            const modStr = formatModifier(modVal);
+            labelParts.push(modStr);
+            
+            // Fix double sign issue (e.g. " + +5")
+            // The detailsParts are joined by " + ". If modVal is positive, formatModifier returns "+5".
+            // Joining with " + " results in " ... + +5".
+            // If modVal is negative, formatModifier returns "-5". Joining with " + " results in " ... + -5".
+            // We want " ... + 5" or " ... - 5".
+            
+            // Logic:
+            // If modVal > 0: part should be "5" (so join becomes " + 5")
+            // If modVal < 0: part should be "-5" (so join becomes " + -5") -> Wait, standard math is " - 5" not "+ -5"
+            // Actually, best way is to NOT rely on join(" + ") for the modifier part if we want clean output,
+            // OR change what we push.
+            
+            // If we push "5" (for +5), join gives "+ 5".
+            // If we push "-5" (for -5), join gives "+ -5". We want "- 5".
+            
+            // Let's manually append the modifier to the LAST element or handle join differently?
+            // Easier: Don't push to detailsParts to be joined. Append manually.
+        }
+        
+        let details = detailsParts.join(' + ');
+        if (modVal > 0) {
+            details += ` + ${modVal}`;
+        } else if (modVal < 0) {
+            details += ` - ${Math.abs(modVal)}`;
+        }
 
         const entry: RollEntry = {
             timestamp: Date.now(),
             label: labelParts.join(' + '),
             result: total,
             diceType: 'mixed',
-            details: detailsParts.join(' + '), // Combine groups with +
+            details: details,
             sendToDiscord
         };
 
         onRoll(entry);
         setPending({});
+        setModifier('0');
     };
 
     const DICE = [2, 4, 6, 8, 10, 12, 20, 100];
     const hasPending = Object.keys(pending).length > 0;
 
     const removeFromPool = (sides: number, e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent adding when clicking remove
+        e.stopPropagation(); 
         setPending(prev => {
             const current = prev[sides] || 0;
             if (current <= 1) {
@@ -88,8 +146,8 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                 ...style, 
                 display: 'flex', 
                 flexDirection: 'column',
-                padding: '1rem', // Match Card padding
-                overflow: 'hidden' // Force containment
+                padding: '1rem', 
+                overflow: 'hidden' 
             }}
         >
             {/* Header */}
@@ -101,7 +159,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                     <button
                         onClick={onToggleDiscord}
                         style={{
-                            background: sendToDiscord ? '#5865F2' : 'rgba(255,255,255,0.1)', // Discord Blurple
+                            background: sendToDiscord ? '#5865F2' : 'rgba(255,255,255,0.1)', 
                             border: '1px solid var(--glass-border)',
                             borderRadius: '4px',
                             color: 'white',
@@ -147,7 +205,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                 </div>
             </div>
 
-            {/* History Window - Grows to fill space */}
+            {/* History Window */}
             <div style={{ 
                 flex: 1, 
                 overflowY: 'auto', 
@@ -155,7 +213,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                 borderRadius: '4px',
                 padding: '0.5rem',
                 fontSize: '0.8rem',
-                minHeight: 0, // Critical for flex scrolling
+                minHeight: 0, 
                 marginBottom: '0.5rem'
             }}>
                 {history.length === 0 && <div style={{ color: '#aaa', fontStyle: 'italic', textAlign: 'center' }}>Click dice to build pool</div>}
@@ -165,12 +223,9 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                         borderBottom: '1px solid rgba(255,255,255,0.1)',
                         paddingBottom: '8px', marginBottom: '8px'
                     }}>
-                        {/* Formula: 1d20 + ... */}
                         <div style={{ color: '#aaa', fontSize: '0.75rem' }}>
                             {entry.label}
                         </div>
-                        
-                        {/* Result: (14) + ... | = Total */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', color: 'white', fontSize: '0.9rem' }}>
                             <div style={{ wordBreak: 'break-all', paddingRight: '8px' }}>
                                 {entry.details}
@@ -183,8 +238,28 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                 ))}
                 <div ref={historyEndRef} />
             </div>
+            
+            {/* Modifier Input */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '0.8rem', color: '#aaa' }}>Mod:</span>
+                 <input 
+                    type="number" 
+                    value={modifier}
+                    onChange={(e) => setModifier(e.target.value)}
+                    style={{
+                        width: '50px',
+                        background: 'rgba(0,0,0,0.3)',
+                        border: '1px solid var(--glass-border)',
+                        color: '#fff',
+                        borderRadius: '4px',
+                        padding: '2px 4px',
+                        fontSize: '0.8rem',
+                        textAlign: 'center'
+                    }}
+                />
+            </div>
 
-            {/* Controls - Fixed at bottom (flex flow) */}
+            {/* Controls */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', flexShrink: 0 }}>
                 {DICE.map(d => {
                     const count = pending[d] || 0;
