@@ -104,9 +104,9 @@ export const ResourceManager: React.FC<ResourceManagerProps> = ({ resources, cha
     };
     
     const handleRemove = (id: string) => {
-        if (confirm('Delete this resource?')) {
+        // if (confirm('Delete this resource?')) { // User reported this does nothing. Removing confirmation for responsiveness or checking if it was the issue.
             onChange(resources.filter(r => r.id !== id));
-        }
+        // }
     };
 
     // Auto-update calculated max values on render
@@ -200,39 +200,111 @@ export const ResourceManager: React.FC<ResourceManagerProps> = ({ resources, cha
                         flexDirection: 'column',
                         gap: '8px'
                     }}>
+                        {/* Header: Name + Delete */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                              <span style={{ fontWeight: 'bold', color: 'var(--color-text-primary)' }}>{res.name}</span>
-                             <button 
-                                onClick={() => handleRemove(res.id)} 
-                                style={{ 
-                                    color: '#ef4444', 
-                                    background: 'none', 
-                                    border: 'none', 
-                                    cursor: 'pointer', 
-                                    fontSize: '1.2rem',
-                                    padding: '0 4px',
-                                    lineHeight: 1
-                                }}
-                                title="Remove Resource"
-                             >
-                                 &times;
-                             </button>
+                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                                    {res.current} / {res.max}
+                                </span>
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemove(res.id);
+                                    }} 
+                                    style={{ 
+                                        color: '#ef4444', 
+                                        background: 'none', 
+                                        border: 'none', 
+                                        cursor: 'pointer', 
+                                        fontSize: '1.2rem',
+                                        padding: '0 4px',
+                                        lineHeight: 1
+                                    }}
+                                    title="Remove Resource"
+                                >
+                                    &times;
+                                </button>
+                             </div>
                         </div>
                         
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '4px' }}>
-                            <button 
-                                onClick={() => handleUpdate(res.id, { current: Math.max(0, res.current - 1) })}
-                                style={{ width: '28px', height: '28px', background: '#374151', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
-                            >-</button>
-                            <span style={{ fontWeight: 'bold', fontSize: '1rem' }}>
-                                {res.current} <span style={{ color: 'var(--color-text-muted)', fontWeight: 'normal' }}>/ {res.max}</span>
-                            </span>
-                            <button 
-                                onClick={() => handleUpdate(res.id, { current: Math.min(res.max, res.current + 1) })}
-                                style={{ width: '28px', height: '28px', background: '#374151', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
-                            >+</button>
+                        {/* Control Row: [-] [Bars] [+] */}
+                        <div style={{ display: 'flex', alignItems: 'stretch', height: '32px' }}>
+                            {/* Minus Button */}
+                            <LongPressButton 
+                                onTrigger={() => handleUpdate(res.id, { current: Math.max(0, res.current - 1) })}
+                                style={{ 
+                                    width: '32px', 
+                                    background: '#374151', 
+                                    border: '1px solid var(--glass-border)', 
+                                    borderRight: 'none',
+                                    color: 'white', 
+                                    borderTopLeftRadius: '4px',
+                                    borderBottomLeftRadius: '4px',
+                                    cursor: 'pointer', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    fontSize: '1.2rem'
+                                }}
+                            >-</LongPressButton>
+
+                            {/* Bars Container */}
+                            <div style={{ 
+                                flex: 1, 
+                                display: 'flex', 
+                                background: 'transparent', // Empty background
+                                border: '1px solid var(--glass-border)',
+                                // Remove side borders if we want them to merge with buttons entirely, likely kept for separation
+                            }}>
+                                {Array.from({ length: res.max }).map((_, i) => (
+                                    <div 
+                                        key={i}
+                                        onClick={() => {
+                                            const newVal = i + 1;
+                                            handleUpdate(res.id, { current: newVal === res.current ? newVal - 1 : newVal });
+                                        }}
+                                        style={{
+                                            flex: 1,
+                                            background: getLayeredBarColor(i, res.current, res.max),
+                                            borderRight: i < res.max - 1 ? '1px solid #6b7280' : 'none', // Higher contrast divider
+                                            cursor: 'pointer',
+                                            transition: 'background 0.2s',
+                                            height: '100%'
+                                        }}
+                                        title={`${i + 1} / ${res.max}`}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Plus Button */}
+                            <LongPressButton 
+                                onTrigger={() => {
+                                    // Allow overflow for CoreStrains, cap others at max
+                                    const isUncapped = res.maxFormula === 'CoreStrains';
+                                    const nextVal = res.current + 1;
+                                    if (isUncapped || nextVal <= res.max) {
+                                        handleUpdate(res.id, { current: nextVal });
+                                    }
+                                }}
+                                style={{ 
+                                    width: '32px', 
+                                    background: '#374151', 
+                                    border: '1px solid var(--glass-border)', 
+                                    borderLeft: 'none',
+                                    color: 'white', 
+                                    borderTopRightRadius: '4px',
+                                    borderBottomRightRadius: '4px',
+                                    cursor: 'pointer', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    fontSize: '1.2rem'
+                                }}
+                            >+</LongPressButton>
                         </div>
-                        <div style={{ textAlign: 'right', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+
+                        <div style={{ textAlign: 'right', fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
                             Reset: {res.reset}
                         </div>
                     </div>
@@ -240,6 +312,42 @@ export const ResourceManager: React.FC<ResourceManagerProps> = ({ resources, cha
             </div>
         </div>
     );
+};
+
+// --- Color Helpers ---
+
+const getLayeredBarColor = (index: number, current: number, max: number): string => {
+    // If this bar index is not yet reached by current count, return transparent
+    if (current <= index) return 'transparent';
+    
+    // Calculate which "layer" of overflow this specific bar segment is in.
+    const layer = Math.floor((current - 1 - index) / max);
+
+    if (layer < 0) return 'transparent';
+
+    // Layer 0 (0..max-1) is the base layer.
+    // User requested infinite scaling with color shifts.
+    // We will use HSL to rotate hue based on layer.
+
+    // Base Hue: Red (0) -> Orange (30) -> Yellow (60) -> Green (120) -> Blue (240) -> Purple (270) -> Red
+    // Let's increment by 45 degrees per layer to get distinct steps.
+    // Layer 0: 0 deg (Red) -> wait, User previously had Layer 0 as Gray.
+    // Let's keep Layer 0 as Gray/Dark Blue-Gray (#1f2937) for the "Safe" zone if desired?
+    // User said: "Start at 0" -> "Accumulates".
+    // Actually, previously Layer 0 was Gray. Then Layer 1 was Red.
+    // Let's stick to: Layer 0 = Gray. Layer 1+ = HSL Cycles.
+    
+    if (layer === 0) {
+        return '#1f2937'; // Standard Gray/Dark Blue
+    }
+
+    // Layer 1 starts at Red (Hue 0)
+    // Layer 2 starts at Orange/Yellow (Hue 15) - Gentler shift
+    const hueStep = 15;
+    const baseHue = ((layer - 1) * hueStep) % 360; 
+
+    // So we just need a distinct color for `layer`.
+    return `hsl(${baseHue}, 80%, 60%)`;
 };
 
 const presetBtnStyle = {
@@ -252,4 +360,61 @@ const presetBtnStyle = {
     borderBottom: '1px solid var(--glass-border)',
     fontSize: '0.9rem',
     transition: 'background 0.2s'
+};
+
+// --- Interaction Hook ---
+function useLongPress(callback: () => void, initialSpeed: number = 200, minSpeed: number = 30) {
+    // Keep a ref to the latest callback to avoid stale closures
+    const savedCallback = React.useRef(callback);
+    React.useLayoutEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const speedRef = React.useRef(initialSpeed);
+
+    const start = React.useCallback(() => {
+        speedRef.current = initialSpeed;
+        savedCallback.current(); // Immediate fire
+
+        const loop = () => {
+            timeoutRef.current = setTimeout(() => {
+                savedCallback.current();
+                // Accelerate: reduce interval by 15% each tick, down to minSpeed
+                speedRef.current = Math.max(minSpeed, speedRef.current * 0.85);
+                loop();
+            }, speedRef.current);
+        };
+
+        // Initial delay before starting the loop
+        timeoutRef.current = setTimeout(loop, 500);
+    }, [initialSpeed, minSpeed]);
+
+    const stop = React.useCallback(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    }, []);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+             if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
+
+    return {
+        onMouseDown: start,
+        onMouseUp: stop,
+        onMouseLeave: stop,
+        onTouchStart: start,
+        onTouchEnd: stop
+    };
+}
+
+// Wrapper component to apply long press to a button
+const LongPressButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { onTrigger: () => void }> = ({ onTrigger, ...props }) => {
+    const handlers = useLongPress(onTrigger);
+    return <button type="button" {...props} {...handlers} />;
 };

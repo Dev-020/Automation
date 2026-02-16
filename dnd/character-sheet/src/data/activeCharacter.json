@@ -3910,6 +3910,62 @@
       "timestamp": 1771228374306,
       "diceType": "d6",
       "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Burning Hands (Lvl 3)",
+      "result": 12,
+      "details": "(4 + 3 + 2) + (2 + 1)",
+      "timestamp": 1771228376967,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Catapult",
+      "result": 18,
+      "details": "(7 + 8 + 3)",
+      "timestamp": 1771228380113,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Catapult (Lvl 2)",
+      "result": 14,
+      "details": "(1 + 4 + 4) + 5",
+      "timestamp": 1771228381877,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Catapult (Lvl 3)",
+      "result": 15,
+      "details": "(1 + 3 + 6) + (2 + 3)",
+      "timestamp": 1771228384167,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 8,
+      "details": "(5 + 3)",
+      "timestamp": 1771228387806,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds",
+      "result": 16,
+      "details": "(8 + 8)",
+      "timestamp": 1771228388172,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cure Wounds (Lvl 3)",
+      "result": 29,
+      "details": "(6 + 7) + (1 + 3 + 5 + 7)",
+      "timestamp": 1771228389463,
+      "diceType": "d8",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -4884,5 +4940,32 @@
       }
     ]
   },
-  "resources": []
+  "resources": [
+    {
+      "id": "a9439c6e-a126-4d98-bcc3-31979eaaac2b",
+      "name": "Core Strains",
+      "current": 0,
+      "max": 6,
+      "reset": "Long",
+      "type": "calculated",
+      "maxFormula": "CoreStrains"
+    },
+    {
+      "id": "f68797f7-f2ee-404f-b93c-0394f1e44742",
+      "name": "Innate Sorcery",
+      "current": 2,
+      "max": 2,
+      "reset": "Long",
+      "type": "manual"
+    },
+    {
+      "id": "7f86b297-f6fd-45ff-a5d7-164842db3988",
+      "name": "Sorcery Points (HB)",
+      "current": 38,
+      "max": 38,
+      "reset": "Long",
+      "type": "calculated",
+      "maxFormula": "SorceryPointsHomebrew"
+    }
+  ]
 }

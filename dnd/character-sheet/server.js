@@ -35,7 +35,7 @@ if (DISCORD_TOKEN) {
 }
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // External Data Paths
 const SPELLS_DIR = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/spells';
