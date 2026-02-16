@@ -55,17 +55,14 @@ export interface GeminiState {
     mode: 'Integrated' | 'Autonomous';
     activeToggles: {
         singularity: boolean;
-        coolant: boolean; // New: Coolant Flush toggle
+        coolant: boolean; // Coolant Flush: blocks overload damage for 1 SP
     };
     turnSpells: { name: string; level: number }[]; 
+    adaptiveSwaps: { swappedOut: string; swappedIn: string; level: number }[]; // Adaptive Protocol swaps this turn
     indomitable?: {
         active: boolean; // Is Unstable Overload active?
         withheldStrain: number; 
         used: boolean; // Long rest tracker
-    };
-    adaptiveSpell?: {
-        name: string;
-        targetName: string;
     };
 }
 

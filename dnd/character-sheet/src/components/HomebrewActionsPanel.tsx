@@ -3,15 +3,21 @@ import React, { useState } from 'react';
 import { GeminiProtocolPanel } from './GeminiProtocolPanel';
 import type { GeminiState } from '../types';
 
-import type { Spell } from '../types';
+import type { Spell, RollEntry } from '../types';
 
 interface HomebrewActionsPanelProps {
     character: any;
     onUpdateCharacter: (updates: any) => void;
     allKnownSpells: Spell[];
+    preparedClassSpells: Spell[];
+    swapInSpells: Spell[];
+    onRoll: (entry: RollEntry) => void;
+    sendToDiscord: boolean;
+    conSaveModifier: number;
+    spellSaveDC: number;
 }
 
-export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ character, onUpdateCharacter, allKnownSpells }) => {
+export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ character, onUpdateCharacter, allKnownSpells, preparedClassSpells, swapInSpells, onRoll, sendToDiscord, conSaveModifier, spellSaveDC }) => {
     const [selectedGroup, setSelectedGroup] = useState('Gemini Protocol');
     
     // Placeholder groups for now
@@ -32,6 +38,9 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
     const currentStrain = coreStrains?.current || 0;
     const maxStrain = coreStrains?.max || 0;
 
+    // Find Sorcery Points resource
+    const sorceryPoints = character.resources?.find((r: any) => r.name === 'Sorcery Points');
+    const currentSP = sorceryPoints?.current || 0;
 
     const handleOverload = () => {
         // Reset Core Strains to 0
@@ -43,13 +52,13 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
         });
 
         onUpdateCharacter({
-            ...character,
             resources: newResources,
             homebrew: {
                 ...character.homebrew,
                 gemini: {
                     ...character.homebrew?.gemini,
                     turnSpells: [], // Clear log so strain isn't re-added
+                    adaptiveSwaps: [], // Clear adaptive swaps too
                     indomitable: {
                         ...(character.homebrew?.gemini?.indomitable || { withheldStrain: 0, used: false }),
                         active: false // Unstable state ends
@@ -69,47 +78,93 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
             homebrew: {
                 ...character.homebrew,
                 gemini: {
-                    ...(character.homebrew?.gemini || { mode: 'Integrated', activeToggles: { singularity: false, coolant: false }, turnSpells: [] }),
+                    ...(character.homebrew?.gemini || { mode: 'Integrated', activeToggles: { singularity: false, coolant: false }, turnSpells: [], adaptiveSwaps: [] }),
                     turnSpells: newLog
                 }
             }
         });
     };
 
+    const handleAdaptiveSwap = (swappedOut: string, swappedIn: Spell) => {
+        const swapLevel = Math.max(1, swappedIn.level); // Minimum 1 strain for cantrips and level 1
+        const newSwaps = [...(character.homebrew?.gemini?.adaptiveSwaps || []), { swappedOut, swappedIn: swappedIn.name, level: swapLevel }];
+
+        // Remove the swapped-out spell from the list, add the swapped-in spell with prepared: true
+        const updatedSpells = [
+            ...character.spells.filter((s: Spell) => s.name !== swappedOut),
+            { ...swappedIn, prepared: true }
+        ];
+
+        onUpdateCharacter({
+            ...character,
+            spells: updatedSpells,
+            homebrew: {
+                ...character.homebrew,
+                gemini: {
+                    ...(character.homebrew?.gemini || { mode: 'Integrated', activeToggles: { singularity: false, coolant: false }, turnSpells: [], adaptiveSwaps: [] }),
+                    adaptiveSwaps: newSwaps
+                }
+            }
+        });
+    };
+
     const handleEndTurn = () => {
-        const turnSpells = character.homebrew?.gemini?.turnSpells || [];
+        const geminiState = character.homebrew?.gemini;
+        const turnSpells = geminiState?.turnSpells || [];
+        const adaptiveSwaps = geminiState?.adaptiveSwaps || [];
+        const coolantActive = geminiState?.activeToggles?.coolant || false;
         
         // Calculate total strain from spells cast this turn
         const spellStrain = turnSpells.reduce((total: number, s: { level: number }) => total + s.level, 0);
 
+        // Calculate strain removed from adaptive swaps
+        const adaptiveStrain = adaptiveSwaps.reduce((total: number, s: { level: number }) => total + s.level, 0);
+
         // Calculate other strain sources (e.g. Singularity)
-        // Note: Singularity adds +1 strain per turn if active.
-        const singularityStrain = character.homebrew?.gemini?.activeToggles?.singularity ? 1 : 0;
+        const singularityStrain = geminiState?.activeToggles?.singularity ? 1 : 0;
         
-        const totalStrainAdded = spellStrain + singularityStrain;
+        const totalStrainAdded = spellStrain + singularityStrain - adaptiveStrain;
+
+        // Determine if strain would exceed max
+        const projectedTotal = currentStrain + totalStrainAdded;
+        const wouldExceedMax = projectedTotal > maxStrain;
 
         // Update Resources
-        const currentStrains = character.resources?.find((r: any) => r.name === 'Core Strains');
         let newResources = character.resources || [];
         
-        if (currentStrains && totalStrainAdded > 0) {
-             newResources = character.resources.map((r: any) => {
+        if (totalStrainAdded !== 0) {
+             newResources = newResources.map((r: any) => {
                  if (r.name === 'Core Strains') {
-                     return { ...r, current: r.current + totalStrainAdded };
+                     return { ...r, current: Math.max(0, r.current + totalStrainAdded) };
                  }
                  return r;
              });
         }
 
-        // Reset Turn Log
+        // Coolant: if active and strain would exceed max, spend 1 SP to block overload damage
+        if (coolantActive && wouldExceedMax && currentSP > 0) {
+            newResources = newResources.map((r: any) => {
+                if (r.name === 'Sorcery Points') {
+                    return { ...r, current: r.current - 1 };
+                }
+                return r;
+            });
+        }
+
+        // Reset Turn Log and coolant toggle
         onUpdateCharacter({
             ...character,
             resources: newResources,
             homebrew: {
                 ...character.homebrew,
                 gemini: {
-                    ...character.homebrew?.gemini,
-                    turnSpells: [] 
+                    ...geminiState,
+                    turnSpells: [],
+                    adaptiveSwaps: [],
+                    activeToggles: {
+                        ...geminiState?.activeToggles,
+                        coolant: false // Reset coolant each turn
+                    }
                 }
             }
         });
@@ -154,9 +209,17 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
                         currentStrain={currentStrain}
                         maxStrain={maxStrain}
                         availableSpells={allKnownSpells}
+                        preparedClassSpells={preparedClassSpells}
+                        swapInSpells={swapInSpells}
                         onCastSpell={handleCastSpell}
+                        onAdaptiveSwap={handleAdaptiveSwap}
                         onEndTurn={handleEndTurn}
                         onOverload={handleOverload}
+                        onRoll={onRoll}
+                        sendToDiscord={sendToDiscord}
+                        conSaveModifier={conSaveModifier}
+                        spellSaveDC={spellSaveDC}
+                        currentSorceryPoints={currentSP}
                     />
                 ) : (
                     <div style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>Select a Homebrew Group</div>

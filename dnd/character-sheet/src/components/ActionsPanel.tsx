@@ -307,7 +307,29 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
                      <HomebrewActionsPanel 
                         character={character} 
                         onUpdateCharacter={onUpdateCharacter || (() => {})} 
-                        allKnownSpells={[...spells, ...featSpells]} // Pass both Class and Feat spells
+                        allKnownSpells={[...spells, ...featSpells]}
+                        preparedClassSpells={spells.filter(s => s.prepared)}
+                        swapInSpells={(() => {
+                            // Max castable spell level from spell slots
+                            const maxSpellLevel = Math.max(0, ...Object.entries(spellSlots || {})
+                                .filter(([, slot]: [string, any]) => slot.max > 0)
+                                .map(([lvl]) => parseInt(lvl)));
+                            // Already-prepared spell names (to exclude from swap-in)
+                            const preparedNames = new Set(spells.filter(s => s.prepared).map(s => s.name));
+                            const featSpellNames = new Set(featSpells.map(s => s.name));
+                            // All Sorcerer spells from API, non-PHB, within level cap, not already prepared
+                            return allSpells.filter(s =>
+                                s.classes?.includes('Sorcerer') &&
+                                s.source !== 'PHB' &&
+                                s.level <= maxSpellLevel &&
+                                !preparedNames.has(s.name) &&
+                                !featSpellNames.has(s.name)
+                            );
+                        })()}
+                        onRoll={onRoll}
+                        sendToDiscord={sendToDiscord}
+                        conSaveModifier={(stats.CON?.modifier || 0) + (stats.CON?.saveProficiency ? Math.ceil(1 + (level / 4)) : 0)}
+                        spellSaveDC={saveDC}
                      />
                  )}
             </div>
