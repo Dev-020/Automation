@@ -2741,6 +2741,14 @@
       "timestamp": 1771136171547,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CHA",
+      "result": 17,
+      "details": "(15) + 2",
+      "timestamp": 1771210664607,
+      "diceType": "d20",
+      "sendToDiscord": false
     }
   ],
   "containers": [

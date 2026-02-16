@@ -477,7 +477,17 @@ function App() {
           
           <div className="tab-content" style={{ overflowY: 'auto', flex: 1, paddingRight: '0.5rem', marginTop: '1rem' }}>
             <div className="animate-fade-in">
-                {activeTab === 'Actions' && <ActionsPanel actions={character.actions} />}
+                {activeTab === 'Actions' && <ActionsPanel 
+                    actions={character.actions} 
+                    spells={character.spells}
+                    spellSlots={character.spellSlots}
+                    stats={character.stats}
+                    onUpdateSlots={(slots) => setCharacter(prev => ({ ...prev, spellSlots: slots }))}
+                    characterClass={character.class}
+                    level={character.level}
+                    allSpells={allSpells}
+                    feats={character.feats}
+                />}
                 {activeTab === 'Spells' && <SpellsPanel character={character} spells={character.spells} slots={character.spellSlots} allSpells={allSpells} onUpdateSpells={(updatedSpells) => setCharacter(prev => ({ ...prev, spells: updatedSpells }))} level={character.level} />}
                 {activeTab === 'Inventory' && <InventoryPanel 
                     inventory={character.inventory} 

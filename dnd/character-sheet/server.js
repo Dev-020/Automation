@@ -203,6 +203,25 @@ app.get('/api/ref/skills', (req, res) => {
     res.json(xphbSkills);
 });
 
+// Get Actions (XPHB Only)
+const ACTIONS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/actions.json';
+
+app.get('/api/ref/actions', async (req, res) => {
+    try {
+        const data = await fs.promises.readFile(ACTIONS_PATH, 'utf8');
+        const json = JSON.parse(data);
+        
+        // Filter for XPHB source actions
+        // also exclude 'Action Options' variants unless requested, but for now just standard actions
+        const xphbActions = json.action.filter(a => a.source === 'XPHB');
+        
+        res.json(xphbActions);
+    } catch (error) {
+        console.error("Failed to load actions:", error);
+        res.status(500).json({ error: "Failed to load actions" });
+    }
+});
+
 // Serve 5eTools Data - Items
 app.get('/api/items', (req, res) => {
     sendFileSafe(res, ITEMS_PATH);
