@@ -13,44 +13,24 @@ export const formatModifier = (mod: number): string => {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 };
 
-/**
- * Parses and rolls a dice formula string (e.g. "1d20 + 5", "2d6 - 1", "1d8").
- * Returns a RollEntry object typical for the app's history.
- */
-export const rollFormula = (formula: string, label?: string, sendToDiscord = false): RollEntry => {
-    // 1. Normalize formula: "1d20 + 5 - 2d6"
-    // Remove all spaces for clean regex matching
-    const cleanFormula = formula.replace(/\s+/g, '');
-    
-    // Regex to split into terms: 
-    // Captures: ([+-]?) (\d+) d (\d+)  -> Dice Term
-    // Captures: ([+-]?) (\d+)          -> Flat Term
-    // We'll iterate through matches
-    
+// Helper to perform a single pass calculation
+const calculateRoll = (cleanFormula: string) => {
     const termRegex = /([+-]?)(?:(\d+)d(\d+)|(\d+))/gi;
     let match;
-    
     let total = 0;
     let detailsParts: string[] = [];
-    let mainDiceType = 'd20'; // Default
+    let mainDiceType = 'd20';
     let hasDice = false;
 
     while ((match = termRegex.exec(cleanFormula)) !== null) {
-        // match[0] = full term (e.g. "+2d6")
-        // match[1] = operator ("+" or "-" or "")
-        // match[2] = dice count
-        // match[3] = dice sides
-        // match[4] = flat amount
-        
         const op = match[1] === '-' ? -1 : 1;
         const opStr = match[1] === '-' ? '- ' : '+ ';
         
         if (match[2] && match[3]) {
-            // It's a dice roll
             hasDice = true;
             const count = parseInt(match[2]);
             const sides = parseInt(match[3]);
-            mainDiceType = `d${sides}`; // Update to last seen dice type
+            mainDiceType = `d${sides}`;
             
             const rolls: number[] = [];
             let termTotal = 0;
@@ -61,49 +41,91 @@ export const rollFormula = (formula: string, label?: string, sendToDiscord = fal
             }
             
             total += (termTotal * op);
-            
-            // Format details: " + (3 + 5)"
             const termDetail = count > 1 ? `(${rolls.join(' + ')})` : `${rolls[0]}`;
             detailsParts.push(`${opStr}${termDetail}`);
             
         } else if (match[4]) {
-            // It's a flat number
             const val = parseInt(match[4]);
             total += (val * op);
             detailsParts.push(`${opStr}${val}`);
         }
     }
+    
+    // Clean up first operator
+    let details = detailsParts.join(' ');
+    if (details.startsWith('+ ')) details = details.substring(2);
+    
+    if (!hasDice) mainDiceType = 'd20';
 
-    if (detailsParts.length === 0) {
-        // Fallback for empty or invalid input
-         return {
-            label: label || 'Invalid Roll',
-            result: 0,
-            details: 'Error',
+    return { total, details, mainDiceType };
+};
+
+export const rollFormula = (formula: string, label?: string, sendToDiscord = false, rollMode: 'normal' | 'advantage' | 'disadvantage' = 'normal'): RollEntry => {
+    const cleanFormula = formula.replace(/\s+/g, '');
+    
+    if (rollMode === 'normal') {
+        const { total, details, mainDiceType } = calculateRoll(cleanFormula);
+        return {
+            label: label || formula, 
+            result: total, // Logic for normal is same, just returning total
+            details: details,
             timestamp: Date.now(),
-            diceType: 'd20',
+            diceType: mainDiceType,
+            sendToDiscord
+        };
+    } else {
+        // Universal Advantage/Disadvantage: Roll everything twice
+        const roll1 = calculateRoll(cleanFormula);
+        const roll2 = calculateRoll(cleanFormula);
+        
+        let finalResult = roll1.total;
+        let chosenIndex = 0; // 1 or 2
+        
+        if (rollMode === 'advantage') {
+             if (roll1.total >= roll2.total) {
+                 finalResult = roll1.total;
+                 chosenIndex = 1;
+             } else {
+                 finalResult = roll2.total;
+                 chosenIndex = 2;
+             }
+        } else {
+            // Disadvantage
+             if (roll1.total <= roll2.total) {
+                 finalResult = roll1.total;
+                 chosenIndex = 1;
+             } else {
+                 finalResult = roll2.total;
+                 chosenIndex = 2;
+             }
+        }
+        
+        // Format Details:
+        // Roll 1: [details] = [total]
+        // Roll 2: [details] = [total]
+        // The UI will bold the final result which is separate, but we can bold the chosen line here?
+        // Let's just output clear lines.
+        
+        const mark1 = chosenIndex === 1 ? ' <<' : '';
+        const mark2 = chosenIndex === 2 ? ' <<' : '';
+
+        // We can use standard markdown bolding **text** if the renderer supports it, 
+        // OR simply rely on the 'result' property being displayed prominently at the end.
+        // User asked for: "First line is the first roll, second line is the second roll"
+        
+        const details = `Roll 1: ${roll1.details} = ${roll1.total}${mark1}\nRoll 2: ${roll2.details} = ${roll2.total}${mark2}`;
+        
+        let finalLabel = label || formula;
+        if (rollMode === 'advantage') finalLabel += ' (Adv)';
+        if (rollMode === 'disadvantage') finalLabel += ' (Dis)';
+        
+        return {
+            label: finalLabel,
+            result: finalResult,
+            details: details,
+            timestamp: Date.now(),
+            diceType: roll1.mainDiceType,
             sendToDiscord
         };
     }
-
-    // Clean up the first operator if it's "+"
-    // e.g. "+ (5 + 2) + 3" -> "(5 + 2) + 3"
-    let details = detailsParts.join(' ');
-    if (details.startsWith('+ ')) {
-        details = details.substring(2);
-    }
-    
-    // Determine strict dice type if mixed? 
-    // If mixed, maybe just "d20" or "mixed"? 
-    // For now, let's stick with the last valid dice type found, or d20 if only flat mods.
-    if (!hasDice) mainDiceType = 'd20';
-
-    return {
-        label: label || formula, 
-        result: total,
-        details: details,
-        timestamp: Date.now(),
-        diceType: mainDiceType,
-        sendToDiscord
-    };
 };

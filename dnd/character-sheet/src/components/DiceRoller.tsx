@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import type { RollEntry } from '../types';
-import { formatModifier } from '../utils/dnd';
+import { formatModifier, rollFormula } from '../utils/dnd';
 
 interface DiceRollerProps {
     history: RollEntry[];
@@ -15,6 +15,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
     const historyEndRef = useRef<HTMLDivElement>(null);
     const [pending, setPending] = useState<Record<number, number>>({});
     const [modifier, setModifier] = useState<string>('0');
+    const [rollMode, setRollMode] = useState<'normal' | 'advantage' | 'disadvantage'>('normal');
 
     // Auto-scroll to bottom of history
     useEffect(() => {
@@ -31,13 +32,14 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
     const clearPool = () => {
         setPending({});
         setModifier('0');
+        setRollMode('normal');
     };
 
     const executeRoll = () => {
         const sidesList = Object.keys(pending).map(Number);
         if (sidesList.length === 0) return;
 
-        // Build Formula from Pool (e.g. 2d6 + 1d8)
+        // Build Formula from Pool (e.g. "2d6 + 1d8")
         const parts: string[] = [];
         sidesList.forEach(sides => {
              const count = pending[sides];
@@ -50,78 +52,15 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
         if (modVal !== 0) {
             formula += ` ${modVal >= 0 ? '+' : '-'} ${Math.abs(modVal)}`;
         }
+        
+        let label = formula; // Default label
 
-        // Use rollFormula for Logic (iterative to handle multiple different dice types if needed, 
-        // but rollFormula currently handles 1 type. So we must loop here OR improve rollFormula. 
-        // Given current rollFormula handles "XdY+Z", we can just loop for each dice type and sum them up?)
-        
-        // Actually, users typically roll "2d6 + 3" (one type). 
-        // Mixed dice "1d6 + 1d8" is rarer but supported by the previous logic.
-        // Let's keep the previous logic BUT apply the modifier at the end.
-        
-        // REVERTING LOGIC to keep consistent with previous Mixed Dice support, but adding Modifier.
-        
-        let total = 0;
-        const detailsParts: string[] = [];
-        const labelParts: string[] = [];
-
-        sidesList.forEach(sides => {
-            const count = pending[sides];
-            labelParts.push(`${count}d${sides}`);
-            
-            const rolls = [];
-            for (let i = 0; i < count; i++) {
-                const r = Math.floor(Math.random() * sides) + 1; // Inline rollDice for now or import
-                rolls.push(r);
-                total += r;
-            }
-            detailsParts.push(`(${rolls.join(' + ')})`);
-        });
-        
-        // Apply Modifier
-        if (modVal !== 0) {
-            total += modVal;
-            const modStr = formatModifier(modVal);
-            labelParts.push(modStr);
-            
-            // Fix double sign issue (e.g. " + +5")
-            // The detailsParts are joined by " + ". If modVal is positive, formatModifier returns "+5".
-            // Joining with " + " results in " ... + +5".
-            // If modVal is negative, formatModifier returns "-5". Joining with " + " results in " ... + -5".
-            // We want " ... + 5" or " ... - 5".
-            
-            // Logic:
-            // If modVal > 0: part should be "5" (so join becomes " + 5")
-            // If modVal < 0: part should be "-5" (so join becomes " + -5") -> Wait, standard math is " - 5" not "+ -5"
-            // Actually, best way is to NOT rely on join(" + ") for the modifier part if we want clean output,
-            // OR change what we push.
-            
-            // If we push "5" (for +5), join gives "+ 5".
-            // If we push "-5" (for -5), join gives "+ -5". We want "- 5".
-            
-            // Let's manually append the modifier to the LAST element or handle join differently?
-            // Easier: Don't push to detailsParts to be joined. Append manually.
-        }
-        
-        let details = detailsParts.join(' + ');
-        if (modVal > 0) {
-            details += ` + ${modVal}`;
-        } else if (modVal < 0) {
-            details += ` - ${Math.abs(modVal)}`;
-        }
-
-        const entry: RollEntry = {
-            timestamp: Date.now(),
-            label: labelParts.join(' + '),
-            result: total,
-            diceType: 'mixed',
-            details: details,
-            sendToDiscord
-        };
+        // Call the unified rollFormula which handles Advantage/Disadvantage universally
+        const entry = rollFormula(formula, label, sendToDiscord, rollMode);
 
         onRoll(entry);
         setPending({});
-        setModifier('0');
+        // Keep modifier, mode persists
     };
 
     const DICE = [2, 4, 6, 8, 10, 12, 20, 100];
@@ -227,7 +166,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                             {entry.label}
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', color: 'white', fontSize: '0.9rem' }}>
-                            <div style={{ wordBreak: 'break-all', paddingRight: '8px' }}>
+                            <div style={{ wordBreak: 'break-all', paddingRight: '8px', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                                 {entry.details}
                             </div>
                             <div style={{ fontWeight: 'bold', fontSize: '1.1rem', whiteSpace: 'nowrap' }}>
@@ -239,24 +178,76 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
                 <div ref={historyEndRef} />
             </div>
             
-            {/* Modifier Input */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.8rem', color: '#aaa' }}>Mod:</span>
-                 <input 
-                    type="number" 
-                    value={modifier}
-                    onChange={(e) => setModifier(e.target.value)}
-                    style={{
-                        width: '50px',
-                        background: 'rgba(0,0,0,0.3)',
-                        border: '1px solid var(--glass-border)',
-                        color: '#fff',
-                        borderRadius: '4px',
-                        padding: '2px 4px',
-                        fontSize: '0.8rem',
-                        textAlign: 'center'
-                    }}
-                />
+            {/* Modifier Input & Mode */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: '#aaa' }}>Mod:</span>
+                     <input 
+                        type="number" 
+                        value={modifier}
+                        onChange={(e) => setModifier(e.target.value)}
+                        style={{
+                            width: '50px',
+                            background: 'rgba(0,0,0,0.3)',
+                            border: '1px solid var(--glass-border)',
+                            color: '#fff',
+                            borderRadius: '4px',
+                            padding: '2px 4px',
+                            fontSize: '0.8rem',
+                            textAlign: 'center'
+                        }}
+                    />
+                </div>
+                
+                {/* Mode Select */}
+                 <div style={{ display: 'flex', gap: '2px' }}>
+                    <button
+                        onClick={() => setRollMode('normal')}
+                        style={{
+                            background: rollMode === 'normal' ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+                            color: rollMode === 'normal' ? 'white' : '#aaa',
+                            border: '1px solid var(--glass-border)',
+                            borderRadius: '4px 0 0 4px',
+                            padding: '2px 6px',
+                            fontSize: '0.7rem',
+                            cursor: 'pointer'
+                        }}
+                        title="Normal Roll"
+                    >
+                        Norm
+                    </button>
+                    <button
+                        onClick={() => setRollMode('advantage')}
+                        style={{
+                            background: rollMode === 'advantage' ? 'rgba(50, 205, 50, 0.3)' : 'transparent',
+                            color: rollMode === 'advantage' ? '#4ade80' : '#aaa',
+                            border: '1px solid var(--glass-border)',
+                            borderLeft: 'none',
+                            borderRight: 'none',
+                            padding: '2px 6px',
+                            fontSize: '0.7rem',
+                            cursor: 'pointer'
+                        }}
+                        title="Advantage (Roll 2, Keep High)"
+                    >
+                        Adv
+                    </button>
+                    <button
+                        onClick={() => setRollMode('disadvantage')}
+                        style={{
+                            background: rollMode === 'disadvantage' ? 'rgba(220, 38, 38, 0.3)' : 'transparent',
+                            color: rollMode === 'disadvantage' ? '#f87171' : '#aaa',
+                            borderRadius: '0 4px 4px 0',
+                            border: '1px solid var(--glass-border)',
+                            padding: '2px 6px',
+                            fontSize: '0.7rem',
+                            cursor: 'pointer'
+                        }}
+                        title="Disadvantage (Roll 2, Keep Low)"
+                    >
+                        Dis
+                    </button>
+                 </div>
             </div>
 
             {/* Controls */}
