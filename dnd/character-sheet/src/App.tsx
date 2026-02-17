@@ -19,6 +19,7 @@ import { rollDice } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
 import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost } from './utils/rules';
+import { getFeatModifiers } from './utils/featUtils';
 import './App.css';
 
 import activeCharacterData from './data/activeCharacter.json';
@@ -229,6 +230,49 @@ function App() {
     return () => clearTimeout(timeoutId);
 
   }, [character]);
+
+  // Sync Feat ASIs
+  useEffect(() => {
+      // 1. Calculate expected modifiers from current feats
+      const featModifiers = getFeatModifiers(character.feats);
+      const statsList: StatName[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+      let hasChanges = false;
+      const newStats = { ...character.stats };
+
+      statsList.forEach(stat => {
+          const currentStat = newStats[stat];
+          const expectedMods = featModifiers[stat] || [];
+          
+          // Filter out OLD feat modifiers (those starting with 'feat-asi-' or source starting with 'Feat:')
+          // We use the ID prefix 'feat-asi-' as the primary identifier for our automated mods
+          const nonFeatMods = (currentStat.manualModifiers || []).filter(m => 
+              !m.id.startsWith('feat-asi-')
+          );
+
+          // Combine non-feat mods with the new expected feat mods
+          const combinedMods = [...nonFeatMods, ...expectedMods];
+
+          // Check if there's actually a difference to avoid infinite loops
+          const currentJson = JSON.stringify(currentStat.manualModifiers || []);
+          const newJson = JSON.stringify(combinedMods);
+
+          if (currentJson !== newJson) {
+              newStats[stat] = {
+                  ...currentStat,
+                  manualModifiers: combinedMods
+              };
+              hasChanges = true;
+          }
+      });
+
+      if (hasChanges) {
+          console.log("Syncing Feat ASIs...", newStats);
+          setCharacter(prev => ({
+              ...prev,
+              stats: newStats
+          }));
+      }
+  }, [character.feats, character.stats]); // Depend on feats and stats (to detect if we need to update)
 
   // Export to JSON
   const handleExport = () => {

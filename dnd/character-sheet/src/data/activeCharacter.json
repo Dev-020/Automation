@@ -29,21 +29,33 @@
     },
     "CON": {
       "base": 15,
-      "modifier": 3,
+      "modifier": 4,
       "saveProficiency": true,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771166900898-1",
+          "id": "bg-asi-1771308452784-0",
           "source": "Background",
+          "value": 2,
+          "type": "bonus"
+        },
+        {
+          "id": "feat-asi-durable-con",
+          "source": "Feat: Durable",
           "value": 1,
           "type": "bonus"
         }
       ],
-      "total": 16,
+      "total": 18,
       "breakdown": [
         {
-          "id": "bg-asi-1771166900898-1",
+          "id": "bg-asi-1771308452784-0",
           "source": "Background",
+          "value": 2,
+          "type": "bonus"
+        },
+        {
+          "id": "feat-asi-durable-con",
+          "source": "Feat: Durable",
           "value": 1,
           "type": "bonus"
         }
@@ -55,18 +67,18 @@
       "saveProficiency": false,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771166900898-0",
+          "id": "bg-asi-1771308452784-1",
           "source": "Background",
-          "value": 2,
+          "value": 1,
           "type": "bonus"
         }
       ],
-      "total": 15,
+      "total": 14,
       "breakdown": [
         {
-          "id": "bg-asi-1771166900898-0",
+          "id": "bg-asi-1771308452784-1",
           "source": "Background",
-          "value": 2,
+          "value": 1,
           "type": "bonus"
         }
       ]
@@ -81,17 +93,31 @@
     },
     "CHA": {
       "base": 15,
-      "modifier": 2,
+      "modifier": 3,
       "saveProficiency": true,
-      "manualModifiers": [],
-      "total": 15,
-      "breakdown": []
+      "manualModifiers": [
+        {
+          "id": "feat-asi-war-caster-cha",
+          "source": "Feat: War Caster",
+          "value": 1,
+          "type": "bonus"
+        }
+      ],
+      "total": 16,
+      "breakdown": [
+        {
+          "id": "feat-asi-war-caster-cha",
+          "source": "Feat: War Caster",
+          "value": 1,
+          "type": "bonus"
+        }
+      ]
     }
   },
   "vitals": {
     "hp": {
-      "current": 51,
-      "max": 51,
+      "current": 68,
+      "max": 58,
       "temp": 0
     },
     "hitDice": {
@@ -99,7 +125,7 @@
       "max": 7,
       "face": "d6"
     },
-    "ac": 12,
+    "ac": 19,
     "initiative": 1,
     "speed": 30,
     "proficiencyBonus": 3,
@@ -109,7 +135,8 @@
     },
     "acBreakdown": [
       "Leather Armor (Light): 11",
-      "Dexterity: +1"
+      "Dexterity: +1",
+      "Gemini Integrated: +7 (CON+CHA)"
     ]
   },
   "skills": [
@@ -140,7 +167,7 @@
     {
       "name": "Deception",
       "stat": "CHA",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -152,7 +179,7 @@
     {
       "name": "Insight",
       "stat": "WIS",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -164,7 +191,7 @@
     {
       "name": "Investigation",
       "stat": "INT",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -182,7 +209,7 @@
     {
       "name": "Perception",
       "stat": "WIS",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -212,7 +239,7 @@
     {
       "name": "Stealth",
       "stat": "DEX",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -272,27 +299,30 @@
   ],
   "spells": [
     {
-      "name": "Vortex Warp",
-      "source": "SCC",
-      "page": 38,
+      "name": "Misty Step",
+      "source": "XPHB",
+      "page": 299,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
       "level": 2,
       "school": "C",
       "time": [
         {
           "number": 1,
-          "unit": "action"
+          "unit": "bonus"
         }
       ],
       "range": {
         "type": "point",
         "distance": {
-          "type": "feet",
-          "amount": 90
+          "type": "self"
         }
       },
       "components": {
-        "v": true,
-        "s": true
+        "v": true
       },
       "duration": [
         {
@@ -300,19 +330,7 @@
         }
       ],
       "entries": [
-        "You magically twist space around another creature you can see within range. The target must succeed on a Constitution saving throw (the target can choose to fail), or the target is teleported to an unoccupied space of your choice that you can see within range. The chosen space must be on a surface or in a liquid that can support the target without the target having to squeeze."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "At Higher Levels",
-          "entries": [
-            "When you cast this spell using a spell slot of 3rd level or higher, the range of the spell increases by 30 feet for each slot level above 2nd."
-          ]
-        }
-      ],
-      "savingThrow": [
-        "constitution"
+        "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see."
       ],
       "miscTags": [
         "SGT",
@@ -320,104 +338,18 @@
       ],
       "classes": [
         "Sorcerer",
-        "Wizard",
-        "Artificer"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Control Flames",
-      "source": "XGE",
-      "page": 152,
-      "otherSources": [
-        {
-          "source": "EEPC",
-          "page": 16
-        }
-      ],
-      "referenceSources": [
-        "PotA"
-      ],
-      "level": 0,
-      "school": "T",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "feet",
-          "amount": 60
-        }
-      },
-      "components": {
-        "s": true
-      },
-      "duration": [
-        {
-          "type": "instant"
-        },
-        {
-          "type": "timed",
-          "duration": {
-            "type": "hour",
-            "amount": 1
-          }
-        }
-      ],
-      "entries": [
-        "You choose nonmagical flame that you can see within range and that fits within a 5-foot cube. You affect it in one of the following ways:",
-        {
-          "type": "list",
-          "items": [
-            "You instantaneously expand the flame 5 feet in one direction, provided that wood or other fuel is present in the new location.",
-            "You instantaneously extinguish the flames within the cube.",
-            "You double or halve the area of bright light and dim light cast by the flame, change its color, or both. The change lasts for 1 hour.",
-            "You cause simple shapes—such as the vague form of a creature, an inanimate object, or a location—to appear within the flames and animate as you like. The shapes last for 1 hour."
-          ]
-        },
-        "If you cast this spell multiple times, you can have up to three non-instantaneous effects created by it active at a time, and you can dismiss such an effect as an action."
-      ],
-      "miscTags": [
-        "LGT",
-        "SGT"
-      ],
-      "areaTags": [
-        "C"
-      ],
-      "hasFluffImages": true,
-      "classes": [
-        "Druid",
-        "Sorcerer",
+        "Warlock",
         "Wizard"
       ],
       "prepared": true
     },
     {
-      "name": "Gust",
-      "source": "XGE",
-      "page": 157,
-      "otherSources": [
-        {
-          "source": "EEPC",
-          "page": 19
-        },
-        {
-          "source": "ERLW",
-          "page": 50
-        },
-        {
-          "source": "TCE",
-          "page": 50
-        }
-      ],
-      "referenceSources": [
-        "PotA"
-      ],
-      "level": 0,
+      "name": "Slow",
+      "source": "XPHB",
+      "page": 318,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 3,
       "school": "T",
       "time": [
         {
@@ -429,42 +361,41 @@
         "type": "point",
         "distance": {
           "type": "feet",
-          "amount": 30
+          "amount": 120
         }
       },
       "components": {
         "v": true,
-        "s": true
+        "s": true,
+        "m": "a drop of molasses"
       },
       "duration": [
         {
-          "type": "instant"
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
         }
       ],
       "entries": [
-        "You seize the air and compel it to create one of the following effects at a point you can see within range:",
-        {
-          "type": "list",
-          "items": [
-            "One Medium or smaller creature that you choose must succeed on a Strength saving throw or be pushed up to 5 feet away from you.",
-            "You create a small blast of air capable of moving one object that is neither held nor carried and that weighs no more than 5 pounds. The object is pushed up to 10 feet away from you. It isn't pushed with enough force to cause damage.",
-            "You create a harmless sensory effect using air, such as causing leaves to rustle, wind to slam shutters closed, or your clothing to ripple in a breeze."
-          ]
-        }
+        "You alter time around up to six creatures of your choice in a 40-foot {@variantrule Cube [Area of Effect]|XPHB|Cube} within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration.",
+        "An affected target's {@variantrule Speed|XPHB} is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a {@variantrule Bonus Action|XPHB}, not both, and it can make only one attack if it takes the {@action Attack|XPHB} action. If it casts a spell with a Somatic component, there is a {@chance 25|||The spell fails!|The spell does not fail.} chance the spell fails as a result of the target making the spell's gestures too slowly.",
+        "An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
       ],
       "savingThrow": [
-        "strength"
+        "wisdom"
       ],
       "miscTags": [
-        "FMV",
-        "OBJ",
-        "SGT"
+        "MAC"
       ],
       "areaTags": [
-        "ST"
+        "C",
+        "MT"
       ],
       "classes": [
-        "Druid",
+        "Bard",
         "Sorcerer",
         "Wizard"
       ],
@@ -547,13 +478,258 @@
       "prepared": true
     },
     {
-      "name": "Mold Earth",
+      "name": "Magic Missile",
+      "source": "XPHB",
+      "page": 295,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 1,
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You create three glowing darts of magical force. Each dart strikes a creature of your choice that you can see within range. A dart deals {@damage 1d4 + 1} Force damage to its target. The darts all strike simultaneously, and you can direct them to hit one creature or several."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "The spell creates one more dart for each spell slot level above 1."
+          ]
+        }
+      ],
+      "damageInflict": [
+        "force"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "areaTags": [
+        "MT",
+        "ST"
+      ],
+      "hasFluffImages": true,
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Detect Thoughts",
+      "source": "XPHB",
+      "page": 262,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 2,
+      "school": "D",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "self"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "1 Copper Piece"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
+        }
+      ],
+      "entries": [
+        "You activate one of the effects below. Until the spell ends, you can activate either effect as a {@action Magic|XPHB} action on your later turns.",
+        {
+          "type": "entries",
+          "name": "Sense Thoughts",
+          "entries": [
+            "You sense the presence of thoughts within 30 feet of yourself that belong to creatures that know languages or are telepathic. You don't read the thoughts, but you know that a thinking creature is present.",
+            "The spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Read Thoughts",
+          "entries": [
+            "Target one creature you can see within 30 feet of yourself or one creature within 30 feet of yourself that you detected with the Sense Thoughts option. You learn what is most on the target's mind right now. If the target doesn't know any languages and isn't telepathic, you learn nothing.",
+            "As a {@action Magic|XPHB} action on your next turn, you can try to probe deeper into the target's mind. If you probe deeper, the target makes a Wisdom saving throw. On a failed save, you discern the target's reasoning, emotions, and something that looms large in its mind (such as a worry, love, or hate). On a successful save, the spell ends. Either way, the target knows that you are probing into its mind, and until you shift your attention away from the target's mind, the target can take an action on its turn to make an Intelligence ({@skill Arcana|XPHB}) check against your spell save DC, ending the spell on a success."
+          ]
+        }
+      ],
+      "savingThrow": [
+        "wisdom"
+      ],
+      "abilityCheck": [
+        "intelligence"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "See Invisibility",
+      "source": "XPHB",
+      "page": 314,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 2,
+      "school": "D",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "self"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a pinch of talc"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "For the duration, you see creatures and objects that have the {@condition Invisible|XPHB} condition as if they were visible, and you can see into the Ethereal Plane. Creatures and objects there appear ghostly."
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard",
+        "Artificer"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Cure Wounds",
+      "source": "XPHB",
+      "page": 259,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 1,
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "A creature you touch regains a number of {@variantrule Hit Points|XPHB} equal to {@dice 2d8} plus your spellcasting ability modifier."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Using a Higher-Level Spell Slot",
+          "entries": [
+            "The healing increases by {@scaledice 2d8|1-9|2d8} for each spell slot level above 1."
+          ]
+        }
+      ],
+      "miscTags": [
+        "HL"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "classes": [
+        "Bard",
+        "Cleric",
+        "Druid",
+        "Ranger",
+        "Paladin",
+        "Artificer"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Gust",
       "source": "XGE",
-      "page": 162,
+      "page": 157,
       "otherSources": [
         {
           "source": "EEPC",
-          "page": 21
+          "page": 19
+        },
+        {
+          "source": "ERLW",
+          "page": 50
+        },
+        {
+          "source": "TCE",
+          "page": 50
         }
       ],
       "referenceSources": [
@@ -575,38 +751,35 @@
         }
       },
       "components": {
+        "v": true,
         "s": true
       },
       "duration": [
         {
           "type": "instant"
-        },
-        {
-          "type": "timed",
-          "duration": {
-            "type": "hour",
-            "amount": 1
-          }
         }
       ],
       "entries": [
-        "You choose a portion of dirt or stone that you can see within range and that fits within a 5-foot cube. You manipulate it in one of the following ways:",
+        "You seize the air and compel it to create one of the following effects at a point you can see within range:",
         {
           "type": "list",
           "items": [
-            "If you target an area of loose earth, you can instantaneously excavate it, move it along the ground, and deposit it up to 5 feet away. This movement doesn't involve enough force to cause damage.",
-            "You cause shapes, colors, or both to appear on the dirt or stone, spelling out words, creating images, or shaping patterns. The changes last for 1 hour.",
-            "If the dirt or stone you target is on the ground, you cause it to become {@quickref difficult terrain||3}. Alternatively, you can cause the ground to become normal terrain if it is already {@quickref difficult terrain||3}. This change lasts for 1 hour."
+            "One Medium or smaller creature that you choose must succeed on a Strength saving throw or be pushed up to 5 feet away from you.",
+            "You create a small blast of air capable of moving one object that is neither held nor carried and that weighs no more than 5 pounds. The object is pushed up to 10 feet away from you. It isn't pushed with enough force to cause damage.",
+            "You create a harmless sensory effect using air, such as causing leaves to rustle, wind to slam shutters closed, or your clothing to ripple in a breeze."
           ]
-        },
-        "If you cast this spell multiple times, you can have no more than two of its non-instantaneous effects active at a time, and you can dismiss such an effect as an action."
+        }
+      ],
+      "savingThrow": [
+        "strength"
       ],
       "miscTags": [
-        "DFT",
+        "FMV",
+        "OBJ",
         "SGT"
       ],
       "areaTags": [
-        "C"
+        "ST"
       ],
       "classes": [
         "Druid",
@@ -688,16 +861,20 @@
       "prepared": true
     },
     {
-      "name": "Magic Missile",
-      "source": "XPHB",
-      "page": 295,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "UtHftLH"
+      "name": "Control Flames",
+      "source": "XGE",
+      "page": 152,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 16
+        }
       ],
-      "level": 1,
-      "school": "V",
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 0,
+      "school": "T",
       "time": [
         {
           "number": 1,
@@ -708,42 +885,116 @@
         "type": "point",
         "distance": {
           "type": "feet",
-          "amount": 120
+          "amount": 60
         }
       },
       "components": {
-        "v": true,
         "s": true
       },
       "duration": [
         {
           "type": "instant"
+        },
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
         }
       ],
       "entries": [
-        "You create three glowing darts of magical force. Each dart strikes a creature of your choice that you can see within range. A dart deals {@damage 1d4 + 1} Force damage to its target. The darts all strike simultaneously, and you can direct them to hit one creature or several."
-      ],
-      "entriesHigherLevel": [
+        "You choose nonmagical flame that you can see within range and that fits within a 5-foot cube. You affect it in one of the following ways:",
         {
-          "type": "entries",
-          "name": "Using a Higher-Level Spell Slot",
-          "entries": [
-            "The spell creates one more dart for each spell slot level above 1."
+          "type": "list",
+          "items": [
+            "You instantaneously expand the flame 5 feet in one direction, provided that wood or other fuel is present in the new location.",
+            "You instantaneously extinguish the flames within the cube.",
+            "You double or halve the area of bright light and dim light cast by the flame, change its color, or both. The change lasts for 1 hour.",
+            "You cause simple shapes—such as the vague form of a creature, an inanimate object, or a location—to appear within the flames and animate as you like. The shapes last for 1 hour."
           ]
-        }
-      ],
-      "damageInflict": [
-        "force"
+        },
+        "If you cast this spell multiple times, you can have up to three non-instantaneous effects created by it active at a time, and you can dismiss such an effect as an action."
       ],
       "miscTags": [
+        "LGT",
         "SGT"
       ],
       "areaTags": [
-        "MT",
-        "ST"
+        "C"
       ],
       "hasFluffImages": true,
       "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Mold Earth",
+      "source": "XGE",
+      "page": 162,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 21
+        }
+      ],
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 30
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        },
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "You choose a portion of dirt or stone that you can see within range and that fits within a 5-foot cube. You manipulate it in one of the following ways:",
+        {
+          "type": "list",
+          "items": [
+            "If you target an area of loose earth, you can instantaneously excavate it, move it along the ground, and deposit it up to 5 feet away. This movement doesn't involve enough force to cause damage.",
+            "You cause shapes, colors, or both to appear on the dirt or stone, spelling out words, creating images, or shaping patterns. The changes last for 1 hour.",
+            "If the dirt or stone you target is on the ground, you cause it to become {@quickref difficult terrain||3}. Alternatively, you can cause the ground to become normal terrain if it is already {@quickref difficult terrain||3}. This change lasts for 1 hour."
+          ]
+        },
+        "If you cast this spell multiple times, you can have no more than two of its non-instantaneous effects active at a time, and you can dismiss such an effect as an action."
+      ],
+      "miscTags": [
+        "DFT",
+        "SGT"
+      ],
+      "areaTags": [
+        "C"
+      ],
+      "classes": [
+        "Druid",
         "Sorcerer",
         "Wizard"
       ],
@@ -790,76 +1041,6 @@
       ],
       "classes": [
         "Bard",
-        "Sorcerer",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Blindness/Deafness",
-      "source": "XPHB",
-      "page": 248,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "UtHftLH"
-      ],
-      "level": 2,
-      "school": "T",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "feet",
-          "amount": 120
-        }
-      },
-      "components": {
-        "v": true
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          }
-        }
-      ],
-      "entries": [
-        "One creature that you can see within range must succeed on a Constitution saving throw, or it has the {@condition Blinded|XPHB} or {@condition Deafened|XPHB} condition (your choice) for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "Using a Higher-Level Spell Slot",
-          "entries": [
-            "You can target one additional creature for each spell slot level above 2."
-          ]
-        }
-      ],
-      "conditionInflict": [
-        "blinded",
-        "deafened"
-      ],
-      "savingThrow": [
-        "constitution"
-      ],
-      "miscTags": [
-        "SCT",
-        "SGT"
-      ],
-      "areaTags": [
-        "ST"
-      ],
-      "classes": [
-        "Bard",
-        "Cleric",
         "Sorcerer",
         "Wizard"
       ],
@@ -935,13 +1116,11 @@
       "prepared": true
     },
     {
-      "name": "Slow",
-      "source": "XPHB",
-      "page": 318,
-      "srd52": true,
-      "basicRules2024": true,
-      "level": 3,
-      "school": "T",
+      "name": "Vortex Warp",
+      "source": "SCC",
+      "page": 38,
+      "level": 2,
+      "school": "C",
       "time": [
         {
           "number": 1,
@@ -952,186 +1131,12 @@
         "type": "point",
         "distance": {
           "type": "feet",
-          "amount": 120
+          "amount": 90
         }
       },
       "components": {
         "v": true,
-        "s": true,
-        "m": "a drop of molasses"
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          },
-          "concentration": true
-        }
-      ],
-      "entries": [
-        "You alter time around up to six creatures of your choice in a 40-foot {@variantrule Cube [Area of Effect]|XPHB|Cube} within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration.",
-        "An affected target's {@variantrule Speed|XPHB} is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a {@variantrule Bonus Action|XPHB}, not both, and it can make only one attack if it takes the {@action Attack|XPHB} action. If it casts a spell with a Somatic component, there is a {@chance 25|||The spell fails!|The spell does not fail.} chance the spell fails as a result of the target making the spell's gestures too slowly.",
-        "An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
-      ],
-      "savingThrow": [
-        "wisdom"
-      ],
-      "miscTags": [
-        "MAC"
-      ],
-      "areaTags": [
-        "C",
-        "MT"
-      ],
-      "classes": [
-        "Bard",
-        "Sorcerer",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "See Invisibility",
-      "source": "XPHB",
-      "page": 314,
-      "srd52": true,
-      "basicRules2024": true,
-      "level": 2,
-      "school": "D",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "self"
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true,
-        "m": "a pinch of talc"
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "hour",
-            "amount": 1
-          }
-        }
-      ],
-      "entries": [
-        "For the duration, you see creatures and objects that have the {@condition Invisible|XPHB} condition as if they were visible, and you can see into the Ethereal Plane. Creatures and objects there appear ghostly."
-      ],
-      "classes": [
-        "Bard",
-        "Sorcerer",
-        "Wizard",
-        "Artificer"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Detect Thoughts",
-      "source": "XPHB",
-      "page": 262,
-      "srd52": true,
-      "basicRules2024": true,
-      "level": 2,
-      "school": "D",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "self"
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true,
-        "m": "1 Copper Piece"
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          },
-          "concentration": true
-        }
-      ],
-      "entries": [
-        "You activate one of the effects below. Until the spell ends, you can activate either effect as a {@action Magic|XPHB} action on your later turns.",
-        {
-          "type": "entries",
-          "name": "Sense Thoughts",
-          "entries": [
-            "You sense the presence of thoughts within 30 feet of yourself that belong to creatures that know languages or are telepathic. You don't read the thoughts, but you know that a thinking creature is present.",
-            "The spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead."
-          ]
-        },
-        {
-          "type": "entries",
-          "name": "Read Thoughts",
-          "entries": [
-            "Target one creature you can see within 30 feet of yourself or one creature within 30 feet of yourself that you detected with the Sense Thoughts option. You learn what is most on the target's mind right now. If the target doesn't know any languages and isn't telepathic, you learn nothing.",
-            "As a {@action Magic|XPHB} action on your next turn, you can try to probe deeper into the target's mind. If you probe deeper, the target makes a Wisdom saving throw. On a failed save, you discern the target's reasoning, emotions, and something that looms large in its mind (such as a worry, love, or hate). On a successful save, the spell ends. Either way, the target knows that you are probing into its mind, and until you shift your attention away from the target's mind, the target can take an action on its turn to make an Intelligence ({@skill Arcana|XPHB}) check against your spell save DC, ending the spell on a success."
-          ]
-        }
-      ],
-      "savingThrow": [
-        "wisdom"
-      ],
-      "abilityCheck": [
-        "intelligence"
-      ],
-      "miscTags": [
-        "SGT"
-      ],
-      "classes": [
-        "Bard",
-        "Sorcerer",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Misty Step",
-      "source": "XPHB",
-      "page": 299,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "UtHftLH"
-      ],
-      "level": 2,
-      "school": "C",
-      "time": [
-        {
-          "number": 1,
-          "unit": "bonus"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "self"
-        }
-      },
-      "components": {
-        "v": true
+        "s": true
       },
       "duration": [
         {
@@ -1139,7 +1144,19 @@
         }
       ],
       "entries": [
-        "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see."
+        "You magically twist space around another creature you can see within range. The target must succeed on a Constitution saving throw (the target can choose to fail), or the target is teleported to an unoccupied space of your choice that you can see within range. The chosen space must be on a surface or in a liquid that can support the target without the target having to squeeze."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "At Higher Levels",
+          "entries": [
+            "When you cast this spell using a spell slot of 3rd level or higher, the range of the spell increases by 30 feet for each slot level above 2nd."
+          ]
+        }
+      ],
+      "savingThrow": [
+        "constitution"
       ],
       "miscTags": [
         "SGT",
@@ -1147,7 +1164,109 @@
       ],
       "classes": [
         "Sorcerer",
+        "Wizard",
+        "Artificer"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Counterspell",
+      "source": "XPHB",
+      "page": 258,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 3,
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "reaction",
+          "condition": "which you take when you see a creature within 60 feet of yourself casting a spell with Verbal, Somatic, or Material components"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 60
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You attempt to interrupt a creature in the process of casting a spell. The creature makes a Constitution saving throw. On a failed save, the spell dissipates with no effect, and the action, {@variantrule Bonus Action|XPHB}, or {@variantrule Reaction|XPHB} used to cast it is wasted. If that spell was cast with a spell slot, the slot isn't expended."
+      ],
+      "savingThrow": [
+        "constitution"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "classes": [
+        "Sorcerer",
         "Warlock",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Mage Armor",
+      "source": "XPHB",
+      "page": 293,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 1,
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a piece of cured leather"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 8
+          }
+        }
+      ],
+      "entries": [
+        "You touch a willing creature who isn't wearing armor. Until the spell ends, the target's base AC becomes 13 plus its Dexterity modifier. The spell ends early if the target dons armor."
+      ],
+      "miscTags": [
+        "MAC"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "hasFluffImages": true,
+      "classes": [
+        "Sorcerer",
         "Wizard"
       ],
       "prepared": true
@@ -1205,25 +1324,6 @@
       "value": 1000,
       "hasFluffImages": true,
       "equipped": true
-    },
-    {
-      "id": "ce3f39c5-d347-4256-9170-79c3a34a3612",
-      "name": "Orion Chassis",
-      "quantity": 1,
-      "weight": 0,
-      "containerId": null,
-      "notes": "Custom Item",
-      "type": "LA|XPHB",
-      "rarity": "artifact",
-      "reqAttune": false,
-      "properties": [],
-      "mastery": [],
-      "bonusAc": "+5",
-      "entries": [
-        "Represents the enchanced AC that Leo & Orion gets when they go into integrated mode."
-      ],
-      "equipped": false,
-      "isAttuned": false
     },
     {
       "id": "aca08760-b811-42e2-9b0b-3a0b47988faf",
@@ -1331,6 +1431,20 @@
       "damageType": "S",
       "value": 100,
       "hasFluffImages": true
+    },
+    {
+      "id": "1bcfca16-4357-4b21-a4ba-5877d4bfbed8",
+      "name": "Mage Armor",
+      "quantity": 1,
+      "weight": 10,
+      "containerId": null,
+      "source": "XPHB",
+      "rarity": "none",
+      "type": "LA|XPHB",
+      "ac": 13,
+      "value": 1000,
+      "hasFluffImages": true,
+      "equipped": false
     }
   ],
   "wealth": {
@@ -1735,7 +1849,38 @@
       "choices": {
         "type": "MM",
         "count": 2,
-        "selected": []
+        "selected": [
+          {
+            "name": "Careful Spell",
+            "source": "XPHB",
+            "page": 141,
+            "srd52": true,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point"
+            },
+            "entries": [
+              "When you cast a spell that forces other creatures to make a saving throw, you can protect some of those creatures from the spell's full force. To do so, spend 1 Sorcery Point and choose a number of those creatures up to your Charisma modifier (minimum of one creature). A chosen creature automatically succeeds on its saving throw against the spell, and it takes no damage if it would normally take half damage on a successful save."
+            ]
+          },
+          {
+            "name": "Distant Spell",
+            "source": "XPHB",
+            "page": 141,
+            "srd52": true,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point"
+            },
+            "entries": [
+              "When you cast a spell that has a range of at least 5 feet, you can spend 1 Sorcery Point to double the spell's range. Or when you cast a spell that has a range of Touch, you can spend 1 Sorcery Point to make the spell's range 30 feet."
+            ]
+          }
+        ]
       }
     },
     {
@@ -3382,468 +3527,44 @@
       "sendToDiscord": false
     },
     {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 13,
-      "details": "(3 + 6) + 4",
-      "timestamp": 1771225322814,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 14,
-      "details": "(6 + 4) + 4",
-      "timestamp": 1771225326882,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 14,
-      "details": "(8 + 2) + 4",
-      "timestamp": 1771225327674,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 12,
-      "details": "(1 + 7) + 4",
-      "timestamp": 1771225328279,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 2)",
-      "result": 13,
-      "details": "(4 + 7) + 2",
-      "timestamp": 1771225353357,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 7,
-      "details": "(1 + 2) + 4",
-      "timestamp": 1771225356476,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 5,
-      "details": "(1 + 4)",
-      "timestamp": 1771225360487,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Magic Missile (Lvl 3)",
-      "result": 5,
-      "details": "4 + 1",
-      "timestamp": 1771225397435,
-      "diceType": "d4",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Magic Missile",
-      "result": 4,
-      "details": "3 + 1",
-      "timestamp": 1771225399382,
-      "diceType": "d4",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 6,
-      "details": "(3 + 3)",
-      "timestamp": 1771225404534,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 2)",
-      "result": 12,
-      "details": "(5 + 5) + 2",
-      "timestamp": 1771225406314,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 11,
-      "details": "(2 + 5) + 4",
-      "timestamp": 1771225411461,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Fireball",
-      "result": 29,
-      "details": "(4 + 4 + 4 + 5 + 5 + 3 + 3 + 1)",
-      "timestamp": 1771225425237,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 14,
-      "details": "(5 + 5) + 4",
-      "timestamp": 1771225429360,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 3)",
-      "result": 16,
-      "details": "(4 + 4 + 6) + 2",
-      "timestamp": 1771225537573,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 3)",
-      "result": 12,
-      "details": "(6 + 3 + 1) + 2",
-      "timestamp": 1771225543962,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 2)",
-      "result": 10,
-      "details": "(2 + 1 + 6) + 1",
-      "timestamp": 1771225547472,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands",
-      "result": 11,
-      "details": "(3 + 5 + 3)",
-      "timestamp": 1771225549657,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 2)",
-      "result": 14,
-      "details": "(5 + 4 + 4) + 1",
-      "timestamp": 1771225558150,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 3)",
-      "result": 11,
-      "details": "(2 + 6 + 1) + 2",
-      "timestamp": 1771225560545,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "timestamp": 1771225728764,
-      "label": "4d2",
-      "result": 6,
-      "diceType": "mixed",
-      "details": "(2 + 1 + 2 + 1)",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 5,
-      "details": "(1 + 4)",
-      "timestamp": 1771225734091,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 11,
-      "details": "(4 + 7)",
-      "timestamp": 1771225734184,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 2)",
-      "result": 20,
-      "details": "(2 + 5) + (8 + 5)",
-      "timestamp": 1771225736145,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 31,
-      "details": "(5 + 3) + (2 + 6 + 8 + 7)",
-      "timestamp": 1771225738396,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands",
-      "result": 16,
-      "details": "(4 + 6 + 6)",
-      "timestamp": 1771225834963,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 2)",
-      "result": 17,
-      "details": "(5 + 3 + 3) + 6",
-      "timestamp": 1771225837073,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 3)",
-      "result": 21,
-      "details": "(6 + 2 + 6) + (2 + 5)",
-      "timestamp": 1771225840559,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Catapult (Lvl 2)",
-      "result": 18,
-      "details": "(5 + 2 + 7) + 4",
-      "timestamp": 1771225849417,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Catapult (Lvl 3)",
-      "result": 21,
-      "details": "(8 + 2 + 3) + (5 + 3)",
-      "timestamp": 1771225851781,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 7,
-      "details": "(5 + 2)",
-      "timestamp": 1771225872437,
-      "diceType": "d8",
+      "label": "Skill Check: Insight",
+      "result": 19,
+      "details": "(17) + 2",
+      "timestamp": 1771251741421,
+      "diceType": "d20",
       "sendToDiscord": true
     },
     {
-      "label": "Effect: Cure Wounds (Lvl 2)",
+      "label": "Skill Check: Insight",
+      "result": 13,
+      "details": "(11) + 2",
+      "timestamp": 1771254630377,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
       "result": 15,
-      "details": "(1 + 6) + (2 + 6)",
-      "timestamp": 1771225873885,
-      "diceType": "d8",
+      "details": "(8) + 7",
+      "timestamp": 1771257576765,
+      "diceType": "d20",
       "sendToDiscord": true
     },
     {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 34,
-      "details": "(8 + 3) + (6 + 4 + 6 + 7)",
-      "timestamp": 1771225875499,
-      "diceType": "d8",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Effect: Fireball",
-      "result": 29,
-      "details": "(6 + 3 + 5 + 2 + 3 + 4 + 4 + 2)",
-      "timestamp": 1771225921860,
-      "diceType": "d6",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 10,
-      "details": "(8 + 2)",
-      "timestamp": 1771228302559,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 10,
-      "details": "(4 + 6)",
-      "timestamp": 1771228304404,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 33,
-      "details": "(6 + 5) + (5 + 1 + 8 + 8)",
-      "timestamp": 1771228346727,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 2)",
-      "result": 15,
-      "details": "(2 + 4) + (2 + 7)",
-      "timestamp": 1771228348473,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
+      "label": "Skill Check: Sleight of Hand",
       "result": 7,
-      "details": "(3 + 4)",
-      "timestamp": 1771228350388,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands",
-      "result": 12,
-      "details": "(5 + 4 + 3)",
-      "timestamp": 1771228372783,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 2)",
-      "result": 13,
-      "details": "(3 + 4 + 2) + 4",
-      "timestamp": 1771228374306,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Burning Hands (Lvl 3)",
-      "result": 12,
-      "details": "(4 + 3 + 2) + (2 + 1)",
-      "timestamp": 1771228376967,
-      "diceType": "d6",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Catapult",
-      "result": 18,
-      "details": "(7 + 8 + 3)",
-      "timestamp": 1771228380113,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Catapult (Lvl 2)",
-      "result": 14,
-      "details": "(1 + 4 + 4) + 5",
-      "timestamp": 1771228381877,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Catapult (Lvl 3)",
-      "result": 15,
-      "details": "(1 + 3 + 6) + (2 + 3)",
-      "timestamp": 1771228384167,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 8,
-      "details": "(5 + 3)",
-      "timestamp": 1771228387806,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds",
-      "result": 16,
-      "details": "(8 + 8)",
-      "timestamp": 1771228388172,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Effect: Cure Wounds (Lvl 3)",
-      "result": 29,
-      "details": "(6 + 7) + (1 + 3 + 5 + 7)",
-      "timestamp": 1771228389463,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Overload Burst (True Overload) — 10d8 Fire",
-      "result": 54,
-      "details": "(3 + 7 + 5 + 3 + 6 + 8 + 1 + 7 + 7 + 7)",
-      "timestamp": 1771243499949,
-      "diceType": "d8",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Backlash CON Save (DC 13)",
-      "result": 25,
-      "details": "19 + 6",
-      "timestamp": 1771243499950,
+      "details": "(6) + 1",
+      "timestamp": 1771259310955,
       "diceType": "d20",
       "sendToDiscord": true
     },
     {
-      "label": "Overload Burst (True Overload) — 12d8 Fire",
-      "result": 40,
-      "details": "(4 + 7 + 1 + 4 + 2 + 1 + 4 + 5 + 1 + 4 + 2 + 5)",
-      "timestamp": 1771243576145,
-      "diceType": "d8",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Backlash CON Save (DC 13)",
-      "result": 17,
-      "details": "11 + 6",
-      "timestamp": 1771243576146,
+      "label": "Skill Check: Acrobatics",
+      "result": 11,
+      "details": "(10) + 1",
+      "timestamp": 1771259792986,
       "diceType": "d20",
       "sendToDiscord": true
-    },
-    {
-      "label": "Overload Burst (True Overload) — 22d8 Fire",
-      "result": 97,
-      "details": "(7 + 6 + 5 + 4 + 2 + 6 + 4 + 6 + 8 + 2 + 6 + 1 + 1 + 3 + 3 + 6 + 5 + 6 + 3 + 6 + 6 + 1)",
-      "timestamp": 1771246862025,
-      "diceType": "d8",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Backlash CON Save (DC 13)",
-      "result": 13,
-      "details": "7 + 6",
-      "timestamp": 1771246862027,
-      "diceType": "d20",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Overload Burst (True Overload) — 16d8 Fire",
-      "result": 72,
-      "details": "(5 + 5 + 2 + 6 + 3 + 3 + 4 + 7 + 8 + 1 + 1 + 8 + 1 + 7 + 7 + 4)",
-      "timestamp": 1771247869968,
-      "diceType": "d8",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Backlash CON Save (DC 13)",
-      "result": 17,
-      "details": "11 + 6",
-      "timestamp": 1771247869968,
-      "diceType": "d20",
-      "sendToDiscord": true
-    },
-    {
-      "label": "Overload Burst (Maximum) — 16d8 Force",
-      "result": 72,
-      "details": "(4 + 1 + 7 + 4 + 8 + 8 + 5 + 4 + 2 + 4 + 6 + 1 + 8 + 4 + 3 + 3)",
-      "timestamp": 1771248327114,
-      "diceType": "d8",
-      "sendToDiscord": false
-    },
-    {
-      "label": "Withheld Overload — 10d10 Force",
-      "result": 57,
-      "details": "(9 + 4 + 6 + 3 + 8 + 5 + 10 + 5 + 2 + 5)",
-      "timestamp": 1771248327114,
-      "diceType": "d10",
-      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -3861,25 +3582,25 @@
   ],
   "notes": [
     {
-      "id": "1fb30d8b-5906-41a0-a7ac-7b28cd665dfe",
-      "title": "New Note 2",
-      "subject": "Test note wandafl",
-      "content": "",
+      "id": "c4e6d69c-1953-4c17-8c3c-ddf93529184a",
+      "title": "2/16/2026",
+      "subject": "Yone from League of Legends",
+      "content": "Insane 2 week time skip<div>Got 2 new feats: Tandem Paragon and Durable</div><div>Lies and Deceit arc against Zarumaki and Yone from league of legends</div><div>Split party to hep caravan, me and monkey stay behind</div><div>Zarumaki gets one, walahi we're FRIED</div><div>Zarumaki was fake, walahi we're on TOP</div><div>Big-ahh portal opens, eldritch-fizz from league of legends come out</div><div>?????????</div>",
       "categoryIds": [
-        "6b08bbc5-07ce-4b26-97ab-690097eda12c",
-        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b"
+        "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
+        "6b08bbc5-07ce-4b26-97ab-690097eda12c"
       ],
-      "lastModified": 1771087291682
+      "lastModified": 1771307156612
     },
     {
       "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
       "title": "TO DO LIST:",
       "subject": "Typa shi to do for this goofy ahh website",
-      "content": "<ol><li>Implement the background features for the character. <b>(PARTIALLY DONE)</b></li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE)</b></span></li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE; Skilled and Expertise Bullshit left)</b></span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Refine Spell Section to be more useful</li><li>Add spell modifier, attack, save DC in spell section.</li><li>Show hit/dc and effect on each spell card</li><li>Add homebrew section <b>(PARTIALLY DONE)</b></li><li>Implement class feature for the character.</li></ol><div><br></div><div><b>FINISHED:<br></b><ol style=\"color: rgb(241, 242, 244);\"><li>Add spell modifier, attack, save DC in spell section.&nbsp;<b>(DONE)</b></li><li>Show hit/dc and effect on each spell card&nbsp;<b>(DONE)</b></li></ol></div>",
+      "content": "<ol><li>Implement the background features for the character. <b>(PARTIALLY DONE)</b></li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE)</b></span></li><li>Add advantage/disadvantage button to automate rolls.</li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE; Skilled and Expertise Bullshit left)</b></span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Add homebrew section <b>(PARTIALLY DONE)</b></li><li>Implement class feature for the character.</li><li>Add Innate sorcery button</li></ol><div>FINISHED:</div><div><ol style=\"color: rgb(241, 242, 244);\"><li>Refine Spell Section to be more useful&nbsp;<b>(DONE)</b></li><li>Add spell modifier, attack, save DC in spell section.&nbsp;<b>(DONE)</b></li><li>Show hit/dc and effect on each spell card&nbsp;<b>(DONE)</b></li></ol></div>",
       "categoryIds": [
         "6b08bbc5-07ce-4b26-97ab-690097eda12c"
       ],
-      "lastModified": 1771226112437
+      "lastModified": 1771307409709
     }
   ],
   "noteCategories": [
@@ -3890,7 +3611,7 @@
     },
     {
       "id": "bc8e7b4e-f6cf-47c4-83e9-d8006679857b",
-      "name": "Random Category #2"
+      "name": "Campaign Notes"
     }
   ],
   "feats": [
@@ -4312,6 +4033,101 @@
         "asi": {
           "con": 1
         },
+        "spells": {},
+        "spellAbilities": {},
+        "profs": {}
+      }
+    },
+    {
+      "name": "Tandem Paragon",
+      "source": "Homebrew",
+      "page": 0,
+      "category": "G",
+      "entries": [
+        "You are trained to operate as a perfectly synchronized combatant, amplifying both offense and defense when fighting alongside an ally.",
+        "You designate one willing creature you can see within 30 feet as your Tandem Partner at the start of combat (no action required). You may change partners at the start of your turn.",
+        {
+          "type": "entries",
+          "name": "I. Unified Pressure",
+          "entries": [
+            "Once per turn, when you deal damage to a creature with:",
+            {
+              "type": "list",
+              "items": [
+                "A weapon attack",
+                "A spell attack",
+                "Or a spell that forces a saving throw"
+              ]
+            },
+            "you can mark that creature until the start of your next turn.",
+            "If your Tandem Partner damages the marked creature before the mark ends, one of the following effects occurs (your choice):",
+            {
+              "type": "list",
+              "items": [
+                "The attack deals extra damage equal to **1d8 + your proficiency bonus** (same damage type as the triggering attack), or",
+                "The target has disadvantage on the next saving throw it makes before the end of its next turn."
+              ]
+            },
+            "If your Partner marks a creature first, you can trigger this effect instead."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "II. Layered Defense",
+          "entries": [
+            "While you are within 30 feet of your Tandem Partner and can see each other:",
+            "When either of you is:",
+            {
+              "type": "list",
+              "items": [
+                "Hit by an attack, or",
+                "Fails a saving throw"
+              ]
+            },
+            "the other can use their reaction to grant:",
+            {
+              "type": "list",
+              "items": [
+                "Resistance to the triggering damage, **or**",
+                "A bonus to the saving throw equal to the reactor's proficiency bonus (potentially turning failure into success)."
+              ]
+            },
+            "You can use this feature a number of times equal to your proficiency bonus per long rest."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "III. Tactical Convergence",
+          "entries": [
+            "If both you and your Tandem Partner target the same creature in a round:",
+            {
+              "type": "list",
+              "items": [
+                "That creature's speed is reduced by 10 feet until the start of your next turn.",
+                "Opportunity attacks made by either of you against that creature are made with advantage.",
+                "If the creature attempts to teleport or move willingly out of both your ranges, one of you can make an opportunity attack against it (even if teleporting)."
+              ]
+            }
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "IV. Finisher Protocol",
+          "entries": [
+            "Once per long rest, when you and your Tandem Partner both deal damage to the same creature in the same round, you may trigger one of the following:",
+            {
+              "type": "list",
+              "items": [
+                "The creature is knocked prone (no save if Large or smaller; Huge+ gets a Strength save vs 8 + PB + relevant ability mod).",
+                "The creature becomes vulnerable to the next instance of damage it takes before the end of your next turn.",
+                "The creature must make a Constitution save or lose concentration."
+              ]
+            }
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {},
         "spells": {},
         "spellAbilities": {},
         "profs": {}
@@ -4859,17 +4675,12 @@
       }
     ],
     "gemini": {
-      "mode": "Autonomous",
+      "mode": "Integrated",
       "activeToggles": {
         "singularity": false,
         "coolant": false
       },
       "turnSpells": [],
-      "indomitable": {
-        "active": false,
-        "withheldStrain": 10,
-        "used": true
-      },
       "adaptiveSwaps": []
     }
   },
@@ -4877,8 +4688,8 @@
     {
       "id": "a9439c6e-a126-4d98-bcc3-31979eaaac2b",
       "name": "Core Strains",
-      "current": 0,
-      "max": 6,
+      "current": 5,
+      "max": 7,
       "reset": "Long",
       "type": "calculated",
       "maxFormula": "CoreStrains"

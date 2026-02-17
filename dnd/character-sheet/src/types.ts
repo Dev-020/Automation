@@ -212,6 +212,11 @@ export interface Feature extends FeatureEntry {
   additionalSpells?: any[];
   category?: string;
   prerequisite?: any[];
+  skillProficiencies?: any[];
+  toolProficiencies?: any[];
+  languageProficiencies?: any[];
+  expertise?: any[];
+  skillToolLanguageProficiencies?: any[];
   _config?: {
       asi?: Record<string, number>;
       spells?: Record<string, string>;

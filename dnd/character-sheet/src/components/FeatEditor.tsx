@@ -111,7 +111,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
 
                 opts.push({
                     type: 'choose',
-                    label: `Choose ${count} from ${Array.isArray(from) ? from.join(', ') : 'options'} (+${amount})`,
+                    label: `Choose ${count} from ${Array.isArray(from) ? from.join(', ') : 'options'} (${amount >= 0 ? '+' : ''}${amount})`,
                     from: Array.isArray(from) ? from : [],
                     count,
                     amount
@@ -123,7 +123,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                 Object.keys(ab).forEach(k => {
                      if (['str','dex','con','int','wis','cha'].includes(k)) {
                          stats[k as StatName] = ab[k];
-                         labelParts.push(`${k.toUpperCase()} +${ab[k]}`);
+                         labelParts.push(`${k.toUpperCase()} ${ab[k] >= 0 ? '+' : ''}${ab[k]}`);
                      }
                 });
                 if (labelParts.length > 0) {
@@ -548,7 +548,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                                 {Array.from({ length: asiOptions[asiModeIndex].count || 1 }).map((_, i) => (
                                     <div key={i} style={{ flex: 1, minWidth: '120px' }}>
                                         <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.5rem' }}>
-                                            Increase {i + 1} (+{asiOptions[asiModeIndex].amount})
+                                            Increase {i + 1} ({asiOptions[asiModeIndex].amount! >= 0 ? '+' : ''}{asiOptions[asiModeIndex].amount})
                                         </label>
                                         <select
                                             value={asiSelections[i] || ''}

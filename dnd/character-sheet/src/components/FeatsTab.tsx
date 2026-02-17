@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import type { Character, Feature } from '../types';
 import featsData from '../../../5etools/5etools-src/data/feats.json';
 import { SidePanel } from './SidePanel';
+import { MainPanel } from './MainPanel';
 import { FeatEditor } from './FeatEditor';
+import { HomebrewFeatForm } from './HomebrewFeatForm';
 
 // Filter for everything EXCEPT legacy PHB content (as per user request)
 const ALL_FEATS = (featsData.feat || []).filter((f: any) => f.source !== 'PHB');
@@ -17,6 +19,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [editingFeat, setEditingFeat] = useState<Feature | null>(null);
     const [editMode, setEditMode] = useState<'add' | 'edit'>('edit'); // Track if we are adding a fresh feat or editing existing
+    const [isCreatingHomebrew, setIsCreatingHomebrew] = useState(false);
 
     // --- Actions ---
     const handleAddFeat = (feat: any) => {
@@ -81,6 +84,16 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                     Feats
                 </h2>
                 <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button 
+                        onClick={() => setIsCreatingHomebrew(true)}
+                        style={{
+                            padding: '0.5rem 1rem', background: 'linear-gradient(135deg, #10b981, #059669)',
+                            color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer',
+                            fontWeight: 'bold', marginRight: '1rem'
+                        }}
+                    >
+                        + Create Homebrew
+                    </button>
                     <button 
                         onClick={() => setViewMode('list')}
                         style={{
@@ -180,7 +193,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                                 <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{feat.source}</span>
                                 {feat.prerequisite && (
                                     <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                                        Requires: {feat.prerequisite.map((p: any, i: number) => {
+                                        Requires: {feat.prerequisite.map((p: any) => {
                                             const parts = [];
                                             if (p.level) parts.push(`Level ${p.level}`);
                                             if (p.ability) {
@@ -221,6 +234,20 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                     />
                 )}
             </SidePanel>
+
+            <MainPanel
+                isOpen={isCreatingHomebrew}
+                onClose={() => setIsCreatingHomebrew(false)}
+                title="Create Homebrew Feat"
+            >
+                <HomebrewFeatForm 
+                    onSave={(newFeat) => {
+                        handleAddFeat(newFeat);
+                        setIsCreatingHomebrew(false);
+                    }}
+                    onCancel={() => setIsCreatingHomebrew(false)}
+                />
+            </MainPanel>
         </div>
     );
 };
