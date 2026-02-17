@@ -18,7 +18,7 @@ import { FeatsTab } from './components/FeatsTab';
 import { rollDice } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
-import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost } from './utils/rules';
+import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost, getSpellSlots } from './utils/rules';
 import { getFeatModifiers } from './utils/featUtils';
 import './App.css';
 
@@ -109,6 +109,39 @@ function App() {
       const newMaxHP = calculateMaxHP(character.level, conMod, character.class);
       const newHitDieMax = character.level;
       const newSorceryPointsMax = getSorceryPoints(character.level, character.class);
+
+      // 3. Calculate Spell Slots (Dynamic)
+      const expectedSlots = getSpellSlots(character.level, character.class);
+      const newSpellSlots = { ...character.spellSlots };
+      let slotsChanged = false;
+
+      // Update Max values for each level
+      Object.entries(expectedSlots).forEach(([lvlStr, max]) => {
+          const lvl = parseInt(lvlStr);
+          const currentSlot = newSpellSlots[lvl] || { current: 0, max: 0 };
+          
+          if (currentSlot.max !== max) {
+              // Loop logic: update if max changes
+              newSpellSlots[lvl] = {
+                  current: Math.min(currentSlot.current, max),
+                  max: max
+              };
+              slotsChanged = true;
+          }
+      });
+      // Check for slots that SHOULDN'T exist (e.g. leveled down?)
+      Object.keys(newSpellSlots).forEach(lvlStr => {
+          const lvl = parseInt(lvlStr);
+          if (!expectedSlots[lvl]) {
+              // If slot exists in character but not in expected (level down), zero it out
+              if (newSpellSlots[lvl].max !== 0) {
+                  newSpellSlots[lvl] = { ...newSpellSlots[lvl], max: 0, current: 0 };
+                  slotsChanged = true;
+              }
+          }
+      });
+      
+      // 4. Calculate AC
       
       // 3. Calculate AC
       const geminiConfig = character.homebrew?.gemini ? {
@@ -169,11 +202,12 @@ function App() {
           }
       }
 
-      if (statsChanged || vitalsChanged) {
+      if (statsChanged || vitalsChanged || slotsChanged) {
           setCharacter(prev => ({
               ...prev,
               stats: newStats,
-              vitals: updatedVitals
+              vitals: updatedVitals,
+              spellSlots: newSpellSlots
           }));
       }
 

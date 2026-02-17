@@ -25,6 +25,7 @@ export interface Resource {
   max: number;
   reset: 'Short' | 'Long';
   type: 'manual' | 'calculated';
+  activeSource?: string; // For "Source" tab tracking
   maxFormula?: string; // e.g. "SorceryPointsHomebrew", "CoreStrains"
 }
 
@@ -268,6 +269,11 @@ export interface Character {
   actions: Action[];
   spells: Spell[];
   spellSlots: SpellSlots;
+  spellLoadouts?: {
+      Integrated?: Spell[];
+      Autonomous?: Spell[];
+  };
+  pactMagic?: SpellSlots;
   inventory: Item[];
   containers: Container[];
   wealth: {

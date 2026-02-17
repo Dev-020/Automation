@@ -52,3 +52,43 @@ export const getPointBuyCost = (score: number): number => {
     };
     return costs[score] || 0;
 };
+
+export const SPELL_SLOTS_SORCERER: Record<number, number[]> = {
+    1:  [2, 0, 0, 0, 0, 0, 0, 0, 0],
+    2:  [3, 0, 0, 0, 0, 0, 0, 0, 0],
+    3:  [4, 2, 0, 0, 0, 0, 0, 0, 0],
+    4:  [4, 3, 0, 0, 0, 0, 0, 0, 0],
+    5:  [4, 3, 2, 0, 0, 0, 0, 0, 0],
+    6:  [4, 3, 3, 0, 0, 0, 0, 0, 0],
+    7:  [4, 3, 3, 1, 0, 0, 0, 0, 0],
+    8:  [4, 3, 3, 2, 0, 0, 0, 0, 0],
+    9:  [4, 3, 3, 3, 1, 0, 0, 0, 0],
+    10: [4, 3, 3, 3, 2, 0, 0, 0, 0],
+    11: [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    12: [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    13: [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    14: [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    15: [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    16: [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    17: [4, 3, 3, 3, 2, 1, 1, 1, 1],
+    18: [4, 3, 3, 3, 3, 1, 1, 1, 1],
+    19: [4, 3, 3, 3, 3, 2, 1, 1, 1],
+    20: [4, 3, 3, 3, 3, 2, 2, 1, 1]
+};
+
+export const getSpellSlots = (level: number, className: string): Record<number, number> => {
+    // If not Sorcerer, return empty or default? 
+    // For now we only implement Sorcerer as requested.
+    if (className !== "Sorcerer") return {};
+    
+    const slots = SPELL_SLOTS_SORCERER[level] || [];
+    const result: Record<number, number> = {};
+    
+    slots.forEach((count, idx) => {
+        if (count > 0) {
+            result[idx + 1] = count;
+        }
+    });
+    
+    return result;
+};

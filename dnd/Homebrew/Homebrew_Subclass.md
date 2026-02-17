@@ -140,9 +140,7 @@ As a bonus action, you can release the volatile energy of your Infernal Core. Th
 
 #### **Adaptive Spell Protocol**
 
-* Your mastery over Orion’s systems allows you to maintain a single, reconfigurable spell schematic. You designate one of your  "spells known" as your **Adaptive Spell**.  
-* As an **Action**, you can **spend a number of Core Strains equal to the new spell's level** (minimum of 1, maximum of 3\) to temporarily reconfigure the module. Choose another spell from the  **spell list**, which must be of a level for which you have Pact Magic spell slots. Your Adaptive Spell is then replaced with the chosen spell.  
-* The reconfigured module is unstable. The first time you cast the new spell, it is cast as normal. **Immediately after the spell is cast, the module reverts, and your Adaptive Spell returns to the original spell you chose.**
+* As an **Action**, you can **spend a number of Core Strains equal to the new spell's level** to reconfigure your prepared spells. Choose a spell from among your **prepared spells**. Then choose a spell from the  **spell list**, which must be of a level for which you have Pact Magic spell slots. The two spells will swap, unprepared the prepared spell and preparing the spell that came from the spell list.
 
 #### **Guardian Protocol**
 
@@ -198,14 +196,21 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 #### **Integrated Mode:**
 
 * As a bonus action, you can integrate with your suit. While integrated, you gain the following benefits:  
-* **Enhanced AC:** Your Armor Class is calculated as your original Armor Class \+ your Constitution modifier \+ your Charisma modifier.  
-* **Weapon Manifestation:** You can use your bonus action to manifest your pact weapon.
+* **Enhanced AC:** Your Armor Class is calculated as your original Armor Class \+ your Constitution modifier \+ your Charisma modifier.
 
-##### **System Override:** 
+##### **Integrated Mode: Hard-Light Projection**
 
-* When you cast a  spell using your action, you can choose to do one of the following:  
-  * **Offensive Override (Cost: 1 Core Strain):** Choose a damage type to which the primary target of your spell has **resistance**. Until the start of your next turn, the target loses that resistance. If the target has immunity to the chosen damage type, it is instead treated as having resistance to it for the duration.  
-  * **Defensive Override (Cost: 1 Core Strain):** You channel the spell's residual energy into a specialized defensive field. **Choose one damage type** (such as slashing, fire, or poison). You gain **resistance to that damage type until the end of your next turn**.
+* As a Bonus Action, you can shunt raw energy through your suit’s emitters to form a solid blade of superheated plasma in your free hand.  
+  * **Weapon Properties:** It counts as a **Simple Melee Weapon** with the **Light**, **Finesse**, and **Thrown (range 20/60)** properties.  
+  * **Damage:** It deals **2d8 Fire, Cold, or Lightning damage** (chosen when summoned) plus your spellcasting modifier on a hit.  
+  * **Ability Score:** You use your **spellcasting modifier** for attack and damage rolls with this weapon.  
+  * **Utility:** On your discretion, the energy blade can shed Bright Light of up to a 10-foot radius and Dim Light for an additional 10 feet.  
+  * **Stability:** This construct requires **no concentration** and lasts until you dismiss it (no action), end Integrated Mode, or it leaves your hand.  
+* **Cognitive Partition:** While wielding this blade, you can maintain Concentration on **two spells simultaneously**, provided one of them is cast *through* the blade.  
+  * Maintaining two distinct magical weaves creates mental volatility. If you take damage while concentrating on two spells, you make a **single Constitution Saving Throw** to maintain both.  
+    * The DC for this save is equal to the **Standard DC** **\+ the combined levels of the two spells** being maintained.  
+    * On a failed save, you lose concentration on **both** spells immediately.  
+  * However, due to your connection with Orion, you can add your **spellcasting modifier** to the concentration saving throw to maintain it.
 
 ### **Optimized System (Level 6\)**
 
@@ -221,7 +226,7 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 
 ##### **Targeting Matrix:** 
 
-* Your psychic link to the chassis acts as a perfect targeting solution. While in Autonomous Mode, you **double the range** of any spell that originates from the chassis's space or you, and your  spells **ignore half cover and three-quarters cover**.
+* Your psychic link to the chassis acts as a perfect targeting solution. While in Autonomous Mode, you **double the range** of any spell that originates from the chassis's space or you, and your spells **ignore half cover and three-quarters cover**.
 
 #### **While in Integrated Mode,** 
 
@@ -229,7 +234,7 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 
 ##### **Singularity Field:** 
 
-* You project a field of localized gravitational distortion. Your movement speed cannot be reduced, and the area within a **10-foot radius** of you is **difficult terrain for your enemies**. When a hostile creature is moved out of the field (willingly or forced), it must succeed on a **Strength saving throw** against your  Spell Save DC or its **speed becomes 0** until the end of the turn. A creature can only be affected by this saving throw once per turn.
+* You project a field of localized gravitational distortion. Your movement speed cannot be reduced, and the area within a **10-foot radius** of you is **difficult terrain for your enemies**. When a hostile creature is moved out of the field (willingly or forced), it must succeed on a **Strength saving throw** against your Spell Save DC or its **speed becomes 0** until the end of the turn. A creature can only be affected by this saving throw once per turn.
 
 ##### **Threat Matrix:** 
 
@@ -239,21 +244,22 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 
 Your neural architecture has evolved to support multi-threaded arcane processing. You can fracture the Gemini Protocol's consciousness to maximize output, either by splitting your physical form or by overclocking your single frame.
 
-**1\. Parallel Processing (The Action)**
+#### **1\. Parallel Processing (The Action)**
 
 When you use your Action to cast a spell, you can cast a second spell as part of the same Action.
 
 * **Cost:** You generate full **Core Strain** for both spells. If the second spell is a cantrip, you generate **one core strain** instead.
 
-**2\. Mode Protocols**
+#### **2\. Mode Protocols**
 
 The physical manifestation of this processing depends on your current state:
 
 * **Protocol A: Autonomous Mode (The Fractal)**  
   * **Effect:** Orion separates into **two identical constructs** (Alpha and Beta).  
   * **Benefit:** You have three distinct points of origin for your spells (Leo, Alpha, Beta).  
-  * **The Price:** You share a single hit point pool across three bodies.  
+    * Both constructs follow the same rules applied stated in the Pact of the Chassis  
 * **Protocol B: Integrated Mode (The Juggernaut)**  
   * **Effect:** The two AIs fuse within your single frame—one focusing on casting, the other on stabilizing the reactor.  
-  * **Benefit:** When you use Parallel Processing in this mode, you gain **Resistance to all damage** until the start of your next turn.  
-  * **The Synergy:** This Resistance applies to the self-inflicted **Overload damage** you might take from casting the two spells. This makes Integrated Mode the "Safe" way to go Nova, allowing you to tank your own heat.
+  * **Benefit:**   
+    * When you use Parallel Processing in this mode, you gain **Resistance to all damage** until the start of your next turn.  
+    * All enemies inside the **Singularity Field** will have disadvantage on all rolls they perform.

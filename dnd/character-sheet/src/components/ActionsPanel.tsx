@@ -76,7 +76,10 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
         return { featSpells: Object.values(featSpellsMap) };
     }, [feats, allSpells]);
 
-    // --- Spellcasting Logic ---
+    // Innate Sorcery State
+    const [innateSorceryActive, setInnateSorceryActive] = useState(false);
+
+    // Spellcasting Logic
     let spellAbility: StatName = 'INT';
     if (['Cleric', 'Druid', 'Ranger', 'Monk'].includes(characterClass)) spellAbility = 'WIS';
     if (['Bard', 'Sorcerer', 'Paladin', 'Warlock'].includes(characterClass)) spellAbility = 'CHA';
@@ -84,7 +87,12 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
     const modifier = stats[spellAbility]?.modifier || 0;
     const profBonus = Math.ceil(1 + (level / 4));
     const spellAttack = modifier + profBonus;
-    const saveDC = 8 + modifier + profBonus;
+    let saveDC = 8 + modifier + profBonus;
+
+    // Apply Innate Sorcery Bonus
+    if (innateSorceryActive) {
+        saveDC += 1;
+    }
 
     // Upcasting State
     const [castLevels, setCastLevels] = useState<Record<string, number>>({});
@@ -242,7 +250,9 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
 
     // --- Roll Handlers ---
     const handleAttackRoll = (spellName: string) => {
-        const result = rollFormula(`1d20 ${formatModifier(spellAttack)}`, `Attack: ${spellName}`, sendToDiscord);
+        const advMode = innateSorceryActive ? 'advantage' : 'normal';
+        const label = `Attack: ${spellName}` + (innateSorceryActive ? ' (Innate Sorcery)' : '');
+        const result = rollFormula(`1d20 ${formatModifier(spellAttack)}`, label, sendToDiscord, advMode);
         onRoll(result);
     };
 
@@ -336,7 +346,27 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
 
             {/* Column 2: Spellcasting Setup */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)', overflowY: 'hidden' }}>
-                <h3 style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: 0 }}>Spellcasting</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
+                    <h3 style={{ margin: 0 }}>Spellcasting</h3>
+                    {/* Innate Sorcery Toggle */}
+                    <button
+                        onClick={() => setInnateSorceryActive(!innateSorceryActive)}
+                        style={{
+                           background: innateSorceryActive ? 'linear-gradient(45deg, #ff7e5f, #feb47b)' : 'transparent',
+                           border: '1px solid var(--glass-border)',
+                           borderRadius: '4px',
+                           color: innateSorceryActive ? 'white' : '#aaa',
+                           cursor: 'pointer',
+                           fontSize: '0.7rem',
+                           padding: '2px 8px',
+                           marginTop: '-4px', // Slight visual adjustment
+                           transition: 'all 0.3s'
+                        }}
+                        title="Innate Sorcery: +1 Spell Save DC & Advantage on Spell Attacks"
+                    >
+                         {innateSorceryActive ? '🔥 Active' : 'Innate Sorcery'}
+                    </button>
+                </div>
                 
                 {/* Stats Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '6px' }}>
@@ -349,11 +379,25 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
                         onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Attack</div>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--color-primary-light)' }}>+{spellAttack}</div>
+                        <div style={{ 
+                            fontSize: '1.1rem', 
+                            fontWeight: 'bold', 
+                            color: innateSorceryActive ? '#feb47b' : 'var(--color-primary-light)',
+                            textShadow: innateSorceryActive ? '0 0 5px rgba(254, 180, 123, 0.5)' : 'none'
+                        }}>
+                             +{spellAttack}
+                        </div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Save DC</div>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{saveDC}</div>
+                        <div style={{ 
+                            fontSize: '1.1rem', 
+                            fontWeight: 'bold', 
+                            color: innateSorceryActive ? '#feb47b' : 'white',
+                            textShadow: innateSorceryActive ? '0 0 5px rgba(254, 180, 123, 0.5)' : 'none'
+                        }}>
+                            {saveDC}
+                        </div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{spellAbility}</div>

@@ -24,13 +24,45 @@ export const HomebrewActionsPanel: React.FC<HomebrewActionsPanelProps> = ({ char
     const groups = ['Gemini Protocol'];
 
     const handleGeminiUpdate = (newState: GeminiState) => {
-        onUpdateCharacter({
-            ...character,
-            homebrew: {
-                ...character.homebrew,
-                gemini: newState
-            }
-        });
+        // Check for Mode Switch
+        const currentMode = character.homebrew?.gemini?.mode || 'Integrated';
+        const newMode = newState.mode;
+
+        if (currentMode !== newMode) {
+            // Mode Switching Logic (Screenshot & Swap)
+            const currentSpells = character.spells || [];
+            const loadouts = character.spellLoadouts || {};
+
+            // 1. Save current spells to Old Mode
+            const updatedLoadouts = {
+                ...loadouts,
+                [currentMode]: currentSpells
+            };
+
+            // 2. Load spells from New Mode (or init with current if missing/empty)
+            // If it's the first time entering a mode, we clone the current state to avoid data loss.
+            const newSpells = updatedLoadouts[newMode] || currentSpells;
+
+            // 3. Update Character (Spells, Loadouts, and Gemini State)
+            onUpdateCharacter({
+                ...character,
+                spells: newSpells,
+                spellLoadouts: updatedLoadouts,
+                homebrew: {
+                    ...character.homebrew,
+                    gemini: newState
+                }
+            });
+        } else {
+            // Normal Update (Toggles, etc.)
+            onUpdateCharacter({
+                ...character,
+                homebrew: {
+                    ...character.homebrew,
+                    gemini: newState
+                }
+            });
+        }
     };
 
     // Find Core Strains resource
