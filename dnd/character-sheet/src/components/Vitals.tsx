@@ -1,14 +1,17 @@
 import React from 'react';
 import { Card } from './Card';
 import { Tooltip } from './Tooltip';
-import type { Character } from '../types';
+import { formatModifier, rollFormula } from '../utils/dnd';
+import type { Character, RollEntry } from '../types';
 
 interface VitalsProps {
   vitals: Character['vitals'];
   onChange: (newVitals: Character['vitals']) => void;
+  onRoll: (entry: RollEntry) => void;
+  sendToDiscord: boolean;
 }
 
-export const Vitals: React.FC<VitalsProps> = ({ vitals, onChange }) => {
+export const Vitals: React.FC<VitalsProps> = ({ vitals, onChange, onRoll, sendToDiscord }) => {
 
   const updateVital = (key: keyof Character['vitals'], value: any) => {
     onChange({ ...vitals, [key]: value });
@@ -77,7 +80,16 @@ export const Vitals: React.FC<VitalsProps> = ({ vitals, onChange }) => {
 
             {/* Initiative */}
             <div className="vital-box">
-                <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '0.1rem' }}>INITIATIVE</div>
+                <div 
+                    style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '0.1rem', cursor: 'pointer', textDecoration: 'underline' }}
+                    onClick={() => {
+                        const result = rollFormula(`1d20 ${formatModifier(vitals.initiative)}`, 'Initiative Roll', sendToDiscord);
+                        onRoll(result);
+                    }}
+                    title="Click to Roll Initiative"
+                >
+                    INITIATIVE
+                </div>
                 <div style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: 'bold',

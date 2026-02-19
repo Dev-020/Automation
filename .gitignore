@@ -25,3 +25,5 @@ terraria/.env
 dnd/venv
 dnd/5etools
 dnd/.env
+dnd/Homebrew
+dnd/Homebrew/Homebrew_Subclass.md

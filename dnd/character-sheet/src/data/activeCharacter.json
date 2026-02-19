@@ -116,7 +116,7 @@
   },
   "vitals": {
     "hp": {
-      "current": 59,
+      "current": 68,
       "max": 58,
       "temp": 0
     },
@@ -1758,34 +1758,35 @@
         "count": 2,
         "selected": [
           {
-            "name": "Seeking Spell",
+            "name": "Heightened Spell",
             "source": "XPHB",
             "page": 142,
-            "featureType": [
-              "MM"
-            ],
-            "consumes": {
-              "name": "Sorcery Point",
-              "amount": 1
-            },
-            "entries": [
-              "If you make an attack roll for a spell and miss, you can spend 1 Sorcery Point to reroll the {@dice d20}, and you must use the new roll.",
-              "You can use Seeking Spell even if you've already used a different Metamagic option during the casting of the spell."
-            ]
-          },
-          {
-            "name": "Distant Spell",
-            "source": "XPHB",
-            "page": 141,
             "srd52": true,
             "featureType": [
               "MM"
             ],
             "consumes": {
-              "name": "Sorcery Point"
+              "name": "Sorcery Point",
+              "amount": 2
             },
             "entries": [
-              "When you cast a spell that has a range of at least 5 feet, you can spend 1 Sorcery Point to double the spell's range. Or when you cast a spell that has a range of Touch, you can spend 1 Sorcery Point to make the spell's range 30 feet."
+              "When you cast a spell that forces a creature to make a saving throw, you can spend 2 Sorcery Points to give one target of the spell {@variantrule Disadvantage|XPHB} on saves against the spell."
+            ]
+          },
+          {
+            "name": "Quickened Spell",
+            "source": "XPHB",
+            "page": 142,
+            "srd52": true,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point",
+              "amount": 2
+            },
+            "entries": [
+              "When you cast a spell that has a casting time of an action, you can spend 2 Sorcery Points to change the casting time to a {@variantrule Bonus Action|XPHB} for this casting. You can't modify a spell in this way if you've already cast a level 1+ spell on the current turn, nor can you cast a level 1+ spell on this turn after modifying a spell in this way."
             ]
           }
         ]
@@ -1883,7 +1884,7 @@
       ]
     },
     {
-      "name": "Metamagic",
+      "name": "Metamagic Options",
       "source": "XPHB",
       "page": 141,
       "srd52": true,
@@ -1895,7 +1896,44 @@
         "Because your magic flows from within you, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from the \"{@filter Metamagic Options|optionalfeatures|feature type=MM|source=XPHB}\" section later in this class's description.",
         "You can use only one Metamagic option on a spell when you cast it, unless otherwise noted in one of those options.",
         "Whenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know."
-      ]
+      ],
+      "choices": {
+        "type": "MM",
+        "count": 2,
+        "selected": [
+          {
+            "name": "Seeking Spell",
+            "source": "XPHB",
+            "page": 142,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point",
+              "amount": 1
+            },
+            "entries": [
+              "If you make an attack roll for a spell and miss, you can spend 1 Sorcery Point to reroll the {@dice d20}, and you must use the new roll.",
+              "You can use Seeking Spell even if you've already used a different Metamagic option during the casting of the spell."
+            ]
+          },
+          {
+            "name": "Distant Spell",
+            "source": "XPHB",
+            "page": 141,
+            "srd52": true,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point"
+            },
+            "entries": [
+              "When you cast a spell that has a range of at least 5 feet, you can spend 1 Sorcery Point to double the spell's range. Or when you cast a spell that has a range of Touch, you can spend 1 Sorcery Point to make the spell's range 30 feet."
+            ]
+          }
+        ]
+      }
     },
     {
       "name": "Ability Score Improvement",
@@ -1947,7 +1985,7 @@
       }
     },
     {
-      "name": "Metamagic",
+      "name": "Metamagic Options",
       "source": "XPHB",
       "page": 141,
       "srd52": true,
@@ -1965,22 +2003,7 @@
         "count": 2,
         "selected": [
           {
-            "name": "Distant Spell",
-            "source": "XPHB",
-            "page": 141,
-            "srd52": true,
-            "featureType": [
-              "MM"
-            ],
-            "consumes": {
-              "name": "Sorcery Point"
-            },
-            "entries": [
-              "When you cast a spell that has a range of at least 5 feet, you can spend 1 Sorcery Point to double the spell's range. Or when you cast a spell that has a range of Touch, you can spend 1 Sorcery Point to make the spell's range 30 feet."
-            ]
-          },
-          {
-            "name": "Quickened Spell",
+            "name": "Extended Spell",
             "source": "XPHB",
             "page": 142,
             "srd52": true,
@@ -1989,10 +2012,26 @@
             ],
             "consumes": {
               "name": "Sorcery Point",
-              "amount": 2
+              "amount": 1
             },
             "entries": [
-              "When you cast a spell that has a casting time of an action, you can spend 2 Sorcery Points to change the casting time to a {@variantrule Bonus Action|XPHB} for this casting. You can't modify a spell in this way if you've already cast a level 1+ spell on the current turn, nor can you cast a level 1+ spell on this turn after modifying a spell in this way."
+              "When you cast a spell that has a duration of 1 minute or longer, you can spend 1 Sorcery Point to double its duration to a maximum duration of 24 hours.",
+              "If the affected spell requires {@status Concentration|XPHB}, you have {@variantrule Advantage|XPHB} on any saving throw you make to maintain that {@status Concentration|XPHB}."
+            ]
+          },
+          {
+            "name": "Twinned Spell",
+            "source": "XPHB",
+            "page": 142,
+            "srd52": true,
+            "featureType": [
+              "MM"
+            ],
+            "consumes": {
+              "name": "Sorcery Point"
+            },
+            "entries": [
+              "When you cast a spell, such as {@spell Charm Person|XPHB}, that can be cast with a higher-level spell slot to target an additional creature, you can spend 1 Sorcery Point to increase the spell's effective level by 1."
             ]
           }
         ]
@@ -4336,6 +4375,1166 @@
       "timestamp": 1771347182881,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 12,
+      "details": "6 + 6",
+      "timestamp": 1771515206446,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 18,
+      "details": "12 + 6",
+      "timestamp": 1771515206933,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 18,
+      "details": "12 + 6",
+      "timestamp": 1771515207378,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 18,
+      "details": "Roll 1: 6 + 6 = 12\nRoll 2: 12 + 6 = 18 <<",
+      "timestamp": 1771515209645,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 19,
+      "details": "Roll 1: 13 + 6 = 19 <<\nRoll 2: 11 + 6 = 17",
+      "timestamp": 1771515210480,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 19,
+      "details": "Roll 1: 13 + 6 = 19 <<\nRoll 2: 3 + 6 = 9",
+      "timestamp": 1771515210951,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 24,
+      "details": "Roll 1: 18 + 6 = 24 <<\nRoll 2: 4 + 6 = 10",
+      "timestamp": 1771515211891,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Survival",
+      "result": 14,
+      "details": "(15) + -1",
+      "timestamp": 1771515215213,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 20,
+      "details": "(16) + 4",
+      "timestamp": 1771515215516,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Sleight of Hand",
+      "result": 21,
+      "details": "(20) + 1",
+      "timestamp": 1771515215782,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Religion",
+      "result": 17,
+      "details": "(16) + 1",
+      "timestamp": 1771515216195,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 17,
+      "details": "(13) + 4",
+      "timestamp": 1771515218443,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 9,
+      "details": "(5) + 4",
+      "timestamp": 1771515220404,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: History",
+      "result": 17,
+      "details": "(13) + 4",
+      "timestamp": 1771515221746,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 8,
+      "details": "(1) + 7",
+      "timestamp": 1771515225223,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: WIS",
+      "result": 17,
+      "details": "(18) + -1",
+      "timestamp": 1771515225661,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: WIS",
+      "result": 4,
+      "details": "(5) + -1",
+      "timestamp": 1771515225736,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: INT",
+      "result": 5,
+      "details": "(3) + 2",
+      "timestamp": 1771515226837,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA",
+      "result": 10,
+      "details": "(4) + 6",
+      "timestamp": 1771515227127,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Adv)",
+      "result": 16,
+      "details": "Roll 1: 7 + 6 = 13\nRoll 2: 10 + 6 = 16 <<",
+      "timestamp": 1771515230135,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 26,
+      "details": "20 + 6",
+      "timestamp": 1771515235695,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 14,
+      "details": "8 + 6",
+      "timestamp": 1771515236110,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Dis)",
+      "result": 12,
+      "details": "Roll 1: 6 + 6 = 12 <<\nRoll 2: 20 + 6 = 26",
+      "timestamp": 1771515237942,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Dis)",
+      "result": 9,
+      "details": "Roll 1: 3 + 6 = 9 <<\nRoll 2: 20 + 6 = 26",
+      "timestamp": 1771515239019,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 8,
+      "details": "2 + 6",
+      "timestamp": 1771515240910,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 9,
+      "details": "3 + 6",
+      "timestamp": 1771515241991,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Dis)",
+      "result": 13,
+      "details": "Roll 1: 14 + 6 = 20\nRoll 2: 7 + 6 = 13 <<",
+      "timestamp": 1771515243556,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Adv)",
+      "result": 12,
+      "details": "Roll 1: 4 + 6 = 10\nRoll 2: 6 + 6 = 12 <<",
+      "timestamp": 1771515244960,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: STR",
+      "result": 12,
+      "details": "(13) + -1",
+      "timestamp": 1771515249271,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: DEX",
+      "result": 11,
+      "details": "(10) + 1",
+      "timestamp": 1771515249946,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON",
+      "result": 20,
+      "details": "(16) + 4",
+      "timestamp": 1771515250743,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: INT",
+      "result": 8,
+      "details": "(6) + 2",
+      "timestamp": 1771515251094,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: WIS",
+      "result": 6,
+      "details": "(7) + -1",
+      "timestamp": 1771515251527,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CHA",
+      "result": 17,
+      "details": "(14) + 3",
+      "timestamp": 1771515253549,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Survival",
+      "result": 7,
+      "details": "(8) + -1",
+      "timestamp": 1771515254871,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 16,
+      "details": "(12) + 4",
+      "timestamp": 1771515255132,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield (Adv)",
+      "result": 14,
+      "details": "Roll 1: (3 + 4 + 2) = 9\nRoll 2: (6 + 4 + 4) = 14 <<",
+      "timestamp": 1771515261889,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield (Dis)",
+      "result": 10,
+      "details": "Roll 1: (6 + 4 + 2) = 12\nRoll 2: (2 + 3 + 5) = 10 <<",
+      "timestamp": 1771515265970,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield (Dis)",
+      "result": 11,
+      "details": "Roll 1: (6 + 1 + 5) = 12\nRoll 2: (1 + 4 + 6) = 11 <<",
+      "timestamp": 1771515267225,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield",
+      "result": 12,
+      "details": "(2 + 5 + 5)",
+      "timestamp": 1771515269264,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield",
+      "result": 16,
+      "details": "(5 + 5 + 6)",
+      "timestamp": 1771515269638,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield",
+      "result": 12,
+      "details": "(4 + 4 + 4)",
+      "timestamp": 1771515269952,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 11,
+      "details": "5 + 6",
+      "timestamp": 1771515271531,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 17,
+      "details": "11 + 6",
+      "timestamp": 1771515272163,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Adv)",
+      "result": 26,
+      "details": "Roll 1: 20 + 6 = 26 <<\nRoll 2: 9 + 6 = 15",
+      "timestamp": 1771515273753,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Overload Burst (Safety Vent) — 7d4 Fire (Adv)",
+      "result": 22,
+      "details": "Roll 1: (4 + 4 + 3 + 1 + 3 + 3 + 4) = 22 <<\nRoll 2: (2 + 2 + 4 + 2 + 4 + 2 + 3) = 19",
+      "timestamp": 1771515287844,
+      "diceType": "d4",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 6,
+      "details": "2 + 4",
+      "timestamp": 1771515811457,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Sleight of Hand",
+      "result": 16,
+      "details": "15 + 1",
+      "timestamp": 1771515811722,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Religion",
+      "result": 18,
+      "details": "17 + 1",
+      "timestamp": 1771515812011,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 19,
+      "details": "15 + 4",
+      "timestamp": 1771515815101,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 18,
+      "details": "14 + 4",
+      "timestamp": 1771515816082,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 11,
+      "details": "7 + 4",
+      "timestamp": 1771515816522,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 12,
+      "details": "8 + 4",
+      "timestamp": 1771515816685,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 6,
+      "details": "2 + 4",
+      "timestamp": 1771515816834,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 23,
+      "details": "19 + 4",
+      "timestamp": 1771515817264,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth (Adv)",
+      "result": 12,
+      "details": "Roll 1: 8 + 4 = 12 <<\nRoll 2: 6 + 4 = 10",
+      "timestamp": 1771515819643,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth (Adv)",
+      "result": 16,
+      "details": "Roll 1: 12 + 4 = 16 <<\nRoll 2: 4 + 4 = 8",
+      "timestamp": 1771515820841,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth (Dis)",
+      "result": 5,
+      "details": "Roll 1: 8 + 4 = 12\nRoll 2: 1 + 4 = 5 <<",
+      "timestamp": 1771515822804,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Sleight of Hand (Dis)",
+      "result": 12,
+      "details": "Roll 1: 11 + 1 = 12 <<\nRoll 2: 13 + 1 = 14",
+      "timestamp": 1771515823091,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Investigation (Dis)",
+      "result": 12,
+      "details": "Roll 1: 16 + 4 = 20\nRoll 2: 8 + 4 = 12 <<",
+      "timestamp": 1771515824589,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 5,
+      "details": "Roll 1: 2 + 1 = 3\nRoll 2: 4 + 1 = 5 <<",
+      "timestamp": 1771515831013,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 10,
+      "details": "Roll 1: 9 + 1 = 10 <<\nRoll 2: 8 + 1 = 9",
+      "timestamp": 1771515832837,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 16,
+      "details": "15 + 1",
+      "timestamp": 1771515835397,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 19,
+      "details": "18 + 1",
+      "timestamp": 1771515836042,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 20,
+      "details": "19 + 1",
+      "timestamp": 1771515836555,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 2,
+      "details": "1 + 1",
+      "timestamp": 1771515836748,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 15,
+      "details": "14 + 1",
+      "timestamp": 1771515837162,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 2,
+      "details": "1 + 1",
+      "timestamp": 1771515837333,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 10,
+      "details": "9 + 1",
+      "timestamp": 1771515837635,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 3,
+      "details": "2 + 1",
+      "timestamp": 1771515837810,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 17,
+      "details": "16 + 1",
+      "timestamp": 1771515837971,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll",
+      "result": 14,
+      "details": "13 + 1",
+      "timestamp": 1771515838105,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 17,
+      "details": "Roll 1: 16 + 1 = 17 <<\nRoll 2: 5 + 1 = 6",
+      "timestamp": 1771515840487,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 21,
+      "details": "Roll 1: 1 + 1 = 2\nRoll 2: 20 + 1 = 21 <<",
+      "timestamp": 1771515840846,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 14,
+      "details": "Roll 1: 13 + 1 = 14 <<\nRoll 2: 13 + 1 = 14",
+      "timestamp": 1771515841183,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 18,
+      "details": "Roll 1: 16 + 1 = 17\nRoll 2: 17 + 1 = 18 <<",
+      "timestamp": 1771515841494,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 14,
+      "details": "Roll 1: 13 + 1 = 14 <<\nRoll 2: 9 + 1 = 10",
+      "timestamp": 1771515841762,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 11,
+      "details": "Roll 1: 10 + 1 = 11 <<\nRoll 2: 4 + 1 = 5",
+      "timestamp": 1771515842021,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 14,
+      "details": "Roll 1: 13 + 1 = 14 <<\nRoll 2: 2 + 1 = 3",
+      "timestamp": 1771515842318,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 14,
+      "details": "Roll 1: 13 + 1 = 14 <<\nRoll 2: 4 + 1 = 5",
+      "timestamp": 1771515842739,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 18,
+      "details": "Roll 1: 17 + 1 = 18 <<\nRoll 2: 13 + 1 = 14",
+      "timestamp": 1771515843022,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 14,
+      "details": "Roll 1: 5 + 1 = 6\nRoll 2: 13 + 1 = 14 <<",
+      "timestamp": 1771515843236,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 9,
+      "details": "Roll 1: 8 + 1 = 9 <<\nRoll 2: 6 + 1 = 7",
+      "timestamp": 1771515843630,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Adv)",
+      "result": 20,
+      "details": "Roll 1: 14 + 1 = 15\nRoll 2: 19 + 1 = 20 <<",
+      "timestamp": 1771515843791,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 27,
+      "details": "Roll 1: 20 + 7 = 27 <<\nRoll 2: 5 + 7 = 12",
+      "timestamp": 1771515845884,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 15,
+      "details": "Roll 1: 8 + 7 = 15 <<\nRoll 2: 6 + 7 = 13",
+      "timestamp": 1771515846382,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 25,
+      "details": "Roll 1: 17 + 7 = 24\nRoll 2: 18 + 7 = 25 <<",
+      "timestamp": 1771515846559,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 9,
+      "details": "Roll 1: 2 + 7 = 9 <<\nRoll 2: 11 + 7 = 18",
+      "timestamp": 1771515848463,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 11,
+      "details": "Roll 1: 4 + 7 = 11 <<\nRoll 2: 10 + 7 = 17",
+      "timestamp": 1771515848839,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 24,
+      "details": "Roll 1: 18 + 7 = 25\nRoll 2: 17 + 7 = 24 <<",
+      "timestamp": 1771515849266,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 20,
+      "details": "Roll 1: 13 + 7 = 20 <<\nRoll 2: 14 + 7 = 21",
+      "timestamp": 1771515849559,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 9,
+      "details": "Roll 1: 2 + 7 = 9 <<\nRoll 2: 2 + 7 = 9",
+      "timestamp": 1771515849948,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 21,
+      "details": "Roll 1: 16 + 7 = 23\nRoll 2: 14 + 7 = 21 <<",
+      "timestamp": 1771515850382,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 15,
+      "details": "Roll 1: 13 + 7 = 20\nRoll 2: 8 + 7 = 15 <<",
+      "timestamp": 1771515850532,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 9,
+      "details": "Roll 1: 2 + 7 = 9 <<\nRoll 2: 11 + 7 = 18",
+      "timestamp": 1771515850677,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 14,
+      "details": "Roll 1: 7 + 7 = 14 <<\nRoll 2: 20 + 7 = 27",
+      "timestamp": 1771515850978,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 12,
+      "details": "5 + 7",
+      "timestamp": 1771515852839,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 23,
+      "details": "16 + 7",
+      "timestamp": 1771515853138,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 24,
+      "details": "17 + 7",
+      "timestamp": 1771515853569,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 18,
+      "details": "11 + 7",
+      "timestamp": 1771515853972,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 9,
+      "details": "2 + 7",
+      "timestamp": 1771515854180,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: INT",
+      "result": 19,
+      "details": "17 + 2",
+      "timestamp": 1771515854989,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA",
+      "result": 8,
+      "details": "2 + 6",
+      "timestamp": 1771515855291,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 18,
+      "details": "Roll 1: 12 + 6 = 18 <<\nRoll 2: 9 + 6 = 15",
+      "timestamp": 1771515859170,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 15,
+      "details": "Roll 1: 9 + 6 = 15 <<\nRoll 2: 5 + 6 = 11",
+      "timestamp": 1771515859679,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 25,
+      "details": "Roll 1: 19 + 6 = 25 <<\nRoll 2: 6 + 6 = 12",
+      "timestamp": 1771515859939,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 13,
+      "details": "7 + 6",
+      "timestamp": 1771515861423,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 7,
+      "details": "1 + 6",
+      "timestamp": 1771515861874,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 13,
+      "details": "7 + 6",
+      "timestamp": 1771515862334,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 20,
+      "details": "14 + 6",
+      "timestamp": 1771515863434,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 12,
+      "details": "Roll 1: 3 + 6 = 9\nRoll 2: 6 + 6 = 12 <<",
+      "timestamp": 1771515865292,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 24,
+      "details": "Roll 1: 3 + 6 = 9\nRoll 2: 18 + 6 = 24 <<",
+      "timestamp": 1771515865885,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 25,
+      "details": "Roll 1: 11 + 6 = 17\nRoll 2: 19 + 6 = 25 <<",
+      "timestamp": 1771515866302,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 22,
+      "details": "Roll 1: 13 + 6 = 19\nRoll 2: 16 + 6 = 22 <<",
+      "timestamp": 1771515867073,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: STR (Adv)",
+      "result": 11,
+      "details": "Roll 1: 12 - 1 = 11 <<\nRoll 2: 10 - 1 = 9",
+      "timestamp": 1771515875245,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: DEX (Adv)",
+      "result": 14,
+      "details": "Roll 1: 10 + 1 = 11\nRoll 2: 13 + 1 = 14 <<",
+      "timestamp": 1771515875573,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON (Adv)",
+      "result": 23,
+      "details": "Roll 1: 18 + 4 = 22\nRoll 2: 19 + 4 = 23 <<",
+      "timestamp": 1771515875898,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: INT (Adv)",
+      "result": 22,
+      "details": "Roll 1: 20 + 2 = 22 <<\nRoll 2: 2 + 2 = 4",
+      "timestamp": 1771515876435,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: DEX (Dis)",
+      "result": 10,
+      "details": "Roll 1: 9 + 1 = 10 <<\nRoll 2: 15 + 1 = 16",
+      "timestamp": 1771515878604,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON (Dis)",
+      "result": 10,
+      "details": "Roll 1: 15 + 4 = 19\nRoll 2: 6 + 4 = 10 <<",
+      "timestamp": 1771515878970,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: STR (Dis)",
+      "result": 7,
+      "details": "Roll 1: 17 - 1 = 16\nRoll 2: 8 - 1 = 7 <<",
+      "timestamp": 1771515879369,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Ability Check: CON (Dis)",
+      "result": 9,
+      "details": "Roll 1: 5 + 4 = 9 <<\nRoll 2: 12 + 4 = 16",
+      "timestamp": 1771515885295,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: CON (Adv)",
+      "result": 13,
+      "details": "Roll 1: 4 + 4 = 8\nRoll 2: 9 + 4 = 13 <<",
+      "timestamp": 1771515887670,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 17,
+      "details": "Roll 1: 10 + 7 = 17 <<\nRoll 2: 9 + 7 = 16",
+      "timestamp": 1771515888791,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 16,
+      "details": "9 + 7",
+      "timestamp": 1771515891329,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 22,
+      "details": "Roll 1: 15 + 7 = 22 <<\nRoll 2: 20 + 7 = 27",
+      "timestamp": 1771515894907,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Saving Throw: CON (Dis)",
+      "result": 17,
+      "details": "Roll 1: 14 + 7 = 21\nRoll 2: 10 + 7 = 17 <<",
+      "timestamp": 1771515895571,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack (Dis)",
+      "result": 7,
+      "details": "Roll 1: 14 + 6 = 20\nRoll 2: 1 + 6 = 7 <<",
+      "timestamp": 1771515896428,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 23,
+      "details": "17 + 6",
+      "timestamp": 1771515897989,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery)",
+      "result": 7,
+      "details": "1 + 6",
+      "timestamp": 1771515898548,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 26,
+      "details": "Roll 1: 20 + 6 = 26 <<\nRoll 2: 16 + 6 = 22",
+      "timestamp": 1771515900024,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack (Innate Sorcery) (Adv)",
+      "result": 26,
+      "details": "Roll 1: 20 + 6 = 26 <<\nRoll 2: 12 + 6 = 18",
+      "timestamp": 1771515901688,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 21,
+      "details": "15 + 6",
+      "timestamp": 1771515902807,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Deception (Adv)",
+      "result": 22,
+      "details": "Roll 1: 17 + 5 = 22 <<\nRoll 2: 8 + 5 = 13",
+      "timestamp": 1771515907302,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: History (Adv)",
+      "result": 16,
+      "details": "Roll 1: 7 + 4 = 11\nRoll 2: 12 + 4 = 16 <<",
+      "timestamp": 1771515907999,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Deception (Dis)",
+      "result": 11,
+      "details": "Roll 1: 7 + 5 = 12\nRoll 2: 6 + 5 = 11 <<",
+      "timestamp": 1771515910347,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: History (Dis)",
+      "result": 21,
+      "details": "Roll 1: 20 + 4 = 24\nRoll 2: 17 + 4 = 21 <<",
+      "timestamp": 1771515910756,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: History (Dis)",
+      "result": 17,
+      "details": "Roll 1: 20 + 4 = 24\nRoll 2: 13 + 4 = 17 <<",
+      "timestamp": 1771515913829,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: History (Dis)",
+      "result": 16,
+      "details": "Roll 1: 18 + 4 = 22\nRoll 2: 12 + 4 = 16 <<",
+      "timestamp": 1771515914240,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Survival (Dis)",
+      "result": 14,
+      "details": "Roll 1: 15 - 1 = 14 <<\nRoll 2: 16 - 1 = 15",
+      "timestamp": 1771515915349,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Survival (Dis)",
+      "result": 14,
+      "details": "Roll 1: 15 - 1 = 14 <<\nRoll 2: 19 - 1 = 18",
+      "timestamp": 1771515916170,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Survival (Dis)",
+      "result": 5,
+      "details": "Roll 1: 7 - 1 = 6\nRoll 2: 6 - 1 = 5 <<",
+      "timestamp": 1771515918045,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Survival (Dis)",
+      "result": 7,
+      "details": "Roll 1: 13 - 1 = 12\nRoll 2: 8 - 1 = 7 <<",
+      "timestamp": 1771515919298,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Survival (Dis)",
+      "result": 5,
+      "details": "Roll 1: 6 - 1 = 5 <<\nRoll 2: 11 - 1 = 10",
+      "timestamp": 1771515920055,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Skill Check: Survival",
+      "result": 9,
+      "details": "10 - 1",
+      "timestamp": 1771515922303,
+      "diceType": "d20",
+      "sendToDiscord": true
     }
   ],
   "containers": [
@@ -4367,11 +5566,11 @@
       "id": "3b39c994-72d7-46da-83ca-af9402cc9e58",
       "title": "TO DO LIST:",
       "subject": "Typa shi to do for this goofy ahh website",
-      "content": "<ol><li>Implement the background features for the character. <b>(PARTIALLY DONE)</b></li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE)</b></span></li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE; Skilled and Expertise Bullshit left)</b></span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Add homebrew section <b>(PARTIALLY DONE)</b></li><li>Implement class feature for the character.</li></ol><div>FINISHED:</div><div><ol style=\"color: rgb(241, 242, 244);\"><li>Refine Spell Section to be more useful&nbsp;<b>(DONE)</b></li><li>Add spell modifier, attack, save DC in spell section.&nbsp;<b>(DONE)</b></li><li>Show hit/dc and effect on each spell card&nbsp;<b>(DONE)</b></li><li>Add Innate sorcery button <b>(DONE)</b></li><li>Add advantage/disadvantage button to automate rolls.&nbsp;<b>(DONE)</b></li></ol></div>",
+      "content": "<ol><li>Implement the background features for the character. <b>(PARTIALLY DONE)</b></li><li>Implement the race features for the character.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE)</b></span></li><li>Refine optional features choosing and automation. This includes class features, background features, race features, etc.&nbsp;<span style=\"color: rgb(241, 242, 244);\"><b>(PARTIALLY DONE; Skilled and Expertise Bullshit left)</b></span></li><li>Improve UI for vitals section.</li><li>Improve UI for character header.</li><li>Add ability to edit names of containers.</li><li>Add homebrew section <b>(PARTIALLY DONE)</b></li><li>Implement class feature for the character.</li><li>Add universal Advantage/Disadvantage rolls.</li></ol><div>FINISHED:</div><div><ol style=\"color: rgb(241, 242, 244);\"><li>Refine Spell Section to be more useful&nbsp;<b>(DONE)</b></li><li>Add spell modifier, attack, save DC in spell section.&nbsp;<b>(DONE)</b></li><li>Show hit/dc and effect on each spell card&nbsp;<b>(DONE)</b></li><li>Add Innate sorcery button <b>(DONE)</b></li><li>Add advantage/disadvantage button to automate rolls.&nbsp;<b>(DONE)</b></li></ol></div>",
       "categoryIds": [
         "6b08bbc5-07ce-4b26-97ab-690097eda12c"
       ],
-      "lastModified": 1771324036997
+      "lastModified": 1771395244505
     }
   ],
   "noteCategories": [
@@ -5270,13 +6469,13 @@
                   "**Enhanced AC:** Your Armor Class is calculated as your original Armor Class \\+ your Constitution modifier \\+ your Charisma modifier."
                 ]
               },
-              "****Integrated Mode: Hard-Light Projection****",
+              "****Sword Projection****",
               {
                 "type": "list",
                 "items": [
-                  "As a Bonus Action, you can shunt raw energy through your suit’s emitters to form a solid blade of superheated plasma in your free hand.",
+                  "As a Bonus Action, you can shunt raw infernal energy through your suit’s emitters to form a solid blade of Infernal Energy in your free hand.",
                   "**Weapon Properties:** It counts as a **Simple Melee Weapon** with the **Light**, **Finesse**, and **Thrown (range 20/60)** properties.",
-                  "**Damage:** It deals **2d8 Fire, Cold, or Lightning damage** (chosen when summoned) plus your spellcasting modifier on a hit.",
+                  "**Damage:** It deals **2d8 Force damage** plus your spellcasting modifier on a hit.",
                   "**Ability Score:** You use your **spellcasting modifier** for attack and damage rolls with this weapon.",
                   "**Utility:** On your discretion, the energy blade can shed Bright Light of up to a 10-foot radius and Dim Light for an additional 10 feet.",
                   "**Stability:** This construct requires **no concentration** and lasts until you dismiss it (no action), end Integrated Mode, or it leaves your hand.",
@@ -5313,13 +6512,7 @@
               {
                 "type": "list",
                 "items": [
-                  "The maximum range of your psychic tether increases to 120 feet, and the chassis can use any of your tool proficiencies remotely."
-                ]
-              },
-              "****Targeting Matrix:****",
-              {
-                "type": "list",
-                "items": [
+                  "The maximum range of your psychic tether increases to 120 feet, and the chassis can use any of your tool proficiencies remotely.",
                   "Your psychic link to the chassis acts as a perfect targeting solution. While in Autonomous Mode, you **double the range** of any spell that originates from the chassis's space or you, and your spells **ignore half cover and three-quarters cover**."
                 ]
               }
@@ -5333,27 +6526,78 @@
               {
                 "type": "list",
                 "items": [
-                  "you can choose to activate your suit's “Domain Protocol” at the start of your turn (no action required). While this protocol is active, you gain **1 Core Strain** at the start of each of your turns, but you gain the following two benefits:"
+                  "you can choose to activate your suit's “Singularity Field” at the start of your turn (no action required). While this protocol is active, you gain **1 Core Strain** at the start of each of your turns, but you gain the following two benefits:"
                 ]
               },
-              "****Singularity Field:****",
+              "****Singularity:****",
               {
                 "type": "list",
                 "items": [
                   "You project a field of localized gravitational distortion. Your movement speed cannot be reduced, and the area within a **10-foot radius** of you is **difficult terrain for your enemies**. When a hostile creature is moved out of the field (willingly or forced), it must succeed on a **Strength saving throw** against your Spell Save DC or its **speed becomes 0** until the end of the turn. A creature can only be affected by this saving throw once per turn."
                 ]
               },
-              "****Threat Matrix:****",
+              "****Hardware Interface****",
               {
                 "type": "list",
                 "items": [
-                  "At the start of each of your turns, you gain a number of temporary hit points equal to **(your proficiency bonus × the number of hostile creatures in your Stabilizer Field) \\+ your  Level**."
+                  "**Description:** Instead of merely projecting a construct, Orion’s suit allows you to override the physical properties of a weapon you are holding, flooding it with your own magical signature.",
+                  "**The Interface:** As a bonus action, you can touch one weapon and fuse it with your suit’s hard-light emitters. This weapon becomes your **Integrated Weapon** and you become **proficient** with it.",
+                  "**Arcane override:** You use your **Charisma modifier** for the attack and damage rolls of this weapon. Attacks with this weapon deal an additional **2d8 Force damage**.",
+                  "**Universal Focus:** The weapon counts as an arcane focus for your Sorcerer spells.",
+                  "**Spell Fusion:** If you are wielding a weapon created by a spell, you can target it with this feature. The weapon retains its original damage dice and properties but gains the benefits of your **Hardware Interface** and **Reactor Overdrive**.",
+                  "**Magical Property:** The weapon is considered magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage."
+                ]
+              },
+              "****Weapon Enhance****",
+              {
+                "type": "list",
+                "items": [
+                  "**Activation:** When wielding your **Integrated Weapon**.",
+                  "**Description:** You disable the safety limiters on your suit’s output, injecting raw arcane voltage directly into the striking edge of your weapon. This manifests as a crackling aura of force that stabilizes the weapon's trajectory and disintegrates matter on impact.",
+                  "You may spend **Core Strain** to activate one of the following Overdrive Tiers. You cannot stack multiple tiers."
+                ]
+              },
+              {
+                "type": "table",
+                "caption": "",
+                "colLabels": [
+                  "Overdrive Tier",
+                  "Strain Cost",
+                  "Attack Roll Bonus",
+                  "Damage Bonus (Force)"
+                ],
+                "rows": [
+                  [
+                    "**Tier I**",
+                    "1",
+                    "\\+1",
+                    "\\+1d8 Force"
+                  ],
+                  [
+                    "**Tier II**",
+                    "2",
+                    "\\+2",
+                    "\\+2d8 Force"
+                  ],
+                  [
+                    "**Tier III**",
+                    "3",
+                    "\\+3",
+                    "\\+3d8 Force"
+                  ]
                 ]
               }
             ],
             "collapsible": true
           }
         ]
+      },
+      {
+        "name": "",
+        "source": "Homebrew",
+        "page": 0,
+        "level": 1,
+        "entries": []
       },
       {
         "name": "Binary Partition",
@@ -5405,7 +6649,7 @@
     "spells": [],
     "blueprints": [
       {
-        "id": "hb-bp-1771347098399-vf3drwvaa",
+        "id": "hb-bp-1771394986637-600wmd59l",
         "name": "Optical Camo Matrix",
         "type": "Magical",
         "source": "Cloak of Invisibility",
@@ -5419,7 +6663,7 @@
         }
       },
       {
-        "id": "hb-bp-1771347098399-c3pc5ebiz",
+        "id": "hb-bp-1771394986637-fn8pfw9on",
         "name": "Spatial Compression Matrix",
         "type": "Magical",
         "source": "Arcane Repository (Modified Bag of Holding)",
@@ -5444,7 +6688,7 @@
         "rarity": "Uncommon"
       },
       {
-        "id": "hb-bp-1771347098399-r966p0k2s",
+        "id": "hb-bp-1771394986637-ed0gvkbcy",
         "name": "Schematic: Tower Shield",
         "type": "Non-Magical",
         "source": "Piss Yellow Tower Shield (13 STR)\\*",
@@ -5470,7 +6714,12 @@
         "coolant": false
       },
       "turnSpells": [],
-      "adaptiveSwaps": []
+      "adaptiveSwaps": [],
+      "indomitable": {
+        "active": false,
+        "withheldStrain": 3,
+        "used": true
+      }
     }
   },
   "resources": [
@@ -5503,7 +6752,7 @@
     {
       "id": "ae2589fa-64f5-415a-a83c-4b7abb7a3d1d",
       "name": "Indomitable",
-      "current": 1,
+      "current": 0,
       "max": 1,
       "reset": "Long",
       "type": "manual"

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import type { RollEntry } from '../types';
-import { formatModifier, rollFormula } from '../utils/dnd';
+import { formatModifier, rollFormula, setGlobalRollMode } from '../utils/dnd';
 
 interface DiceRollerProps {
     history: RollEntry[];
@@ -21,6 +21,11 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({ history, onRoll, classNa
     useEffect(() => {
         historyEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [history]);
+
+    // Sync Roll Mode to Global State
+    useEffect(() => {
+        setGlobalRollMode(rollMode);
+    }, [rollMode]);
 
     const addToPool = (sides: number) => {
         setPending(prev => ({

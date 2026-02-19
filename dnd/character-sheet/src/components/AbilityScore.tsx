@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatModifier, rollDice } from '../utils/dnd';
+import { formatModifier, rollFormula } from '../utils/dnd';
 import type { RollEntry, AbilityScore as AbilityScoreType } from '../types';
 import { Tooltip } from './Tooltip';
 
@@ -20,18 +20,10 @@ export const AbilityScore: React.FC<AbilityScoreProps> = ({ label, scoreData, on
   const modifiers = scoreData.breakdown || [];
 
   const handleRoll = () => {
-    const result = rollDice(20);
-    const total = result + mod;
-    
-    const entry: RollEntry = {
-        label: `Ability Check: ${label}`,
-        result: total,
-        details: `(${result}) + ${mod}`,
-        timestamp: Date.now(),
-        diceType: 'd20',
-        sendToDiscord
-    };
-    onRoll(entry);
+    // Label for the roll entry
+    const rollLabel = `Ability Check: ${label}`; 
+    const result = rollFormula(`1d20 ${formatModifier(mod)}`, rollLabel, sendToDiscord);
+    onRoll(result);
   };
 
   const tooltipContent = (

@@ -198,11 +198,11 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 * As a bonus action, you can integrate with your suit. While integrated, you gain the following benefits:  
 * **Enhanced AC:** Your Armor Class is calculated as your original Armor Class \+ your Constitution modifier \+ your Charisma modifier.
 
-##### **Integrated Mode: Hard-Light Projection**
+##### **Sword Projection**
 
-* As a Bonus Action, you can shunt raw energy through your suit’s emitters to form a solid blade of superheated plasma in your free hand.  
+* As a Bonus Action, you can shunt raw infernal energy through your suit’s emitters to form a solid blade of Infernal Energy in your free hand.  
   * **Weapon Properties:** It counts as a **Simple Melee Weapon** with the **Light**, **Finesse**, and **Thrown (range 20/60)** properties.  
-  * **Damage:** It deals **2d8 Fire, Cold, or Lightning damage** (chosen when summoned) plus your spellcasting modifier on a hit.  
+  * **Damage:** It deals **2d8 Force damage** plus your spellcasting modifier on a hit.  
   * **Ability Score:** You use your **spellcasting modifier** for attack and damage rolls with this weapon.  
   * **Utility:** On your discretion, the energy blade can shed Bright Light of up to a 10-foot radius and Dim Light for an additional 10 feet.  
   * **Stability:** This construct requires **no concentration** and lasts until you dismiss it (no action), end Integrated Mode, or it leaves your hand.  
@@ -222,23 +222,39 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 
 ##### **Remote Dexterity:** 
 
-* The maximum range of your psychic tether increases to 120 feet, and the chassis can use any of your tool proficiencies remotely.
-
-##### **Targeting Matrix:** 
-
+* The maximum range of your psychic tether increases to 120 feet, and the chassis can use any of your tool proficiencies remotely.  
 * Your psychic link to the chassis acts as a perfect targeting solution. While in Autonomous Mode, you **double the range** of any spell that originates from the chassis's space or you, and your spells **ignore half cover and three-quarters cover**.
 
 #### **While in Integrated Mode,** 
 
-* you can choose to activate your suit's “Domain Protocol” at the start of your turn (no action required). While this protocol is active, you gain **1 Core Strain** at the start of each of your turns, but you gain the following two benefits:
+* you can choose to activate your suit's “Singularity Field” at the start of your turn (no action required). While this protocol is active, you gain **1 Core Strain** at the start of each of your turns, but you gain the following two benefits:
 
-##### **Singularity Field:** 
+##### **Singularity:** 
 
 * You project a field of localized gravitational distortion. Your movement speed cannot be reduced, and the area within a **10-foot radius** of you is **difficult terrain for your enemies**. When a hostile creature is moved out of the field (willingly or forced), it must succeed on a **Strength saving throw** against your Spell Save DC or its **speed becomes 0** until the end of the turn. A creature can only be affected by this saving throw once per turn.
 
-##### **Threat Matrix:** 
+##### **Hardware Interface**
 
-* At the start of each of your turns, you gain a number of temporary hit points equal to **(your proficiency bonus × the number of hostile creatures in your Stabilizer Field) \+ your  Level**.
+* **Description:** Instead of merely projecting a construct, Orion’s suit allows you to override the physical properties of a weapon you are holding, flooding it with your own magical signature.  
+  * **The Interface:** As a bonus action, you can touch one weapon and fuse it with your suit’s hard-light emitters. This weapon becomes your **Integrated Weapon** and you become **proficient** with it.  
+  * **Arcane override:** You use your **Charisma modifier** for the attack and damage rolls of this weapon. Attacks with this weapon deal an additional **2d8 Force damage**.  
+  * **Universal Focus:** The weapon counts as an arcane focus for your Sorcerer spells.  
+  * **Spell Fusion:** If you are wielding a weapon created by a spell, you can target it with this feature. The weapon retains its original damage dice and properties but gains the benefits of your **Hardware Interface** and **Reactor Overdrive**.  
+  * **Magical Property:** The weapon is considered magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.
+
+##### **Weapon Enhance** 
+
+* **Activation:** When wielding your **Integrated Weapon**.  
+* **Description:** You disable the safety limiters on your suit’s output, injecting raw arcane voltage directly into the striking edge of your weapon. This manifests as a crackling aura of force that stabilizes the weapon's trajectory and disintegrates matter on impact.  
+* You may spend **Core Strain** to activate one of the following Overdrive Tiers. You cannot stack multiple tiers.
+
+| Overdrive Tier | Strain Cost | Attack Roll Bonus | Damage Bonus (Force) |
+| :---- | :---- | :---- | :---- |
+| **Tier I** | 1 | \+1 | \+1d8 Force |
+| **Tier II** | 2 | \+2 | \+2d8 Force |
+| **Tier III** | 3 | \+3 | \+3d8 Force |
+
+### 
 
 ### **Binary Partition (Level 10\)**
 

@@ -405,6 +405,72 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
                     </div>
                 </div>
 
+                {/* Metamagic Card */}
+                {(() => {
+                    const metamagicOptions = (character.features || [])
+                        .filter((f: any) => f.choices && f.choices.type === 'MM' && f.choices.selected)
+                        .flatMap((f: any) => f.choices.selected);
+
+                    if (metamagicOptions.length === 0) return null;
+
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const [activeMM, setActiveMM] = useState<any>(metamagicOptions[0]);
+                    
+                    // Sync activeMM if options change or it becomes invalid
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    useEffect(() => {
+                        if (metamagicOptions.length > 0 && !metamagicOptions.find((m: any) => m.name === activeMM?.name)) {
+                            setActiveMM(metamagicOptions[0]);
+                        }
+                    }, [metamagicOptions, activeMM]);
+
+                    return (
+                        <Card style={{ padding: '0.75rem', background: 'var(--color-bg-surface)', borderLeft: '3px solid #f472b6' }}>
+                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                <select
+                                    value={activeMM?.name || ''}
+                                    onChange={(e) => setActiveMM(metamagicOptions.find((m: any) => m.name === e.target.value))}
+                                    style={{
+                                        flex: 1,
+                                        background: 'transparent',
+                                        color: '#f472b6',
+                                        border: 'none',
+                                        fontWeight: 'bold',
+                                        fontSize: '1rem',
+                                        cursor: 'pointer',
+                                        outline: 'none'
+                                    }}
+                                >
+                                    {metamagicOptions.map((m: any) => (
+                                        <option key={m.name} value={m.name} style={{ background: '#1f2937', color: '#f472b6' }}>
+                                            {m.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button 
+                                    onClick={() => setSelectedSpellDetails({ ...activeMM, level: -1 } as any)} // Hack to reuse Spell Detail panel
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: '1px solid var(--glass-border)', 
+                                        borderRadius: '4px', 
+                                        color: 'var(--color-text-muted)',
+                                        cursor: 'pointer',
+                                        padding: '2px 6px',
+                                        fontSize: '0.75rem'
+                                    }}
+                                >
+                                    Details
+                                </button>
+                            </div>
+                            {activeMM && activeMM.consumes && (
+                                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>Cost: {activeMM.consumes.amount || 1} SP</span>
+                                </div>
+                            )}
+                        </Card>
+                    );
+                })()}
+
                 {/* Spell Rows (Including Cantrips which are Level 0) */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', flex: 1, paddingRight: '0.5rem' }}>
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(lvl => {
@@ -660,13 +726,17 @@ export const ActionsPanel: React.FC<ActionsPanelProps> = ({
                         {/* Meta Header */}
                         <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px' }}>
                              <div style={{ fontSize: '0.9rem', color: 'var(--color-primary)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                                {selectedSpellDetails.level === 0 ? 'Cantrip' : `Level ${selectedSpellDetails.level}`} {selectedSpellDetails.school}
+                                {selectedSpellDetails.level === -1 ? 'Metamagic Option' : (selectedSpellDetails.level === 0 ? 'Cantrip' : `Level ${selectedSpellDetails.level}`)} {selectedSpellDetails.school}
                              </div>
                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem' }}>
-                                <div><strong>Time:</strong> {selectedSpellDetails.time[0].number} {selectedSpellDetails.time[0].unit}</div>
-                                <div><strong>Range:</strong> {selectedSpellDetails.range.distance?.amount ? `${selectedSpellDetails.range.distance.amount} ft` : selectedSpellDetails.range.type}</div>
-                                <div><strong>Duration:</strong> {selectedSpellDetails.duration[0].type === 'instant' ? 'Instant' : `${selectedSpellDetails.duration[0].duration?.amount} ${selectedSpellDetails.duration[0].duration?.type}`} {selectedSpellDetails.duration[0].concentration && '(Conc)'}</div>
-                                <div><strong>Components:</strong> {formatComponents(selectedSpellDetails.components)}</div>
+                                {selectedSpellDetails.level !== -1 && (
+                                    <>
+                                        <div><strong>Time:</strong> {selectedSpellDetails.time[0].number} {selectedSpellDetails.time[0].unit}</div>
+                                        <div><strong>Range:</strong> {selectedSpellDetails.range.distance?.amount ? `${selectedSpellDetails.range.distance.amount} ft` : selectedSpellDetails.range.type}</div>
+                                        <div><strong>Duration:</strong> {selectedSpellDetails.duration[0].type === 'instant' ? 'Instant' : `${selectedSpellDetails.duration[0].duration?.amount} ${selectedSpellDetails.duration[0].duration?.type}`} {selectedSpellDetails.duration[0].concentration && '(Conc)'}</div>
+                                        <div><strong>Components:</strong> {formatComponents(selectedSpellDetails.components)}</div>
+                                    </>
+                                )}
                                 <div><strong>Source:</strong> {selectedSpellDetails.source}</div>
                              </div>
                         </div>

@@ -3,7 +3,7 @@ import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
 import type { Character, Skill, RollEntry } from '../types';
-import { calculateModifier, formatModifier, rollDice } from '../utils/dnd';
+import { calculateModifier, formatModifier, rollFormula } from '../utils/dnd';
 
 interface SkillsProps {
   skills: Character['skills'];
@@ -29,18 +29,10 @@ export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus,
   const handleRollClick = (e: React.MouseEvent, skill: Skill) => {
     e.stopPropagation(); // Prevent opening modal
     const mod = getSkillMod(skill);
-    const result = rollDice(20);
-    const total = result + mod;
+    const label = `Skill Check: ${skill.name}`;
+    const result = rollFormula(`1d20 ${formatModifier(mod)}`, label, sendToDiscord);
     
-    const entry: RollEntry = {
-        label: `Skill Check: ${skill.name}`,
-        result: total,
-        details: `(${result}) + ${mod}`,
-        timestamp: Date.now(),
-        diceType: 'd20',
-        sendToDiscord
-    };
-    onRoll(entry);
+    onRoll(result);
   };
 
   const selectedSkill = selectedSkillIndex !== null ? skills[selectedSkillIndex] : null;

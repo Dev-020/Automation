@@ -60,10 +60,32 @@ const calculateRoll = (cleanFormula: string) => {
     return { total, details, mainDiceType };
 };
 
+// Global Roll Mode State
+let globalRollMode: 'normal' | 'advantage' | 'disadvantage' = 'normal';
+
+export const setGlobalRollMode = (mode: 'normal' | 'advantage' | 'disadvantage') => {
+    globalRollMode = mode;
+    console.log(`Global Roll Mode set to: ${mode}`);
+};
+
 export const rollFormula = (formula: string, label?: string, sendToDiscord = false, rollMode: 'normal' | 'advantage' | 'disadvantage' = 'normal'): RollEntry => {
     const cleanFormula = formula.replace(/\s+/g, '');
     
-    if (rollMode === 'normal') {
+    // Resolve Effective Roll Mode based on Global State and Specific Request
+    let effectiveMode = rollMode;
+
+    if (globalRollMode === 'advantage') {
+        if (rollMode === 'normal') effectiveMode = 'advantage';
+        else if (rollMode === 'advantage') effectiveMode = 'advantage';
+        else if (rollMode === 'disadvantage') effectiveMode = 'normal'; // Cancel
+    } else if (globalRollMode === 'disadvantage') {
+        if (rollMode === 'normal') effectiveMode = 'disadvantage';
+        else if (rollMode === 'disadvantage') effectiveMode = 'disadvantage';
+        else if (rollMode === 'advantage') effectiveMode = 'normal'; // Cancel
+    }
+    // If global is normal, strictly use the specific rollMode
+
+    if (effectiveMode === 'normal') {
         const { total, details, mainDiceType } = calculateRoll(cleanFormula);
         return {
             label: label || formula, 
@@ -81,7 +103,7 @@ export const rollFormula = (formula: string, label?: string, sendToDiscord = fal
         let finalResult = roll1.total;
         let chosenIndex = 0; // 1 or 2
         
-        if (rollMode === 'advantage') {
+        if (effectiveMode === 'advantage') {
              if (roll1.total >= roll2.total) {
                  finalResult = roll1.total;
                  chosenIndex = 1;
@@ -103,21 +125,15 @@ export const rollFormula = (formula: string, label?: string, sendToDiscord = fal
         // Format Details:
         // Roll 1: [details] = [total]
         // Roll 2: [details] = [total]
-        // The UI will bold the final result which is separate, but we can bold the chosen line here?
-        // Let's just output clear lines.
         
         const mark1 = chosenIndex === 1 ? ' <<' : '';
         const mark2 = chosenIndex === 2 ? ' <<' : '';
 
-        // We can use standard markdown bolding **text** if the renderer supports it, 
-        // OR simply rely on the 'result' property being displayed prominently at the end.
-        // User asked for: "First line is the first roll, second line is the second roll"
-        
         const details = `Roll 1: ${roll1.details} = ${roll1.total}${mark1}\nRoll 2: ${roll2.details} = ${roll2.total}${mark2}`;
         
         let finalLabel = label || formula;
-        if (rollMode === 'advantage') finalLabel += ' (Adv)';
-        if (rollMode === 'disadvantage') finalLabel += ' (Dis)';
+        if (effectiveMode === 'advantage') finalLabel += ' (Adv)';
+        if (effectiveMode === 'disadvantage') finalLabel += ' (Dis)';
         
         return {
             label: finalLabel,

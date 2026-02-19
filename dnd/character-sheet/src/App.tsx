@@ -15,7 +15,7 @@ import { FeaturesPanel } from './components/FeaturesPanel';
 import { NotesPanel } from './components/NotesPanel';
 import { HomebrewPanel } from './components/HomebrewPanel';
 import { FeatsTab } from './components/FeatsTab';
-import { rollDice } from './utils/dnd';
+import { formatModifier, rollFormula } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
 import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost, getSpellSlots } from './utils/rules';
@@ -524,17 +524,9 @@ function App() {
                                 <span 
                                     className="interactive-roll"
                                     onClick={() => {
-                                        const result = rollDice(20);
-                                        const total = result + mod;
-                                        const entry: RollEntry = {
-                                            label: `Saving Throw: ${stat}`,
-                                            result: total,
-                                            details: `(${result}) + ${mod}`,
-                                            timestamp: Date.now(),
-                                            diceType: 'd20',
-                                            sendToDiscord
-                                        };
-                                        handleRoll(entry);
+                                        const label = `Saving Throw: ${stat}`;
+                                        const result = rollFormula(`1d20 ${formatModifier(mod)}`, label, sendToDiscord);
+                                        handleRoll(result);
                                     }}
                                     style={{
                                         cursor: 'pointer',
@@ -554,7 +546,12 @@ function App() {
                 </Card>
 
                 {/* Vitals Section (Moved here) */}
-                <Vitals vitals={character.vitals} onChange={handleVitalsChange} />
+                <Vitals 
+                    vitals={character.vitals} 
+                    onChange={handleVitalsChange} 
+                    onRoll={handleRoll}
+                    sendToDiscord={sendToDiscord}
+                />
             </div>
         </div>
 
