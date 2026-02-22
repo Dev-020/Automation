@@ -4,7 +4,7 @@ import type { Feature, Character, StatName } from '../types';
 import itemsData from '../../../5etools/5etools-src/data/items.json';
 import languagesData from '../../../5etools/5etools-src/data/languages.json';
 
-const TOOLS_LIST = (itemsData.item || []).filter((i: any) => i.type === 'AT' || i.type === 'T').map((i: any) => i.name); // AT = Artisan Tool, T = Tool
+const TOOLS_LIST = (itemsData.item || []).filter((i: any) => (i.type === 'AT' || i.type === 'T' || i.type === 'AT|XPHB' || i.type === 'T|XPHB' || i.type === 'INS' || i.type === 'INS|XPHB' || i.type === 'GS' || i.type === 'GS|XPHB') && i.source !== 'PHB').map((i: any) => i.name); 
 const LANGUAGES_LIST = (languagesData.language || []).filter((l: any) => l.source === 'XPHB' || l.source === 'PHB').map((l: any) => l.name);
 const SKILLS_LIST = [
     'Athletics', 'Acrobatics', 'Sleight of Hand', 'Stealth', 'Arcana', 'History', 'Investigation', 
@@ -579,7 +579,8 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                         {(opt.mode === 'choose' || opt.mode === 'any') && (
                              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                  {Array.from({ length: (opt.count || opt.anyCount || 1) }).map((_, i) => {
-                                     const list = opt.mode === 'choose' ? (opt.from || []) : getProficiencyList(opt);
+                                     const hasTokens = opt.from && opt.from.some(f => ['anySkill', 'anyTool'].includes(f));
+                                     const list = (opt.mode === 'choose' && !hasTokens) ? (opt.from || []) : getProficiencyList(opt);
                                      const choiceId = `${opt.type}-${idx}-${i}`;
                                      return (
                                         <div key={i}>

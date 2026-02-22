@@ -3,7 +3,7 @@ import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
 import type { Character, Skill, RollEntry } from '../types';
-import { calculateModifier, formatModifier, rollFormula } from '../utils/dnd';
+import { formatModifier, rollFormula } from '../utils/dnd';
 
 interface SkillsProps {
   skills: Character['skills'];
@@ -20,7 +20,7 @@ export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus,
 
   const getSkillMod = (skill: Skill) => {
     const stat = stats[skill.stat];
-    let mod = calculateModifier(stat.base);
+    let mod = stat.modifier;
     if (skill.proficiency) mod += proficiencyBonus;
     if (skill.expertise) mod += proficiencyBonus;
     return mod;

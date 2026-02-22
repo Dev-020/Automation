@@ -125,7 +125,7 @@
       "max": 7,
       "face": "d6"
     },
-    "ac": 19,
+    "ac": 12,
     "initiative": 1,
     "speed": 30,
     "proficiencyBonus": 3,
@@ -135,8 +135,7 @@
     },
     "acBreakdown": [
       "Leather Armor (Light): 11",
-      "Dexterity: +1",
-      "Gemini Integrated: +7 (CON+CHA)"
+      "Dexterity: +1"
     ]
   },
   "skills": [
@@ -221,7 +220,7 @@
     {
       "name": "Persuasion",
       "stat": "CHA",
-      "proficiency": false,
+      "proficiency": true,
       "expertise": false
     },
     {
@@ -299,268 +298,26 @@
   ],
   "spells": [
     {
-      "name": "Booming Blade",
-      "source": "TCE",
-      "page": 106,
-      "otherSources": [
-        {
-          "source": "SCAG",
-          "page": 142
-        }
-      ],
-      "level": 0,
-      "school": "V",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "radius",
-        "distance": {
-          "type": "feet",
-          "amount": 5
-        }
-      },
-      "components": {
-        "s": true,
-        "m": {
-          "text": "a melee weapon worth at least 1 sp",
-          "cost": 10
-        }
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "round",
-            "amount": 1
-          }
-        }
-      ],
-      "entries": [
-        "You brandish the weapon used in the spell's casting and make a melee attack with it against one creature within 5 feet of you. On a hit, the target suffers the weapon attack's normal effects and then becomes sheathed in booming energy until the start of your next turn. If the target willingly moves 5 feet or more before then, the target takes {@damage 1d8} thunder damage, and the spell ends.",
-        "This spell's damage increases when you reach certain levels. At 5th level, the melee attack deals an extra {@damage 1d8} thunder damage to the target on a hit, and the damage the target takes for moving increases to {@damage 2d8}. Both damage rolls increase by 1d8 at 11th level ({@damage 2d8} and {@damage 3d8}) and again at 17th level ({@damage 3d8} and {@damage 4d8})."
-      ],
-      "scalingLevelDice": [
-        {
-          "label": "thunder damage on moving",
-          "scaling": {
-            "1": "1d8",
-            "5": "2d8",
-            "11": "3d8",
-            "17": "4d8"
-          }
-        },
-        {
-          "label": "thunder damage on hit",
-          "scaling": {
-            "5": "1d8",
-            "11": "2d8",
-            "17": "3d8"
-          }
-        }
-      ],
-      "damageInflict": [
-        "thunder"
-      ],
-      "spellAttack": [
-        "M"
-      ],
-      "miscTags": [
-        "AAD",
-        "SCL"
-      ],
-      "areaTags": [
-        "ST"
-      ],
-      "classes": [
-        "Artificer",
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Green-Flame Blade",
-      "source": "TCE",
-      "page": 107,
-      "otherSources": [
-        {
-          "source": "SCAG",
-          "page": 143
-        }
-      ],
-      "level": 0,
-      "school": "V",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "radius",
-        "distance": {
-          "type": "feet",
-          "amount": 5
-        }
-      },
-      "components": {
-        "s": true,
-        "m": {
-          "text": "a melee weapon worth at least 1 sp",
-          "cost": 10
-        }
-      },
-      "duration": [
-        {
-          "type": "instant"
-        }
-      ],
-      "entries": [
-        "You brandish the weapon used in the spell's casting and make a melee attack with it against one creature within 5 feet of you. On a hit, the target suffers the weapon attack's normal effects, and you can cause green fire to leap from the target to a different creature of your choice that you can see within 5 feet of it. The second creature takes fire damage equal to your spellcasting ability modifier.",
-        "This spell's damage increases when you reach certain levels. At 5th level, the melee attack deals an extra {@damage 1d8} fire damage to the target on a hit, and the fire damage to the second creature increases to {@damage 1d8} + your spellcasting ability modifier. Both damage rolls increase by {@damage 1d8} at 11th level ({@damage 2d8} and {@damage 2d8}) and 17th level ({@damage 3d8} and {@damage 3d8})."
-      ],
-      "scalingLevelDice": [
-        {
-          "label": "fire damage to secondary creature",
-          "scaling": {
-            "1": "{{spellcasting_mod}}",
-            "5": "1d8 + {{spellcasting_mod}}",
-            "11": "2d8 + {{spellcasting_mod}}",
-            "17": "3d8 + {{spellcasting_mod}}"
-          }
-        },
-        {
-          "label": "fire damage on hit",
-          "scaling": {
-            "5": "1d8",
-            "11": "2d8",
-            "17": "3d8"
-          }
-        }
-      ],
-      "damageInflict": [
-        "fire"
-      ],
-      "spellAttack": [
-        "M"
-      ],
-      "miscTags": [
-        "AAD",
-        "SCL",
-        "SGT"
-      ],
-      "areaTags": [
-        "MT",
-        "ST"
-      ],
-      "classes": [
-        "Artificer",
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "True Strike",
+      "name": "Misty Step",
       "source": "XPHB",
-      "page": 336,
+      "page": 299,
       "srd52": true,
       "basicRules2024": true,
-      "level": 0,
-      "school": "D",
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 2,
+      "school": "C",
       "time": [
         {
           "number": 1,
-          "unit": "action"
+          "unit": "bonus"
         }
       ],
       "range": {
         "type": "point",
         "distance": {
           "type": "self"
-        }
-      },
-      "components": {
-        "s": true,
-        "m": {
-          "text": "a weapon with which you have proficiency and that is worth 1+ CP",
-          "cost": 1
-        }
-      },
-      "duration": [
-        {
-          "type": "instant"
-        }
-      ],
-      "entries": [
-        "Guided by a flash of magical insight, you make one attack with the weapon used in the spell's casting. The attack uses your spellcasting ability for the attack and damage rolls instead of using Strength or Dexterity. If the attack deals damage, it can be Radiant damage or the weapon's normal damage type (your choice)."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "Cantrip Upgrade",
-          "entries": [
-            "Whether you deal Radiant damage or the weapon's normal damage type, the attack deals extra Radiant damage when you reach levels 5 ({@damage 1d6}), 11 ({@damage 2d6}), and 17 ({@damage 3d6})."
-          ]
-        }
-      ],
-      "scalingLevelDice": [
-        {
-          "label": "extra Radiant damage",
-          "scaling": {
-            "5": "1d6",
-            "11": "2d6",
-            "17": "3d6"
-          }
-        }
-      ],
-      "damageInflict": [
-        "radiant"
-      ],
-      "miscTags": [
-        "AAD"
-      ],
-      "areaTags": [
-        "ST"
-      ],
-      "classes": [
-        "Bard",
-        "Sorcerer",
-        "Warlock",
-        "Wizard",
-        "Artificer"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Lightning Lure",
-      "source": "TCE",
-      "page": 107,
-      "otherSources": [
-        {
-          "source": "SCAG",
-          "page": 143
-        }
-      ],
-      "level": 0,
-      "school": "V",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "radius",
-        "distance": {
-          "type": "feet",
-          "amount": 15
         }
       },
       "components": {
@@ -572,11 +329,122 @@
         }
       ],
       "entries": [
-        "You create a lash of lightning energy that strikes at one creature of your choice that you can see within 15 feet of you. The target must succeed on a Strength saving throw or be pulled up to 10 feet in a straight line toward you and then take {@damage 1d8} lightning damage if it is within 5 feet of you.",
-        "This spell's damage increases by {@damage 1d8} when you reach 5th level ({@damage 2d8}), 11th level ({@damage 3d8}), and 17th level ({@damage 4d8})."
+        "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see."
+      ],
+      "miscTags": [
+        "SGT",
+        "TP"
+      ],
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Slow",
+      "source": "XPHB",
+      "page": 318,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 3,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a drop of molasses"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
+        }
+      ],
+      "entries": [
+        "You alter time around up to six creatures of your choice in a 40-foot {@variantrule Cube [Area of Effect]|XPHB|Cube} within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration.",
+        "An affected target's {@variantrule Speed|XPHB} is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a {@variantrule Bonus Action|XPHB}, not both, and it can make only one attack if it takes the {@action Attack|XPHB} action. If it casts a spell with a Somatic component, there is a {@chance 25|||The spell fails!|The spell does not fail.} chance the spell fails as a result of the target making the spell's gestures too slowly.",
+        "An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
+      ],
+      "savingThrow": [
+        "wisdom"
+      ],
+      "miscTags": [
+        "MAC"
+      ],
+      "areaTags": [
+        "C",
+        "MT"
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Sorcerous Burst",
+      "source": "XPHB",
+      "page": 318,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 0,
+      "school": "V",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You cast sorcerous energy at one creature or object within range. Make a ranged attack roll against the target. On a hit, the target takes {@damage 1d8} damage of a type you choose: Acid, Cold, Fire, Lightning, Poison, Psychic, or Thunder.",
+        "If you roll an 8 on a {@dice d8} for this spell, you can roll another {@dice d8}, and add it to the damage. When you cast this spell, the maximum number of these d8s you can add to the spell's damage equals your spellcasting ability modifier."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "Cantrip Upgrade",
+          "entries": [
+            "The damage increases by {@damage 1d8} when you reach levels 5 ({@damage 2d8}), 11 ({@damage 3d8}), and 17 ({@damage 4d8})."
+          ]
+        }
       ],
       "scalingLevelDice": {
-        "label": "lightning damage",
+        "label": "damage",
         "scaling": {
           "1": "1d8",
           "5": "2d8",
@@ -585,24 +453,26 @@
         }
       },
       "damageInflict": [
-        "lightning"
+        "acid",
+        "cold",
+        "fire",
+        "lightning",
+        "poison",
+        "psychic",
+        "thunder"
       ],
-      "savingThrow": [
-        "strength"
+      "spellAttack": [
+        "R"
       ],
       "miscTags": [
-        "FMV",
-        "SCL",
-        "SGT"
+        "OBJ",
+        "SCL"
       ],
       "areaTags": [
         "ST"
       ],
       "classes": [
-        "Artificer",
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
+        "Sorcerer"
       ],
       "prepared": true
     },
@@ -677,236 +547,15 @@
       "prepared": true
     },
     {
-      "name": "Shadow Blade",
-      "source": "XGE",
-      "page": 164,
-      "level": 2,
-      "school": "I",
-      "time": [
-        {
-          "number": 1,
-          "unit": "bonus"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "self"
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          },
-          "concentration": true
-        }
-      ],
-      "entries": [
-        "You weave together threads of shadow to create a sword of solidified gloom in your hand. This magic sword lasts until the spell ends. It counts as a simple melee weapon with which you are proficient. It deals {@damage 2d8} psychic damage on a hit and has the finesse, light, and thrown properties (range 20/60). In addition, when you use the sword to attack a target that is in dim light or darkness, you make the attack roll with advantage.",
-        "If you drop the weapon or throw it, it dissipates at the end of the turn. Thereafter, while the spell persists, you can use a bonus action to cause the sword to reappear in your hand."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "At Higher Levels",
-          "entries": [
-            "When you cast this spell using a 3rd- or 4th-level spell slot, the damage increases to {@damage 3d8}. When you cast it using a 5th- or 6th-level spell slot, the damage increases to {@damage 4d8}. When you cast it using a spell slot of 7th level or higher, the damage increases to {@damage 5d8}."
-          ]
-        }
-      ],
-      "damageInflict": [
-        "psychic"
-      ],
-      "miscTags": [
-        "UBA"
-      ],
-      "hasFluffImages": true,
-      "classes": [
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Misty Step",
+      "name": "Cure Wounds",
       "source": "XPHB",
-      "page": 299,
+      "page": 259,
       "srd52": true,
       "basicRules2024": true,
       "referenceSources": [
         "UtHftLH"
       ],
-      "level": 2,
-      "school": "C",
-      "time": [
-        {
-          "number": 1,
-          "unit": "bonus"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "self"
-        }
-      },
-      "components": {
-        "v": true
-      },
-      "duration": [
-        {
-          "type": "instant"
-        }
-      ],
-      "entries": [
-        "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see."
-      ],
-      "miscTags": [
-        "SGT",
-        "TP"
-      ],
-      "classes": [
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Thunder Step",
-      "source": "XGE",
-      "page": 168,
-      "level": 3,
-      "school": "C",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "feet",
-          "amount": 90
-        }
-      },
-      "components": {
-        "v": true
-      },
-      "duration": [
-        {
-          "type": "instant"
-        }
-      ],
-      "entries": [
-        "You teleport yourself to an unoccupied space you can see within range. Immediately after you disappear, a thunderous boom sounds, and each creature within 10 feet of the space you left must make a Constitution saving throw, taking {@damage 3d10} thunder damage on a failed save, or half as much damage on a successful one. The thunder can be heard from up to 300 feet away.",
-        "You can bring along objects as long as their weight doesn't exceed what you can carry. You can also teleport one willing creature of your size or smaller who is carrying gear up to its carrying capacity. The creature must be within 5 feet of you when you cast this spell, and there must be an unoccupied space within 5 feet of your destination space for the creature to appear in; otherwise, the creature is left behind."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "At Higher Levels",
-          "entries": [
-            "When you cast this spell using a spell slot of 4th level or higher, the damage increases by {@scaledamage 3d10|3-9|1d10} for each slot level above 3rd."
-          ]
-        }
-      ],
-      "damageInflict": [
-        "thunder"
-      ],
-      "savingThrow": [
-        "constitution"
-      ],
-      "miscTags": [
-        "SGT",
-        "TP"
-      ],
-      "areaTags": [
-        "S"
-      ],
-      "classes": [
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Fire Shield",
-      "source": "XPHB",
-      "page": 274,
-      "srd52": true,
-      "basicRules2024": true,
-      "level": 4,
-      "school": "V",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "self"
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true,
-        "m": "a bit of phosphorus or a firefly"
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 10
-          }
-        }
-      ],
-      "entries": [
-        "Wispy flames wreathe your body for the duration, shedding {@variantrule Bright Light|XPHB} in a 10-foot radius and {@variantrule Dim Light|XPHB} for an additional 10 feet.",
-        "The flames provide you with a warm shield or a chill shield, as you choose. The warm shield grants you {@variantrule Resistance|XPHB} to Cold damage, and the chill shield grants you {@variantrule Resistance|XPHB} to Fire damage.",
-        "In addition, whenever a creature within 5 feet of you hits you with a melee attack roll, the shield erupts with flame. The attacker takes {@damage 2d8} Fire damage from a warm shield or {@damage 2d8} Cold damage from a chill shield."
-      ],
-      "damageResist": [
-        "cold",
-        "fire"
-      ],
-      "damageInflict": [
-        "cold",
-        "fire"
-      ],
-      "miscTags": [
-        "LGT"
-      ],
-      "classes": [
-        "Druid",
-        "Sorcerer",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Dispel Magic",
-      "source": "XPHB",
-      "page": 264,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "DrDe-SD"
-      ],
-      "level": 3,
+      "level": 1,
       "school": "A",
       "time": [
         {
@@ -917,8 +566,7 @@
       "range": {
         "type": "point",
         "distance": {
-          "type": "feet",
-          "amount": 120
+          "type": "touch"
         }
       },
       "components": {
@@ -931,19 +579,19 @@
         }
       ],
       "entries": [
-        "Choose one creature, object, or magical effect within range. Any ongoing spell of level 3 or lower on the target ends. For each ongoing spell of level 4 or higher on the target, make an ability check using your spellcasting ability ({@dc 10} plus that spell's level). On a successful check, the spell ends."
+        "A creature you touch regains a number of {@variantrule Hit Points|XPHB} equal to {@dice 2d8} plus your spellcasting ability modifier."
       ],
       "entriesHigherLevel": [
         {
           "type": "entries",
           "name": "Using a Higher-Level Spell Slot",
           "entries": [
-            "You automatically end a spell on the target if the spell's level is equal to or less than the level of the spell slot you use."
+            "The healing increases by {@scaledice 2d8|1-9|2d8} for each spell slot level above 1."
           ]
         }
       ],
       "miscTags": [
-        "OBJ"
+        "HL"
       ],
       "areaTags": [
         "ST"
@@ -953,21 +601,33 @@
         "Cleric",
         "Druid",
         "Ranger",
-        "Sorcerer",
-        "Warlock",
-        "Wizard",
         "Paladin",
         "Artificer"
       ],
       "prepared": true
     },
     {
-      "name": "Haste",
-      "source": "XPHB",
-      "page": 284,
-      "srd52": true,
-      "basicRules2024": true,
-      "level": 3,
+      "name": "Gust",
+      "source": "XGE",
+      "page": 157,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 19
+        },
+        {
+          "source": "ERLW",
+          "page": 50
+        },
+        {
+          "source": "TCE",
+          "page": 50
+        }
+      ],
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 0,
       "school": "T",
       "time": [
         {
@@ -984,38 +644,518 @@
       },
       "components": {
         "v": true,
-        "s": true,
-        "m": "a shaving of licorice root"
+        "s": true
       },
       "duration": [
         {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          },
-          "concentration": true
+          "type": "instant"
         }
       ],
       "entries": [
-        "Choose a willing creature that you can see within range. Until the spell ends, the target's {@variantrule Speed|XPHB} is doubled, it gains a +2 bonus to {@variantrule Armor Class|XPHB}, it has {@variantrule Advantage|XPHB} on Dexterity saving throws, and it gains an additional action on each of its turns. That action can be used to take only the {@action Attack|XPHB} (one attack only), {@action Dash|XPHB}, {@action Disengage|XPHB}, {@action Hide|XPHB}, or {@action Utilize|XPHB} action.",
-        "When the spell ends, the target is {@condition Incapacitated|XPHB} and has a {@variantrule Speed|XPHB} of 0 until the end of its next turn, as a wave of lethargy washes over it."
+        "You seize the air and compel it to create one of the following effects at a point you can see within range:",
+        {
+          "type": "list",
+          "items": [
+            "One Medium or smaller creature that you choose must succeed on a Strength saving throw or be pushed up to 5 feet away from you.",
+            "You create a small blast of air capable of moving one object that is neither held nor carried and that weighs no more than 5 pounds. The object is pushed up to 10 feet away from you. It isn't pushed with enough force to cause damage.",
+            "You create a harmless sensory effect using air, such as causing leaves to rustle, wind to slam shutters closed, or your clothing to ripple in a breeze."
+          ]
+        }
       ],
-      "conditionInflict": [
-        "incapacitated"
+      "savingThrow": [
+        "strength"
       ],
       "miscTags": [
-        "ADV",
-        "MAC",
+        "FMV",
+        "OBJ",
         "SGT"
       ],
       "areaTags": [
         "ST"
       ],
       "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Shape Water",
+      "source": "XGE",
+      "page": 164,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 21
+        },
+        {
+          "source": "EGW"
+        }
+      ],
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 30
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        },
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "You choose an area of water that you can see within range and that fits within a 5-foot cube. You manipulate it in one of the following ways:",
+        {
+          "type": "list",
+          "items": [
+            "You instantaneously move or otherwise change the flow of the water as you direct, up to 5 feet in any direction. This movement doesn't have enough force to cause damage.",
+            "You cause the water to form into simple shapes and animate at your direction. This change lasts for 1 hour.",
+            "You change the water's color or opacity. The water must be changed in the same way throughout. This change lasts for 1 hour.",
+            "You freeze the water, provided that there are no creatures in it. The water unfreezes in 1 hour."
+          ]
+        },
+        "If you cast this spell multiple times, you can have no more than two of its non-instantaneous effects active at a time, and you can dismiss such an effect as an action."
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "areaTags": [
+        "C"
+      ],
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Control Flames",
+      "source": "XGE",
+      "page": 152,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 16
+        }
+      ],
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 60
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        },
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "You choose nonmagical flame that you can see within range and that fits within a 5-foot cube. You affect it in one of the following ways:",
+        {
+          "type": "list",
+          "items": [
+            "You instantaneously expand the flame 5 feet in one direction, provided that wood or other fuel is present in the new location.",
+            "You instantaneously extinguish the flames within the cube.",
+            "You double or halve the area of bright light and dim light cast by the flame, change its color, or both. The change lasts for 1 hour.",
+            "You cause simple shapes—such as the vague form of a creature, an inanimate object, or a location—to appear within the flames and animate as you like. The shapes last for 1 hour."
+          ]
+        },
+        "If you cast this spell multiple times, you can have up to three non-instantaneous effects created by it active at a time, and you can dismiss such an effect as an action."
+      ],
+      "miscTags": [
+        "LGT",
+        "SGT"
+      ],
+      "areaTags": [
+        "C"
+      ],
+      "hasFluffImages": true,
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Mold Earth",
+      "source": "XGE",
+      "page": 162,
+      "otherSources": [
+        {
+          "source": "EEPC",
+          "page": 21
+        }
+      ],
+      "referenceSources": [
+        "PotA"
+      ],
+      "level": 0,
+      "school": "T",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 30
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        },
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 1
+          }
+        }
+      ],
+      "entries": [
+        "You choose a portion of dirt or stone that you can see within range and that fits within a 5-foot cube. You manipulate it in one of the following ways:",
+        {
+          "type": "list",
+          "items": [
+            "If you target an area of loose earth, you can instantaneously excavate it, move it along the ground, and deposit it up to 5 feet away. This movement doesn't involve enough force to cause damage.",
+            "You cause shapes, colors, or both to appear on the dirt or stone, spelling out words, creating images, or shaping patterns. The changes last for 1 hour.",
+            "If the dirt or stone you target is on the ground, you cause it to become {@quickref difficult terrain||3}. Alternatively, you can cause the ground to become normal terrain if it is already {@quickref difficult terrain||3}. This change lasts for 1 hour."
+          ]
+        },
+        "If you cast this spell multiple times, you can have no more than two of its non-instantaneous effects active at a time, and you can dismiss such an effect as an action."
+      ],
+      "miscTags": [
+        "DFT",
+        "SGT"
+      ],
+      "areaTags": [
+        "C"
+      ],
+      "classes": [
+        "Druid",
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Vortex Warp",
+      "source": "SCC",
+      "page": 38,
+      "level": 2,
+      "school": "C",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 90
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You magically twist space around another creature you can see within range. The target must succeed on a Constitution saving throw (the target can choose to fail), or the target is teleported to an unoccupied space of your choice that you can see within range. The chosen space must be on a surface or in a liquid that can support the target without the target having to squeeze."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "At Higher Levels",
+          "entries": [
+            "When you cast this spell using a spell slot of 3rd level or higher, the range of the spell increases by 30 feet for each slot level above 2nd."
+          ]
+        }
+      ],
+      "savingThrow": [
+        "constitution"
+      ],
+      "miscTags": [
+        "SGT",
+        "TP"
+      ],
+      "classes": [
         "Sorcerer",
         "Wizard",
         "Artificer"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Counterspell",
+      "source": "XPHB",
+      "page": 258,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 3,
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "reaction",
+          "condition": "which you take when you see a creature within 60 feet of yourself casting a spell with Verbal, Somatic, or Material components"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 60
+        }
+      },
+      "components": {
+        "s": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You attempt to interrupt a creature in the process of casting a spell. The creature makes a Constitution saving throw. On a failed save, the spell dissipates with no effect, and the action, {@variantrule Bonus Action|XPHB}, or {@variantrule Reaction|XPHB} used to cast it is wasted. If that spell was cast with a spell slot, the slot isn't expended."
+      ],
+      "savingThrow": [
+        "constitution"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "classes": [
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Mage Armor",
+      "source": "XPHB",
+      "page": 293,
+      "srd52": true,
+      "basicRules2024": true,
+      "referenceSources": [
+        "UtHftLH"
+      ],
+      "level": 1,
+      "school": "A",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "touch"
+        }
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": "a piece of cured leather"
+      },
+      "duration": [
+        {
+          "type": "timed",
+          "duration": {
+            "type": "hour",
+            "amount": 8
+          }
+        }
+      ],
+      "entries": [
+        "You touch a willing creature who isn't wearing armor. Until the spell ends, the target's base AC becomes 13 plus its Dexterity modifier. The spell ends early if the target dons armor."
+      ],
+      "miscTags": [
+        "MAC"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "hasFluffImages": true,
+      "classes": [
+        "Sorcerer",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Dimension Door",
+      "source": "XPHB",
+      "page": 262,
+      "srd52": true,
+      "basicRules2024": true,
+      "level": 4,
+      "school": "C",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 500
+        }
+      },
+      "components": {
+        "v": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You teleport to a location within range. You arrive at exactly the spot desired. It can be a place you can see, one you can visualize, or one you can describe by stating distance and direction, such as \"200 feet straight downward\" or \"300 feet upward to the northwest at a 45-degree angle.\"",
+        "You can also teleport one willing creature. The creature must be within 5 feet of you when you teleport, and it teleports to a space within 5 feet of your destination space.",
+        "If you, the other creature, or both would arrive in a space occupied by a creature or completely filled by one or more objects, you and any creature traveling with you each take {@damage 4d6} Force damage, and the teleportation fails."
+      ],
+      "damageInflict": [
+        "force"
+      ],
+      "miscTags": [
+        "TP"
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
+      ],
+      "prepared": true
+    },
+    {
+      "name": "Raulothim's Psychic Lance",
+      "source": "FTD",
+      "page": 21,
+      "level": 4,
+      "school": "E",
+      "time": [
+        {
+          "number": 1,
+          "unit": "action"
+        }
+      ],
+      "range": {
+        "type": "point",
+        "distance": {
+          "type": "feet",
+          "amount": 120
+        }
+      },
+      "components": {
+        "v": true
+      },
+      "duration": [
+        {
+          "type": "instant"
+        }
+      ],
+      "entries": [
+        "You unleash a shimmering lance of psychic power from your forehead at a creature that you can see within range. Alternatively, you can utter a creature's name. If the named target is within range, it becomes the spell's target even if you can't see it. If the named target isn't within range, the lance dissipates without effect.",
+        "The target must make an Intelligence saving throw. On a failed save, the target takes {@damage 7d6} psychic damage and is {@condition incapacitated} until the start of your next turn. On a successful save, the creature takes half as much damage and isn't {@condition incapacitated}."
+      ],
+      "entriesHigherLevel": [
+        {
+          "type": "entries",
+          "name": "At Higher Levels",
+          "entries": [
+            "When you cast this spell using a spell slot of 5th level or higher, the damage increases by {@scaledamage 7d6|4-9|1d6} for each slot level above 4th."
+          ]
+        }
+      ],
+      "damageInflict": [
+        "psychic"
+      ],
+      "conditionInflict": [
+        "incapacitated"
+      ],
+      "savingThrow": [
+        "intelligence"
+      ],
+      "miscTags": [
+        "SGT"
+      ],
+      "areaTags": [
+        "ST"
+      ],
+      "classes": [
+        "Bard",
+        "Sorcerer",
+        "Warlock",
+        "Wizard"
       ],
       "prepared": true
     },
@@ -1123,252 +1263,44 @@
       "prepared": true
     },
     {
-      "name": "Cacophonic Shield",
-      "source": "FRHoF",
-      "page": 143,
-      "level": 3,
-      "school": "V",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "emanation",
-        "distance": {
-          "type": "feet",
-          "amount": 10
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 10
-          },
-          "concentration": true
-        }
-      ],
-      "entries": [
-        "Thunderous reverberations fill a 10-foot {@variantrule Emanation [Area of Effect]|XPHB|Emanation} originating from you for the duration. Whenever the {@variantrule Emanation [Area of Effect]|XPHB|Emanation} enters a creature's space and whenever a creature enters the {@variantrule Emanation [Area of Effect]|XPHB|Emanation} or ends its turn there, the creature makes a Constitution saving throw. On a failed save, the creature takes {@damage 3d6} Thunder damage and has the {@condition Deafened|XPHB} condition until the start of your next turn. On a successful save, the creature takes half as much damage only. A creature makes this save only once per turn. When you cast this spell, you can designate creatures to be unaffected by it.",
-        "In addition, you have {@variantrule Resistance|XPHB} to Thunder damage, and ranged attack rolls against you are made with {@variantrule Disadvantage|XPHB}."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "Using a Higher-Level Spell Slot",
-          "entries": [
-            "The damage increases by {@scaledamage 3d6|3-9|1d6} for each spell slot level above 3."
-          ]
-        }
-      ],
-      "damageResist": [
-        "thunder"
-      ],
-      "damageInflict": [
-        "thunder"
-      ],
-      "conditionInflict": [
-        "deafened"
-      ],
-      "savingThrow": [
-        "constitution"
-      ],
-      "areaTags": [
-        "S"
-      ],
-      "classes": [
-        "Bard",
-        "Sorcerer",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Hold Person",
+      "name": "Greater Invisibility",
       "source": "XPHB",
-      "page": 286,
+      "page": 281,
       "srd52": true,
       "basicRules2024": true,
-      "referenceSources": [
-        "UtHftLH"
-      ],
-      "level": 2,
-      "school": "E",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "feet",
-          "amount": 60
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true,
-        "m": "a straight piece of iron"
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          },
-          "concentration": true
-        }
-      ],
-      "entries": [
-        "Choose a Humanoid that you can see within range. The target must succeed on a Wisdom saving throw or have the {@condition Paralyzed|XPHB} condition for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
-      ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "Using a Higher-Level Spell Slot",
-          "entries": [
-            "You can target one additional Humanoid for each spell slot level above 2."
-          ]
-        }
-      ],
-      "conditionInflict": [
-        "paralyzed"
-      ],
-      "savingThrow": [
-        "wisdom"
-      ],
-      "affectsCreatureType": [
-        "humanoid"
-      ],
-      "miscTags": [
-        "SCT",
-        "SGT"
-      ],
-      "areaTags": [
-        "ST"
-      ],
-      "classes": [
-        "Bard",
-        "Cleric",
-        "Druid",
-        "Sorcerer",
-        "Warlock",
-        "Wizard"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Mage Hand",
-      "source": "XPHB",
-      "page": 293,
-      "srd52": true,
-      "basicRules2024": true,
-      "referenceSources": [
-        "UtHftLH",
-        "FRAiF"
-      ],
-      "level": 0,
-      "school": "C",
-      "time": [
-        {
-          "number": 1,
-          "unit": "action"
-        }
-      ],
-      "range": {
-        "type": "point",
-        "distance": {
-          "type": "feet",
-          "amount": 30
-        }
-      },
-      "components": {
-        "v": true,
-        "s": true
-      },
-      "duration": [
-        {
-          "type": "timed",
-          "duration": {
-            "type": "minute",
-            "amount": 1
-          }
-        }
-      ],
-      "entries": [
-        "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again.",
-        "When you cast the spell, you can use the hand to manipulate an object, open an unlocked door or container, stow or retrieve an item from an open container, or pour the contents out of a vial.",
-        "As a {@action Magic|XPHB} action on your later turns, you can control the hand thus again. As part of that action, you can move the hand up to 30 feet.",
-        "The hand can't attack, activate magic items, or carry more than 10 pounds."
-      ],
-      "miscTags": [
-        "OBJ"
-      ],
-      "classes": [
-        "Bard",
-        "Sorcerer",
-        "Warlock",
-        "Wizard",
-        "Artificer"
-      ],
-      "prepared": true
-    },
-    {
-      "name": "Backlash",
-      "source": "FRHoF",
-      "page": 142,
       "level": 4,
-      "school": "A",
+      "school": "I",
       "time": [
         {
           "number": 1,
-          "unit": "reaction",
-          "condition": "which you take in response to taking damage"
+          "unit": "action"
         }
       ],
       "range": {
         "type": "point",
         "distance": {
-          "type": "feet",
-          "amount": 60
+          "type": "touch"
         }
       },
       "components": {
-        "v": true
+        "v": true,
+        "s": true
       },
       "duration": [
         {
-          "type": "instant"
+          "type": "timed",
+          "duration": {
+            "type": "minute",
+            "amount": 1
+          },
+          "concentration": true
         }
       ],
       "entries": [
-        "You ward yourself against destructive energy, reducing the damage taken by {@dice 4d6} plus your spellcasting ability modifier.",
-        "If the triggering damage was from a creature within range, you can force the creature to make a Constitution saving throw. The creature takes {@damage 4d6} Force damage on a failed save or half as much damage on a successful one."
+        "A creature you touch has the {@condition Invisible|XPHB} condition until the spell ends."
       ],
-      "entriesHigherLevel": [
-        {
-          "type": "entries",
-          "name": "Using a Higher-Level Spell Slot",
-          "entries": [
-            "The damage reduction and Force damage from this spell both increase by {@scaledamage 4d6|4-9|1d6} for every spell slot level above 4."
-          ]
-        }
-      ],
-      "damageInflict": [
-        "force"
-      ],
-      "savingThrow": [
-        "constitution"
+      "conditionInflict": [
+        "invisible"
       ],
       "areaTags": [
         "ST"
@@ -1376,7 +1308,6 @@
       "classes": [
         "Bard",
         "Sorcerer",
-        "Warlock",
         "Wizard"
       ],
       "prepared": true
@@ -5535,6 +5466,278 @@
       "timestamp": 1771515922303,
       "diceType": "d20",
       "sendToDiscord": true
+    },
+    {
+      "label": "1d10 + 1d12 (Adv)",
+      "result": 17,
+      "details": "Roll 1: 5 + 11 = 16\nRoll 2: 7 + 10 = 17 <<",
+      "timestamp": 1771516269736,
+      "diceType": "d12",
+      "sendToDiscord": true
+    },
+    {
+      "label": "1d8 (Dis)",
+      "result": 3,
+      "details": "Roll 1: 8 = 8\nRoll 2: 3 = 3 <<",
+      "timestamp": 1771516272436,
+      "diceType": "d8",
+      "sendToDiscord": true
+    },
+    {
+      "label": "1d20 (Dis)",
+      "result": 6,
+      "details": "Roll 1: 6 = 6 <<\nRoll 2: 12 = 12",
+      "timestamp": 1771516273615,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "1d20",
+      "result": 14,
+      "details": "14",
+      "timestamp": 1771516276717,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "3d20 (Adv)",
+      "result": 49,
+      "details": "Roll 1: (2 + 13 + 11) = 26\nRoll 2: (17 + 12 + 20) = 49 <<",
+      "timestamp": 1771516280124,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Effect: Green-Flame Blade",
+      "result": 3,
+      "details": "3",
+      "timestamp": 1771516577221,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Green-Flame Blade",
+      "result": 8,
+      "details": "8",
+      "timestamp": 1771516577486,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Lightning Lure",
+      "result": 9,
+      "details": "(7 + 2)",
+      "timestamp": 1771516646366,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Lightning Lure",
+      "result": 9,
+      "details": "(2 + 7)",
+      "timestamp": 1771516649581,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Lightning Lure",
+      "result": 9,
+      "details": "(1 + 8)",
+      "timestamp": 1771516651881,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Lightning Lure",
+      "result": 5,
+      "details": "(4 + 1)",
+      "timestamp": 1771516664920,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Lightning Lure",
+      "result": 14,
+      "details": "(7 + 7)",
+      "timestamp": 1771516670662,
+      "diceType": "d8",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Dis)",
+      "result": 12,
+      "details": "Roll 1: 6 + 6 = 12 <<\nRoll 2: 8 + 6 = 14",
+      "timestamp": 1771520211018,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Initiative Roll (Dis)",
+      "result": 11,
+      "details": "Roll 1: 20 + 1 = 21\nRoll 2: 10 + 1 = 11 <<",
+      "timestamp": 1771520213994,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack (Adv)",
+      "result": 11,
+      "details": "Roll 1: 5 + 6 = 11 <<\nRoll 2: 3 + 6 = 9",
+      "timestamp": 1771520221163,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 22,
+      "details": "Roll 1: 15 + 7 = 22 <<\nRoll 2: 7 + 7 = 14",
+      "timestamp": 1771520223644,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 21,
+      "details": "Roll 1: 15 + 6 = 21 <<\nRoll 2: 7 + 6 = 13",
+      "timestamp": 1771520225039,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 23,
+      "details": "Roll 1: 17 + 6 = 23 <<\nRoll 2: 10 + 6 = 16",
+      "timestamp": 1771520225745,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 23,
+      "details": "Roll 1: 17 + 6 = 23 <<\nRoll 2: 15 + 6 = 21",
+      "timestamp": 1771520226351,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 25,
+      "details": "Roll 1: 8 + 6 = 14\nRoll 2: 19 + 6 = 25 <<",
+      "timestamp": 1771520226770,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 20,
+      "details": "Roll 1: 9 + 6 = 15\nRoll 2: 14 + 6 = 20 <<",
+      "timestamp": 1771520227133,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 13,
+      "details": "Roll 1: 7 + 6 = 13 <<\nRoll 2: 4 + 6 = 10",
+      "timestamp": 1771520227786,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 10,
+      "details": "Roll 1: 4 + 6 = 10 <<\nRoll 2: 3 + 6 = 9",
+      "timestamp": 1771520228088,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 24,
+      "details": "Roll 1: 15 + 6 = 21\nRoll 2: 18 + 6 = 24 <<",
+      "timestamp": 1771520228475,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 17,
+      "details": "Roll 1: 11 + 6 = 17 <<\nRoll 2: 1 + 6 = 7",
+      "timestamp": 1771520228878,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 26,
+      "details": "Roll 1: 20 + 6 = 26 <<\nRoll 2: 12 + 6 = 18",
+      "timestamp": 1771520229707,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA (Adv)",
+      "result": 21,
+      "details": "Roll 1: 15 + 6 = 21 <<\nRoll 2: 5 + 6 = 11",
+      "timestamp": 1771520230027,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 24,
+      "details": "Roll 1: 7 + 7 = 14\nRoll 2: 17 + 7 = 24 <<",
+      "timestamp": 1771520231195,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 26,
+      "details": "Roll 1: 19 + 7 = 26 <<\nRoll 2: 3 + 7 = 10",
+      "timestamp": 1771520231496,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 27,
+      "details": "Roll 1: 20 + 7 = 27 <<\nRoll 2: 10 + 7 = 17",
+      "timestamp": 1771520231786,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON (Adv)",
+      "result": 25,
+      "details": "Roll 1: 18 + 7 = 25 <<\nRoll 2: 11 + 7 = 18",
+      "timestamp": 1771520232227,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "1d20 (Adv)",
+      "result": 7,
+      "details": "Roll 1: 4 = 4\nRoll 2: 7 = 7 <<",
+      "timestamp": 1771642401102,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "Ability Check: CHA",
+      "result": 23,
+      "details": "20 + 3",
+      "timestamp": 1771726332982,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Persuasion",
+      "result": 17,
+      "details": "11 + 6",
+      "timestamp": 1771726827467,
+      "diceType": "d20",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -5570,7 +5773,7 @@
       "categoryIds": [
         "6b08bbc5-07ce-4b26-97ab-690097eda12c"
       ],
-      "lastModified": 1771395244505
+      "lastModified": 1771654064981
     }
   ],
   "noteCategories": [
@@ -5925,49 +6128,6 @@
       }
     },
     {
-      "name": "Skilled",
-      "source": "XPHB",
-      "page": 201,
-      "srd52": true,
-      "basicRules2024": true,
-      "category": "O",
-      "repeatable": true,
-      "repeatableHidden": true,
-      "skillToolLanguageProficiencies": [
-        {
-          "choose": [
-            {
-              "from": [
-                "anySkill",
-                "anyTool"
-              ],
-              "count": 3
-            }
-          ]
-        }
-      ],
-      "entries": [
-        "You gain proficiency in any combination of three {@table Skill List; Skills|XPHB|skills} or {@filter tools|items|type=tool;artisan's tools;instrument;gaming set} of your choice.",
-        {
-          "type": "entries",
-          "name": "Repeatable",
-          "entries": [
-            "You can take this feat more than once."
-          ]
-        }
-      ],
-      "_config": {
-        "asi": {},
-        "spells": {},
-        "spellAbilities": {},
-        "profs": {
-          "mixed-0-0": "anyskill",
-          "mixed-0-1": "anyskill",
-          "mixed-0-2": "anyskill"
-        }
-      }
-    },
-    {
       "name": "Durable",
       "source": "XPHB",
       "page": 203,
@@ -6101,6 +6261,49 @@
         "spells": {},
         "spellAbilities": {},
         "profs": {}
+      }
+    },
+    {
+      "name": "Skilled",
+      "source": "XPHB",
+      "page": 201,
+      "srd52": true,
+      "basicRules2024": true,
+      "category": "O",
+      "repeatable": true,
+      "repeatableHidden": true,
+      "skillToolLanguageProficiencies": [
+        {
+          "choose": [
+            {
+              "from": [
+                "anySkill",
+                "anyTool"
+              ],
+              "count": 3
+            }
+          ]
+        }
+      ],
+      "entries": [
+        "You gain proficiency in any combination of three {@table Skill List; Skills|XPHB|skills} or {@filter tools|items|type=tool;artisan's tools;instrument;gaming set} of your choice.",
+        {
+          "type": "entries",
+          "name": "Repeatable",
+          "entries": [
+            "You can take this feat more than once."
+          ]
+        }
+      ],
+      "_config": {
+        "asi": {},
+        "spells": {},
+        "spellAbilities": {},
+        "profs": {
+          "mixed-0-0": "insight",
+          "mixed-0-1": "stealth",
+          "mixed-0-2": "investigation"
+        }
       }
     }
   ],
@@ -6708,7 +6911,7 @@
       }
     ],
     "gemini": {
-      "mode": "Integrated",
+      "mode": "Autonomous",
       "activeToggles": {
         "singularity": false,
         "coolant": false
@@ -7064,76 +7267,6 @@
           "Artificer",
           "Sorcerer",
           "Warlock",
-          "Wizard"
-        ],
-        "prepared": true
-      },
-      {
-        "name": "Detect Thoughts",
-        "source": "XPHB",
-        "page": 262,
-        "srd52": true,
-        "basicRules2024": true,
-        "level": 2,
-        "school": "D",
-        "time": [
-          {
-            "number": 1,
-            "unit": "action"
-          }
-        ],
-        "range": {
-          "type": "point",
-          "distance": {
-            "type": "self"
-          }
-        },
-        "components": {
-          "v": true,
-          "s": true,
-          "m": "1 Copper Piece"
-        },
-        "duration": [
-          {
-            "type": "timed",
-            "duration": {
-              "type": "minute",
-              "amount": 1
-            },
-            "concentration": true
-          }
-        ],
-        "entries": [
-          "You activate one of the effects below. Until the spell ends, you can activate either effect as a {@action Magic|XPHB} action on your later turns.",
-          {
-            "type": "entries",
-            "name": "Sense Thoughts",
-            "entries": [
-              "You sense the presence of thoughts within 30 feet of yourself that belong to creatures that know languages or are telepathic. You don't read the thoughts, but you know that a thinking creature is present.",
-              "The spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead."
-            ]
-          },
-          {
-            "type": "entries",
-            "name": "Read Thoughts",
-            "entries": [
-              "Target one creature you can see within 30 feet of yourself or one creature within 30 feet of yourself that you detected with the Sense Thoughts option. You learn what is most on the target's mind right now. If the target doesn't know any languages and isn't telepathic, you learn nothing.",
-              "As a {@action Magic|XPHB} action on your next turn, you can try to probe deeper into the target's mind. If you probe deeper, the target makes a Wisdom saving throw. On a failed save, you discern the target's reasoning, emotions, and something that looms large in its mind (such as a worry, love, or hate). On a successful save, the spell ends. Either way, the target knows that you are probing into its mind, and until you shift your attention away from the target's mind, the target can take an action on its turn to make an Intelligence ({@skill Arcana|XPHB}) check against your spell save DC, ending the spell on a success."
-            ]
-          }
-        ],
-        "savingThrow": [
-          "wisdom"
-        ],
-        "abilityCheck": [
-          "intelligence"
-        ],
-        "miscTags": [
-          "SGT"
-        ],
-        "classes": [
-          "Bard",
-          "Sorcerer",
           "Wizard"
         ],
         "prepared": true
@@ -7840,6 +7973,74 @@
           "Sorcerer",
           "Warlock",
           "Wizard"
+        ],
+        "prepared": true
+      },
+      {
+        "name": "Absorb Elements",
+        "source": "XGE",
+        "page": 150,
+        "otherSources": [
+          {
+            "source": "EEPC",
+            "page": 15
+          }
+        ],
+        "referenceSources": [
+          "PotA"
+        ],
+        "level": 1,
+        "school": "A",
+        "time": [
+          {
+            "number": 1,
+            "unit": "reaction",
+            "condition": "which you take when you take acid, cold, fire, lightning, or thunder damage"
+          }
+        ],
+        "range": {
+          "type": "point",
+          "distance": {
+            "type": "self"
+          }
+        },
+        "components": {
+          "s": true
+        },
+        "duration": [
+          {
+            "type": "timed",
+            "duration": {
+              "type": "round",
+              "amount": 1
+            }
+          }
+        ],
+        "entries": [
+          "The spell captures some of the incoming energy, lessening its effect on you and storing it for your next melee attack. You have resistance to the triggering damage type until the start of your next turn. Also, the first time you hit with a melee attack on your next turn, the target takes an extra {@damage 1d6} damage of the triggering type, and the spell ends."
+        ],
+        "entriesHigherLevel": [
+          {
+            "type": "entries",
+            "name": "At Higher Levels",
+            "entries": [
+              "When you cast this spell using a spell slot of 2nd level or higher, the extra damage increases by {@scaledamage 1d6|1-9|1d6} for each slot level above 1st."
+            ]
+          }
+        ],
+        "damageResist": [
+          "acid",
+          "cold",
+          "fire",
+          "lightning",
+          "thunder"
+        ],
+        "classes": [
+          "Druid",
+          "Ranger",
+          "Sorcerer",
+          "Wizard",
+          "Artificer"
         ],
         "prepared": true
       }
@@ -8703,6 +8904,109 @@
           "Bard",
           "Sorcerer",
           "Warlock",
+          "Wizard"
+        ],
+        "prepared": true
+      },
+      {
+        "name": "Spellfire Storm",
+        "source": "FRHoF",
+        "page": 146,
+        "level": 4,
+        "school": "V",
+        "time": [
+          {
+            "number": 1,
+            "unit": "action"
+          }
+        ],
+        "range": {
+          "type": "point",
+          "distance": {
+            "type": "feet",
+            "amount": 60
+          }
+        },
+        "components": {
+          "v": true,
+          "s": true
+        },
+        "duration": [
+          {
+            "type": "timed",
+            "duration": {
+              "type": "minute",
+              "amount": 1
+            },
+            "concentration": true
+          }
+        ],
+        "entries": [
+          "You conjure a pillar of spellfire in a 20-foot-radius, 20-foot-high {@variantrule Cylinder [Area of Effect]|XPHB|Cylinder} centered on a point within range. The area of the {@variantrule Cylinder [Area of Effect]|XPHB|Cylinder} is {@variantrule Bright Light|XPHB}, and each creature in it when it appears makes a Constitution saving throw, taking {@damage 4d10} Radiant damage on a failed save or half as much damage on a successful one. A creature also makes this save when it enters the spell's area for the first time on a turn or ends its turn there. A creature makes this save only once per turn.",
+          "In addition, whenever a creature in the {@variantrule Cylinder [Area of Effect]|XPHB|Cylinder} casts a spell, that creature makes a Constitution saving throw. On a failed save, the spell dissipates with no effect, and the action, {@variantrule Bonus Action|XPHB}, or {@variantrule Reaction|XPHB} used to cast it is wasted. If that spell was cast with a spell slot, the slot isn't expended.",
+          "When you cast this spell, you can designate creatures to be unaffected by it.",
+          {
+            "type": "entries",
+            "name": "Casting as a Circle Spell",
+            "entries": [
+              "In addition to the spell's usual components, you must provide a special component (a blue star sapphire worth 25,000+ GP), which the spell consumes. The spell's range increases to 1 mile, and it no longer requires {@status Concentration|XPHB}. When the spell is cast, each secondary caster must expend a level 3+ spell slot; otherwise, the spell fails."
+            ]
+          }
+        ],
+        "entriesHigherLevel": [
+          {
+            "type": "entries",
+            "name": "Using a Higher-Level Spell Slot",
+            "entries": [
+              "The damage increases by {@scaledamage 4d10|4-9|1d10} for every spell slot level above 4.",
+              "The number of secondary casters determines the spell's area of effect and duration, as shown in the table below. The spell ends early if any caster who participated in this casting contributes to another casting of Spellfire Storm as a Circle spell.",
+              {
+                "type": "table",
+                "colStyles": [
+                  "col-2 text-center",
+                  "col-8",
+                  "col-2"
+                ],
+                "colLabels": [
+                  "Secondary Casters",
+                  "Area of Effect",
+                  "Duration"
+                ],
+                "rows": [
+                  [
+                    "1-3",
+                    "40-foot-radius, 40-foot-high {@variantrule Cylinder [Area of Effect]|XPHB|Cylinder}",
+                    "1 Hour"
+                  ],
+                  [
+                    "4-6",
+                    "60-foot-radius, 60-foot-high {@variantrule Cylinder [Area of Effect]|XPHB|Cylinder}",
+                    "8 Hours"
+                  ],
+                  [
+                    "7+",
+                    "100-foot-radius, 100-foot-high {@variantrule Cylinder [Area of Effect]|XPHB|Cylinder}",
+                    "24 Hours"
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "damageInflict": [
+          "radiant"
+        ],
+        "savingThrow": [
+          "constitution"
+        ],
+        "miscTags": [
+          "LGT"
+        ],
+        "areaTags": [
+          "Y"
+        ],
+        "classes": [
+          "Sorcerer",
           "Wizard"
         ],
         "prepared": true
