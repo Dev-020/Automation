@@ -23,7 +23,7 @@ export const HomebrewPanel: React.FC<HomebrewPanelProps> = ({ homebrew, onUpdate
     const fetchHomebrewData = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3001/api/homebrew');
+            const res = await fetch('http://localhost:3001/api/homebrew?refresh=true');
             const data = await res.json();
             
             const subclassResult = parseHomebrewMarkdown(data.subclass || '');
@@ -34,8 +34,8 @@ export const HomebrewPanel: React.FC<HomebrewPanelProps> = ({ homebrew, onUpdate
             // to ensure synchronization with the files.
             const newHomebrew = {
                 ...homebrew,
-                features: subclassResult.features,
-                blueprints: blueprintsResult.blueprints
+                features: [...subclassResult.features, ...blueprintsResult.features],
+                blueprints: [...subclassResult.blueprints, ...blueprintsResult.blueprints]
             };
 
             onUpdateHomebrew(newHomebrew);

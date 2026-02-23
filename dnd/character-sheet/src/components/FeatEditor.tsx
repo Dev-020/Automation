@@ -2,9 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import EntryRenderer from './EntryRenderer';
 import type { Feature, Character, StatName } from '../types';
 import itemsData from '../../../5etools/5etools-src/data/items.json';
+import itemsBaseData from '../../../5etools/5etools-src/data/items-base.json';
 import languagesData from '../../../5etools/5etools-src/data/languages.json';
 
-const TOOLS_LIST = (itemsData.item || []).filter((i: any) => (i.type === 'AT' || i.type === 'T' || i.type === 'AT|XPHB' || i.type === 'T|XPHB' || i.type === 'INS' || i.type === 'INS|XPHB' || i.type === 'GS' || i.type === 'GS|XPHB') && i.source !== 'PHB').map((i: any) => i.name); 
+const allItems = [...(itemsData.item || []), ...(itemsBaseData.baseitem || [])];
+const filteredTools = allItems.filter((i: any) => 
+    (i.type === 'AT' || i.type === 'T' || i.type === 'AT|XPHB' || i.type === 'T|XPHB' || 
+     i.type === 'INS' || i.type === 'INS|XPHB' || i.type === 'GS' || i.type === 'GS|XPHB') 
+    && i.source !== 'PHB'
+).map((i: any) => i.name);
+const TOOLS_LIST = Array.from(new Set(filteredTools)).sort();
+
 const LANGUAGES_LIST = (languagesData.language || []).filter((l: any) => l.source === 'XPHB' || l.source === 'PHB').map((l: any) => l.name);
 const SKILLS_LIST = [
     'Athletics', 'Acrobatics', 'Sleight of Hand', 'Stealth', 'Arcana', 'History', 'Investigation', 

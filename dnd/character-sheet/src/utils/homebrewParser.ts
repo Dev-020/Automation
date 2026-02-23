@@ -9,8 +9,20 @@ export const parseHomebrewMarkdown = (text: string): ParseResult => {
     const features: Feature[] = [];
     const blueprints: Blueprint[] = [];
     
+    // Extract relevant tabs if it's a full Google Docs export
+    let relevantText = text;
+    if (/(^|\n)# /.test(text)) {
+        const tabs = text.split(/(?:^|\n)# /);
+        const protocolTab = tabs.find(t => t.trim().startsWith('Homebrew Compendium: The Gemini Protocol'));
+        const blueprintsTab = tabs.find(t => t.trim().startsWith('Arcane Infusion Blueprints'));
+        
+        if (protocolTab || blueprintsTab) {
+             relevantText = (protocolTab || '') + '\n' + (blueprintsTab || '');
+        }
+    }
+
     // Split by H3 headers (###)
-    const sections = text.split(/^### /gm).slice(1);
+    const sections = relevantText.split(/^### /gm).slice(1);
 
     sections.forEach(section => {
         const lines = section.split('\n');

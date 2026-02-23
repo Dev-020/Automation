@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -245,6 +246,41 @@ const HOMEBREW_DIR = path.join(__dirname, '../Homebrew');
 app.get('/api/homebrew', async (req, res) => {
     try {
         const subclassPath = path.join(HOMEBREW_DIR, 'Homebrew_Subclass.md');
+        const hashPath = path.join(HOMEBREW_DIR, '.homebrew_hash');
+
+        // Handle refresh query
+        if (req.query.refresh === 'true' && process.env.GOOGLE_DOCUMENT_URL) {
+            try {
+                const docUrl = process.env.GOOGLE_DOCUMENT_URL;
+                const exportUrl = docUrl.replace(/\/edit\?.*$/, '/export?format=markdown');
+                
+                console.log('Fetching latest homebrew data from Google Docs...');
+                const fetchRes = await fetch(exportUrl);
+                if (!fetchRes.ok) throw new Error(`HTTP error! status: ${fetchRes.status}`);
+                const text = await fetchRes.text();
+                
+                const hash = crypto.createHash('md5').update(text).digest('hex');
+                
+                let savedHash = '';
+                try {
+                    savedHash = (await fs.promises.readFile(hashPath, 'utf8')).trim();
+                } catch (e) {
+                    // Ignore error if hash file doesn't exist yet
+                }
+                
+                if (hash !== savedHash) {
+                    await fs.promises.writeFile(subclassPath, text, 'utf8');
+                    await fs.promises.writeFile(hashPath, hash, 'utf8');
+                    console.log('Homebrew content updated from Google Docs.');
+                } else {
+                    console.log('Homebrew content is already up to date.');
+                }
+            } catch (fetchErr) {
+                console.error('Failed to sync with Google Docs:', fetchErr);
+                // Proceed to read the local file even if the refresh fails
+            }
+        }
+
         const blueprintsPath = path.join(HOMEBREW_DIR, 'Blueprints.md');
 
         // Check if files exist
