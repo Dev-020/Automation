@@ -27,6 +27,9 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
     // asiSelections: map of "index" -> "stat". e.g. { "0": "str", "1": "dex" }
     const [asiSelections, setAsiSelections] = useState<Record<string, string>>({}); 
 
+    // Skill Choices State
+    const [skillSelections, setSkillSelections] = useState<Record<string, string>>(character.backgroundConfig?.profs || {});
+
     // --- Derived Data ---
     const selectedBackground = useMemo(() => 
         XPHB_BACKGROUNDS.find((b: any) => b.name === selectedBackgroundName), 
@@ -116,10 +119,21 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
             const values = Object.values(asiSelections);
             const uniqueValues = new Set(values);
             if (uniqueValues.size !== values.length) return false;
+        } // ADDED MISSING BRACE HERE
+
+        // Validate Skills
+        if (selectedBackground?.skillProficiencies) {
+            for (const group of selectedBackground.skillProficiencies) {
+                if (group.choose) {
+                    const count = group.choose.count || 1;
+                    const selectedSkillCount = Object.keys(skillSelections).length;
+                    if (selectedSkillCount < count) return false;
+                }
+            }
         }
 
         return true;
-    }, [selectedBackgroundName, asiOptions, asiChoiceIndex, asiSelections]);
+    }, [selectedBackgroundName, asiOptions, asiChoiceIndex, asiSelections, skillSelections, selectedBackground]);
 
 
     // --- Handlers ---
@@ -158,79 +172,38 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
         // User requested NOT to add the feat to the features list.
         // const newFeatures = [...character.features];
 
-        // 3. Update Proficiencies (Skills & Tools)
+        // 3. Update Tools (Static for now, Skills are dynamic)
         const oldBackgroundName = character.background;
         const oldBackground = oldBackgroundName ? XPHB_BACKGROUNDS.find((b: any) => b.name === oldBackgroundName) : null;
-        
-        let newSkills = [...character.skills];
         let newTools = [...(character.proficiencies?.tools || [])];
 
-        // Helper to normalize skill names (e.g. "Animal Handling" -> "animal handling")
-        // The character.skills array uses keys "animal handling", "arcana", etc. usually.
-        // Let's check the Skill interface or data. usually data uses lower case keys.
-
-        // A. Remove Old Proficiencies
-        if (oldBackground) {
-            // Remove Skills
-            if (oldBackground.skillProficiencies) {
-                oldBackground.skillProficiencies.forEach((group: any) => {
-                    Object.keys(group).forEach(key => {
-                        if (key === 'choose') return;
-                        // key is e.g. "arcana", "animal handling"
-                        // Find matching skill in character.skills and set proficiency = false
-                        const skillIndex = newSkills.findIndex(s => s.name.toLowerCase() === key.toLowerCase());
-                        if (skillIndex !== -1) {
-                            newSkills[skillIndex] = { ...newSkills[skillIndex], proficiency: false };
-                        }
-                    });
+        if (oldBackground?.toolProficiencies) {
+            oldBackground.toolProficiencies.forEach((group: any) => {
+                Object.keys(group).forEach(key => {
+                    if (key === 'choose') return;
+                    newTools = newTools.filter(t => t.toLowerCase() !== key.toLowerCase());
                 });
-            }
-            // Remove Tools
-            if (oldBackground.toolProficiencies) {
-                oldBackground.toolProficiencies.forEach((group: any) => {
-                    Object.keys(group).forEach(key => {
-                        if (key === 'choose') return;
-                        // key is tool name
-                        newTools = newTools.filter(t => t.toLowerCase() !== key.toLowerCase());
-                    });
-                });
-            }
+            });
         }
-
-        // B. Add New Proficiencies
-        if (selectedBackground) {
-            // Add Skills
-            if (selectedBackground.skillProficiencies) {
-                selectedBackground.skillProficiencies.forEach((group: any) => {
-                    Object.keys(group).forEach(key => {
-                        if (key === 'choose') return;
-                        const skillIndex = newSkills.findIndex(s => s.name.toLowerCase() === key.toLowerCase());
-                        if (skillIndex !== -1) {
-                            newSkills[skillIndex] = { ...newSkills[skillIndex], proficiency: true };
-                        }
-                    });
+        if (selectedBackground?.toolProficiencies) {
+            selectedBackground.toolProficiencies.forEach((group: any) => {
+                Object.keys(group).forEach(key => {
+                    if (key === 'choose') return;
+                    if (!newTools.some(t => t.toLowerCase() === key.toLowerCase())) {
+                        newTools.push(key);
+                    }
                 });
-            }
-            // Add Tools
-            if (selectedBackground.toolProficiencies) {
-                selectedBackground.toolProficiencies.forEach((group: any) => {
-                    Object.keys(group).forEach(key => {
-                        if (key === 'choose') return;
-                        // Avoid duplicates
-                        if (!newTools.some(t => t.toLowerCase() === key.toLowerCase())) {
-                            newTools.push(key);
-                        }
-                    });
-                });
-            }
+            });
         }
 
         // 4. Update Character
         onChange({
             background: selectedBackgroundName,
+            backgroundConfig: {
+                profs: skillSelections
+            },
             stats: newStats,
             // features: newFeatures, // Removed per user request
-            skills: newSkills,
             proficiencies: {
                 ...character.proficiencies,
                 tools: newTools
@@ -341,10 +314,51 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
                             {/* Skills */}
                             {selectedBackground.skillProficiencies && (
                                 <div style={{ marginBottom: '0.5rem', color: '#ccc', fontSize: '0.9rem' }}>
-                                    <strong>Skills: </strong>
-                                    {selectedBackground.skillProficiencies.map((group: any) => 
-                                        Object.keys(group).filter(k => k !== 'choose').join(', ') 
-                                    ).join(', ').replace(/_/g, ' ')}
+                                    <h5 style={{ margin: '0 0 0.25rem 0', color: '#fff' }}>Skills</h5>
+                                    {selectedBackground.skillProficiencies.map((group: any, groupIdx: number) => {
+                                        const fixedSkills = Object.keys(group).filter(k => k !== 'choose' && k !== 'any');
+                                        const choiceCount = group.choose ? (group.choose.count || 1) : 0;
+                                        const options = group.choose ? group.choose.from : [];
+
+                                        return (
+                                            <div key={groupIdx} style={{ marginBottom: '0.5rem' }}>
+                                                {fixedSkills.length > 0 && (
+                                                    <div><strong>Granted: </strong> {fixedSkills.join(', ').replace(/_/g, ' ').toUpperCase()}</div>
+                                                )}
+                                                
+                                                {choiceCount > 0 && Array.from({ length: choiceCount }).map((_, i) => (
+                                                    <div key={`bg-choice-${i}`} style={{ marginTop: '0.5rem' }}>
+                                                        <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.25rem' }}>
+                                                            Skill Choice {i + 1}
+                                                        </label>
+                                                        <select
+                                                            value={skillSelections[`skill-${i}`] || ''}
+                                                            onChange={(e) => {
+                                                                const newProfs = { ...skillSelections, [`skill-${i}`]: e.target.value };
+                                                                if (!e.target.value) delete newProfs[`skill-${i}`];
+                                                                setSkillSelections(newProfs);
+                                                            }}
+                                                            style={{ 
+                                                                width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.4)', 
+                                                                border: '1px solid #555', borderRadius: '4px', color: 'white' 
+                                                            }}
+                                                        >
+                                                            <option value="">- Choose a Skill -</option>
+                                                            {options.map((opt: string) => (
+                                                                <option 
+                                                                    key={opt} 
+                                                                    value={opt}
+                                                                    disabled={Object.values(skillSelections).includes(opt) && skillSelections[`skill-${i}`] !== opt}
+                                                                >
+                                                                    {opt.replace(/_/g, ' ').toUpperCase()}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
 

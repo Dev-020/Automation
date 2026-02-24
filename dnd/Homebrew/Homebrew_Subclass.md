@@ -142,24 +142,24 @@ As a bonus action, you can release the volatile energy of your Infernal Core. Th
 
 #### **Adaptive Spell Protocol**
 
-* As an **Action**, you can **spend a number of Core Strains equal to the new spell's level** to reconfigure your prepared spells. Choose a spell from among your **prepared spells**. Then choose a spell from the  **spell list**, which must be of a level for which you have Pact Magic spell slots. The two spells will swap, unprepared the prepared spell and preparing the spell that came from the spell list.
+* As an **Action**, you can **spend a number of Core Strains equal to the new spell's level** to reconfigure your prepared spells. Choose a spell from among your **prepared spells**. Then choose a spell from the **spell list**, which must be of a level for which you have spell slots. The two spells will swap, unprepared the prepared spell and preparing the spell that came from the spell list.
 
 #### **Infernal Harpoon**
 
 * You gain a signature arcanatechnological weapon. It counts as a Simple Melee Weapon with the **Light, Finesse, and Thrown (range 20/60)** properties. It deals **2d8 Force damage** on a hit. If you drop the weapon or throw it, it dissipates at the end of your turn, but you can manifest it again in a free hand as a bonus action.  
-  * **Void Tether (Chassis Link):** When you make a weapon attack with the harpoon and hit a Large or smaller creature within 20 feet of you, you can choose to expend **1 Core Strain** to establish a Void Tether. The harpoon embeds into the target, connecting them directly to your chassis. A new harpoon then manifests into your hand for you to use.  
+  * **Infernal Tether (Chassis Link):** When you make a weapon attack with the harpoon and hit a Large or smaller creature within 20 feet of you, you can choose to expend **1 Core Strain** to establish an Infernal Tether. The harpoon embeds into the target, connecting them directly to your chassis. A new harpoon then manifests into your hand for you to use.  
   * **Mutual Restriction:** The tether has a maximum length of **20 feet**. While tethered, neither you nor the target can move further than **20 feet** away from each other by normal movement.  
   * **Absolute Boundary:** Any forced movement (such as a blast or a shove) that would push either you or the target beyond this 20-foot limit halts exactly at the 20-foot mark. The tether acts as an immovable physical limit.  
 * **Maintaining and Breaking the Tether:** The tether has no maximum duration, but requires a constant feed of infernal energy to sustain. At the start of each of your turns, you must expend **1 Core Strain** to maintain the tether. If you do not, the tether dissipates immediately.  
 * While tethered, the creature can use its action to make a **Strength (Athletics)** or **Dexterity (Acrobatics)** check contested by your **Spell Save DC**. The creature makes this check with **disadvantage**. On a success, the harpoon is dislodged, and the tether dissipates. You can also dismiss the tether at any time (no action required).  
-* All the above-mentioned properties apply on all currently maintained tethers through the Infernal Harpoon if there are any.
+* All the above-mentioned properties apply on all currently maintained tethers through the Infernal Harpoon if there are any. Furthermore, you do not suffer any of the negative effects that are imposed by the tether.  
+* If a creature is willing, you can choose to manifest a tether to them and they will not suffer any of the negative effects that are imposed by the **Infernal Tether**. The willing creature can also dismiss the tether at any time (no action required).
 
 #### **Core Casting Protocol**
 
-* You can channel the raw energy of the Infernal Core to cast spells you know without expending a spell slot. When you cast a spell, you can choose to use this feature.  
-* To cast a spell of 1st level or higher, you do not expend a slot. Instead, you generate **Core Strain**:  
-  * **Cost:** You gain **Core Strain** equal to the **Level of the spell** you cast.  
-* **Metamagic:** If you apply Metamagic, you gain additional **Core Strain** equal to the **Sorcery Point cost** of that Metamagic.
+* You can only channel the raw energy of the Infernal Core to cast spells you know since your spell slots have all been converted to sorcery points. When you cast a spell, the following effects happen:  
+  * To cast a spell of 1st level or higher, you generate **Core Strains** equal to the **Level of the spell** you cast.  
+* If you apply Metamagic Options, you gain additional **Core Strain** equal to the **Sorcery Point cost** of that Metamagic.
 
 #### **Indomitable**
 
@@ -169,9 +169,14 @@ As a bonus action, you can release the volatile energy of your Infernal Core. Th
   * **This state ends if your Core Strain drops below or equal to your maximum limit for any reason.**  
 * Once this protocol activates, it cannot do so again until you finish a long rest.
 
-### **Pact of the Chassis (Level 3\)**
+### **Infernal Chassis (Level 3\)**
 
 This feature replaces the standard Pact Boon options and reflects the symbiotic nature of Leo and Orion.
+
+* **Upgraded Quickened Spell:** The restrictions imposed by the Quickened Metamagic Option are removed.  
+  * You will not gain Core Strains when invoking this Metamagic Option.  
+  * It will not count towards the limit of Metamagic Options allowed on a spell.  
+  * You can freely cast any spell that you know through this Metamagic Option.
 
 #### **Autonomous Mode:**
 
@@ -192,14 +197,19 @@ This feature replaces the standard Pact Boon options and reflects the symbiotic 
 
 While in Autonomous Mode, you can leverage Orion's independent processing to double your magical output.
 
-* **The Command:** As a **Bonus Action**, you can command Orion to cast a spell you know.  
-* **The Cost:** You generate **Core Strain** equal to the **level at which the spell is cast**.  
+* Due to the upgraded Quickened Metamagic Option, you can choose to convert a number of reactions into additional spell casts.  
+  * You will not have that amount of reactions during the turn.  
 * **Outside of combat**, you can use Autonomous Mode freely for exploration, utility, and roleplaying as if Orion is a separate creature.
 
 #### **Integrated Mode:**
 
 * As a bonus action, you can integrate with your suit. While integrated, you gain the following benefits:  
-  * **Enhanced AC:** Your Armor Class is calculated as your original Armor Class \+ your Constitution modifier \+ your Charisma modifier.
+  * **Enhanced AC:** Your Armor Class is calculated as your original Armor Class \+ your Constitution modifier \+ your Charisma modifier.  
+* **Upgraded Careful Spell**: While Integrated Mode is active, when you use Careful Metamagic Option on a spell that creates an area of effect and you are within that area, you can choose to be completely immune to the spell's effects.   
+  * You automatically succeed on any required saving throws, take no damage, and suffer no conditions associated with the spell.  
+  * You will not gain Core Strains when this Metamagic option only targets you.  
+  * It will not count towards the limit of Metamagic Options allowed on a spell.  
+  * It will not count towards the limit of chosen creatures that this Metamagic option allows..
 
 #### **Infernal Harpoon Enhancements:**	
 
@@ -228,15 +238,17 @@ While in Autonomous Mode, you can leverage Orion's independent processing to dou
 
 #### **Infernal Harpoon Enhancements:**
 
-* **Ground Anchor:** When you hit a creature with the harpoon, you can expend **1 Core Strain** to establish a Ground Anchor instead of a Chassis Link. You immediately drive the trailing end of the energy tether into a solid surface within 5 feet of you. The creature is bound to that specific anchor point (following the same 20-foot Mutual Restriction rules relative to the anchor).  
-* **Dimensional Lockdown:** The volatile spatial energy of the tether disrupts interplanar travel. While a creature is bound by your Void Tether (either to you or a Ground Anchor), any attempt it makes to teleport or travel using interplanar magic automatically fails.  
-* **Shatter the Anchor:** If bound to a Ground Anchor, the creature gains a secondary method to escape. The physical tether line and the ground anchor have an AC equal to your spell save DC and Hit Points equal to the Character Hit Points. It is immune to poison, psychic, and all conditions. If the tether is reduced to 0 Hit Points, it shatters and the creature is freed.
+* **Ground Anchor:** When you hit a creature with the harpoon, you can expend **1 Core Strain** to establish an Infernal Anchor instead of a Chassis Link. You immediately drive the trailing end of the energy tether into a solid surface within 5 feet of you. The creature is bound to that specific anchor point (following the same 20-foot Mutual Restriction rules relative to the anchor).  
+  * If a ground anchor already exists and is within 20 feet of the targeted creature, you can choose to bind that creature to that ground anchor instead.  
+  * As a **Bonus Action**, you can choose to bind yourself to any amount of **Infernal Anchors** that is within 20 feet of you. Furthermore, can also choose to manifest an **Infernal Anchor** within 20 feet of you and within that same sequence, bind yourself to it.  
+* **Dimensional Lockdown:** The volatile spatial energy of the tether disrupts interplanar travel. While a creature is bound by your Void Tether (either to you or an Infernal Anchor), any attempt it makes to teleport or travel using interplanar magic automatically fails.  
+* **Shatter the Anchor:** If bound to an Infernal Anchor, the creature gains a secondary method to escape. The physical tether line and the ground anchor have an AC equal to your spell save DC and Hit Points equal to the Character Hit Points. It is immune to poison, psychic, and all conditions. If the tether is reduced to 0 Hit Points, it shatters and the creature is freed.
 
 ### **Binary Partition (Level 10\)**
 
 Your neural architecture has evolved to support multi-threaded arcane processing. You can fracture the Gemini Protocol's consciousness to maximize output, either by splitting your physical form or by overclocking your single frame.
 
-#### **1\. Parallel Processing (The Action)**
+#### **1\. Parallel Processing**
 
 When you use your Action to cast a spell, you can cast a second spell as part of the same Action.
 
@@ -251,7 +263,14 @@ The physical manifestation of this processing depends on your current state:
   * **Benefit:** You have three distinct points of origin for your spells (Leo, Alpha, Beta).  
     * Both constructs follow the same rules applied stated in the Pact of the Chassis  
 * **Protocol B: Integrated Mode (The Juggernaut)**  
-  * **Effect:** The two AIs fuse within your single frame—one focusing on casting, the other on stabilizing the reactor.
+  * **Effect:** The two AIs fuse within your single frame—one focusing on casting, the other on stabilizing the reactor.  
+  * **Benefit:** While Integrated Mode is active, the suit's internal architecture acts as a secondary cognitive processor, allowing you to maintain concentration on two spells simultaneously.  
+  * **System Constraints:** If you take damage while concentrating on two spells, you must make a separate Constitution saving throw for each spell to maintain concentration. If you want to end your concentration, you can choose to end one or both concentration spells.
+
+#### **3\. Infernal Harpoon Upgrades:**
+
+* When you hit a creature with your Infernal Harpoon while you already have another creature bound by a Void Tether, you can expend **1 Core Strain** to establish a Binary Anchor. The tether disconnects from your chassis and connects the two creatures to each other. Both creatures are subjected to the 20-foot Mutual Restriction relative to one another. (You must still expend the required Core Strain at the start of your turn to maintain these active tethers).  
+* **Damage Routing:** While creatures are bound within your tether network, they act as a volatile arcane circuit. Whenever a bound creature takes damage, all other hostile creatures currently bound by your tethers take Force damage equal to half the damage dealt (rounded down). This effect cannot trigger itself to cause another instance of damage.
 
 # TO BE CHANGED
 

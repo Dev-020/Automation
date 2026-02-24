@@ -384,6 +384,55 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                                     }
                                  </div>
                              </div>
+
+                             {/* Race Proficiencies & Choices */}
+                             {selectedRaceConfig.skillProficiencies && (
+                                <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--color-primary)' }}>
+                                    <h4 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>Skill Proficiencies</h4>
+                                    {selectedRaceConfig.skillProficiencies.map((group: any, groupIdx: number) => {
+                                        // Fixed Skills
+                                        const fixedSkills = Object.keys(group).filter(k => k !== 'any' && k !== 'choose');
+                                        
+                                        // Choices (e.g. { "any": 1 })
+                                        const choiceCount = group.any ? parseInt(group.any) : 0;
+
+                                        return (
+                                            <div key={groupIdx} style={{ fontSize: '0.9rem', color: '#ccc' }}>
+                                                {fixedSkills.length > 0 && (
+                                                    <div style={{ marginBottom: '0.5rem' }}>
+                                                        <strong>Granted: </strong> {fixedSkills.join(', ').toUpperCase()}
+                                                    </div>
+                                                )}
+                                                
+                                                {choiceCount > 0 && Array.from({ length: choiceCount }).map((_, i) => (
+                                                    <div key={`choice-${i}`} style={{ marginTop: '0.5rem' }}>
+                                                        <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.25rem' }}>
+                                                            Any Skill Choice {i + 1}
+                                                        </label>
+                                                        <select
+                                                            value={(character.raceConfig?.profs && character.raceConfig.profs[`skill-${i}`]) || ''}
+                                                            onChange={(e) => {
+                                                                const newProfs = { ...(character.raceConfig?.profs || {}), [`skill-${i}`]: e.target.value };
+                                                                if (!e.target.value) delete newProfs[`skill-${i}`];
+                                                                onChange({ raceConfig: { ...character.raceConfig, profs: newProfs } });
+                                                            }}
+                                                            style={{ 
+                                                                width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.4)', 
+                                                                border: '1px solid #555', borderRadius: '4px', color: 'white' 
+                                                            }}
+                                                        >
+                                                            <option value="">- Choose a Skill -</option>
+                                                            {character.skills.map(skill => (
+                                                                <option key={skill.name} value={skill.name}>{skill.name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                             )}
                              
                              {selectedRaceConfig.entries && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

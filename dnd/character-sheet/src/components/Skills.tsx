@@ -13,9 +13,10 @@ interface SkillsProps {
   allSkills: any[]; // Data from skills.json (XPHB)
   onRoll: (entry: RollEntry) => void;
   sendToDiscord: boolean;
+  rawSkills?: Character['skills']; // Optional passing of the raw uncalculated skills to know what's from feats
 }
 
-export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus, onUpdateSkill, allSkills, onRoll, sendToDiscord }) => {
+export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus, onUpdateSkill, allSkills, onRoll, sendToDiscord, rawSkills }) => {
   const [selectedSkillIndex, setSelectedSkillIndex] = useState<number | null>(null);
 
   const getSkillMod = (skill: Skill) => {
@@ -39,6 +40,17 @@ export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus,
   const skillData = selectedSkill && allSkills 
     ? allSkills.find((s: any) => s.name === selectedSkill.name) 
     : null;
+
+  // Find if a skill is uniquely granted by a dynamic source (Feats, Race, BKG)
+  const isDynamicGranted = (index: number, type: 'proficiency' | 'expertise') => {
+      if (!rawSkills) return false;
+      const raw = rawSkills[index];
+      const calc = skills[index];
+      
+      if (type === 'proficiency') return calc.proficiency && !raw?.proficiency;
+      if (type === 'expertise') return calc.expertise && !raw?.expertise;
+      return false;
+  };
 
   return (
     <div className="flex-grow" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -79,8 +91,35 @@ export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus,
                         : 'none',
                     }} 
                 />
-                <span style={{ color: skill.proficiency ? 'white' : 'var(--color-text-muted)', transition: 'color 0.2s' }}>
+                <span style={{ color: skill.proficiency ? 'white' : 'var(--color-text-muted)', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {skill.name} <span style={{fontSize: '0.7em', color: '#666'}}>({skill.stat})</span>
+                    {(skill.dynamicSources && skill.dynamicSources.length > 0) ? (
+                        skill.dynamicSources.map(source => {
+                            const colors = {
+                                FEAT: { bg: 'rgba(59, 130, 246, 0.2)', text: '#93c5fd', border: 'rgba(59, 130, 246, 0.4)' },
+                                RACE: { bg: 'rgba(234, 179, 8, 0.2)', text: '#fde047', border: 'rgba(234, 179, 8, 0.4)' },
+                                BKG:  { bg: 'rgba(34, 197, 94, 0.2)', text: '#86efac', border: 'rgba(34, 197, 94, 0.4)' },
+                            }[source] || { bg: 'rgba(255, 255, 255, 0.1)', text: '#ccc', border: 'rgba(255, 255, 255, 0.2)' };
+                            
+                            return (
+                                <span 
+                                    key={source}
+                                    title={`Granted by ${source}`}
+                                    style={{ 
+                                        fontSize: '0.65em', 
+                                        background: colors.bg,
+                                        color: colors.text, 
+                                        padding: '1px 4px', 
+                                        borderRadius: '4px',
+                                        border: `1px solid ${colors.border}`,
+                                        marginLeft: '4px'
+                                    }}
+                                >
+                                    {source}
+                                </span>
+                            );
+                        })
+                    ) : null}
                 </span>
                 </div>
                 <span 
@@ -144,6 +183,13 @@ export const Skills: React.FC<SkillsProps> = ({ skills, stats, proficiencyBonus,
                                 );
                             })}
                         </div>
+                        
+                        {/* Notice if granted dynamically */}
+                        {((selectedSkill?.dynamicSources && selectedSkill.dynamicSources.length > 0) || (selectedSkillIndex !== null && isDynamicGranted(selectedSkillIndex, 'expertise'))) && (
+                            <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#888' }}>
+                                * Proficiency or Expertise is currently being granted by {selectedSkill?.dynamicSources?.join(', ') || 'an automated source'}. Changes here will affect base (manual) proficiency, but the granted proficiency will remain active as long as you have the source.
+                            </div>
+                        )}
                         <div style={{ marginTop: '0.8rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
                             Modifier: {formatModifier(getSkillMod(selectedSkill))}
                         </div>

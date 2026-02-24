@@ -19,7 +19,8 @@ import { formatModifier, rollFormula } from './utils/dnd';
 import type { Character, StatName, Spell, RollEntry, StatModifier } from './types';
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
 import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost, getSpellSlots } from './utils/rules';
-import { getFeatModifiers } from './utils/featUtils';
+import { getFeatModifiers, getFeatProficiencies } from './utils/featUtils';
+import { getRaceProficiencies, getBackgroundProficiencies } from './utils/profUtils';
 import './App.css';
 
 import activeCharacterData from './data/activeCharacter.json';
@@ -91,6 +92,32 @@ function App() {
   const [sendToDiscord, setSendToDiscord] = useState(false);
   const [selectedStat, setSelectedStat] = useState<StatName | null>(null);
 
+  // Calculate Dynamic Skills
+  const calculatedSkills = character.skills.map(skill => {
+      const isProficient = skill.proficiency;
+      const isExpert = skill.expertise;
+      
+      const featProfs = getFeatProficiencies(character.feats);
+      const featSkill = featProfs.skills[skill.name.toLowerCase()];
+
+      const raceProfs = getRaceProficiencies(character);
+      const isRaceProf = raceProfs.skills[skill.name.toLowerCase()];
+
+      const bgProfs = getBackgroundProficiencies(character);
+      const isBgProf = bgProfs.skills[skill.name.toLowerCase()];
+
+      const dynamicSources: string[] = [];
+      if (featSkill?.proficiency) dynamicSources.push('FEAT');
+      if (isRaceProf) dynamicSources.push('RACE');
+      if (isBgProf) dynamicSources.push('BKG');
+
+      return {
+          ...skill,
+          proficiency: isProficient || !!(featSkill?.proficiency) || isRaceProf || isBgProf,
+          expertise: isExpert || !!(featSkill?.expertise),
+          dynamicSources
+      };
+  });
 
   // Calculate Dynamic Stats
   useEffect(() => {
@@ -440,13 +467,14 @@ function App() {
       <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', overflow: 'hidden' }}>
          <div style={{ flex: 2, overflowY: 'auto', minHeight: '0', paddingRight: '0.5rem' }}>
           <Skills 
-            skills={character.skills} 
+            skills={calculatedSkills} 
             stats={character.stats} 
             proficiencyBonus={character.vitals.proficiencyBonus} 
             onUpdateSkill={handleSkillUpdate}
             allSkills={allSkills}
             onRoll={handleRoll}
             sendToDiscord={sendToDiscord}
+            rawSkills={character.skills}
           />
         </div>
         <DiceRoller 
@@ -588,7 +616,7 @@ function App() {
                     feats={character.feats}
                     onRoll={handleRoll}
                     sendToDiscord={sendToDiscord}
-                    character={character}
+                    character={{...character, skills: calculatedSkills}}
                     onUpdateResources={(resources) => setCharacter(prev => ({ ...prev, resources }))}
                     onUpdateCharacter={(updates) => setCharacter(prev => ({ ...prev, ...updates }))}
                 />}

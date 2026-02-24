@@ -3,7 +3,7 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Events } from 'discord.js';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 
@@ -25,7 +25,7 @@ const client = new Client({
 const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 
-client.once('ready', () => {
+client.once(Events.ClientReady, () => {
     console.log(`Discord Bot ready! Logged in as ${client.user.tag}`);
 });
 

@@ -34,6 +34,7 @@ export interface Skill {
   stat: StatName;
   proficiency: boolean;
   expertise: boolean;
+  dynamicSources?: string[];
 }
 
 export interface Action {
@@ -230,9 +231,15 @@ export interface Feature extends FeatureEntry {
 export interface Character {
   name: string;
   race: string;
+  raceConfig?: {
+      profs?: Record<string, string>;
+  };
   class: string;
   level: number;
   background: string;
+  backgroundConfig?: {
+      profs?: Record<string, string>;
+  };
   alignment: string;
   xp: { current: number; max: number };
   stats: Record<StatName, AbilityScore>;
