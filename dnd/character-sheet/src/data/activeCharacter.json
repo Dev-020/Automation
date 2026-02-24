@@ -145,14 +145,15 @@
       "name": "Acrobatics",
       "stat": "DEX",
       "expertise": false,
-      "dynamicSources": []
+      "dynamicSources": [],
+      "proficiency": false
     },
     {
       "name": "Animal Handling",
       "stat": "WIS",
       "expertise": false,
       "dynamicSources": [],
-      "proficiency": true
+      "proficiency": false
     },
     {
       "name": "Arcana",
@@ -168,12 +169,12 @@
       "stat": "STR",
       "expertise": false,
       "dynamicSources": [],
-      "proficiency": true
+      "proficiency": false
     },
     {
       "name": "Deception",
       "stat": "CHA",
-      "proficiency": true,
+      "proficiency": false,
       "expertise": false,
       "dynamicSources": [
         "CLASS",
@@ -203,7 +204,7 @@
       "stat": "CHA",
       "expertise": false,
       "dynamicSources": [],
-      "proficiency": true
+      "proficiency": false
     },
     {
       "name": "Investigation",
@@ -218,13 +219,15 @@
       "name": "Medicine",
       "stat": "WIS",
       "expertise": false,
-      "dynamicSources": []
+      "dynamicSources": [],
+      "proficiency": false
     },
     {
       "name": "Nature",
       "stat": "INT",
       "expertise": false,
-      "dynamicSources": []
+      "dynamicSources": [],
+      "proficiency": false
     },
     {
       "name": "Perception",
@@ -239,7 +242,8 @@
       "name": "Performance",
       "stat": "CHA",
       "expertise": false,
-      "dynamicSources": []
+      "dynamicSources": [],
+      "proficiency": false
     },
     {
       "name": "Persuasion",
@@ -255,13 +259,15 @@
       "name": "Religion",
       "stat": "INT",
       "expertise": false,
-      "dynamicSources": []
+      "dynamicSources": [],
+      "proficiency": false
     },
     {
       "name": "Sleight of Hand",
       "stat": "DEX",
       "expertise": false,
-      "dynamicSources": []
+      "dynamicSources": [],
+      "proficiency": false
     },
     {
       "name": "Stealth",
@@ -277,7 +283,7 @@
       "stat": "WIS",
       "expertise": false,
       "dynamicSources": [],
-      "proficiency": true
+      "proficiency": false
     }
   ],
   "senses": {
@@ -1411,19 +1417,19 @@
   ],
   "spellSlots": {
     "1": {
-      "current": 0,
+      "current": 4,
       "max": 4
     },
     "2": {
-      "current": 0,
+      "current": 3,
       "max": 3
     },
     "3": {
-      "current": 0,
+      "current": 3,
       "max": 3
     },
     "4": {
-      "current": 0,
+      "current": 1,
       "max": 1
     }
   },

@@ -155,7 +155,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
             
             return {
                 ...skill,
-                proficiency: isClassSkill || sources.length > 0 || skill.proficiency,
+                proficiency: sources.length > 0,
                 dynamicSources: sources
             };
         });
