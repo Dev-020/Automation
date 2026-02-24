@@ -105,11 +105,67 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
 
 
     const handleApply = () => {
-        if (!selectedClassName || !isValid) return;
+        if (!selectedClassName || !isValid || !selectedClassData) return;
 
         const finalSubclass = isCustomSubclass ? customSubclass : selectedSubclass;
+        const classData = selectedClassData as any;
 
-        // Save class configuration into the robust classes array, and update the legacy references
+        // 1. Build saving throw proficiency updates
+        const STAT_MAP: Record<string, string> = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+        const classSaves = (classData.proficiency || []).map((s: string) => STAT_MAP[s] || s.toUpperCase());
+        
+        const updatedStats = { ...character.stats };
+        // Clear all class-sourced save proficiencies first, then set the new ones
+        for (const stat of Object.keys(updatedStats) as Array<keyof typeof updatedStats>) {
+            updatedStats[stat] = { ...updatedStats[stat], saveProficiency: classSaves.includes(stat) || false };
+        }
+
+        // 2. Build armor proficiencies (capitalize first letter)
+        const classArmor = (classData.startingProficiencies?.armor || []).map((a: string) =>
+            a.replace(/\b\w/g, (c: string) => c.toUpperCase())
+        );
+
+        // 3. Build weapon proficiencies (strip 5eTools tags, capitalize)
+        const classWeapons = (classData.startingProficiencies?.weapons || []).map((w: any) => {
+            const raw = typeof w === 'string' ? w : w.item || JSON.stringify(w);
+            return raw.replace(/{@\w+\s+([^|}]+)[^}]*}/g, '$1').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        });
+
+        // 4. Build tool proficiencies (fixed + user-selected)
+        const toolProfs = classData.startingProficiencies?.toolProficiencies || [];
+        const fixedTools = toolProfs.filter((p: any) => Object.values(p)[0] === true).map((p: any) => Object.keys(p)[0]);
+        const selectedTools = Object.values(toolSelections).filter(Boolean);
+        const classTools = [...fixedTools, ...selectedTools].map((t: string) =>
+            t.replace(/\b\w/g, (c: string) => c.toUpperCase())
+        );
+
+        // 5. Build skill proficiency updates
+        const selectedSkillNames = Object.values(skillSelections).filter(Boolean).map((s: string) =>
+            s.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+        );
+
+        const updatedSkills = character.skills.map(skill => {
+            // Clear previous class-sourced proficiency
+            const sources = (skill.dynamicSources || []).filter(s => s !== 'CLS');
+            const isClassSkill = selectedSkillNames.includes(skill.name);
+            
+            if (isClassSkill) {
+                sources.push('CLS');
+            }
+            
+            return {
+                ...skill,
+                proficiency: isClassSkill || sources.length > 0 || skill.proficiency,
+                dynamicSources: sources
+            };
+        });
+
+        // 6. Build hit dice update
+        const hitDieFaces = classData.hd?.faces || 8;
+
+        // Merge existing non-class tool proficiencies with class tool proficiencies
+        const existingTools = (character.proficiencies?.tools || []).filter(t => !classTools.includes(t));
+
         onChange({
             class: selectedClassName,
             classes: [{
@@ -121,7 +177,23 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                     tools: toolSelections
                 },
                 isPrimary: true
-            }]
+            }],
+            stats: updatedStats,
+            skills: updatedSkills,
+            proficiencies: {
+                ...character.proficiencies,
+                armor: classArmor,
+                weapons: classWeapons,
+                tools: [...new Set([...existingTools, ...classTools])]
+            },
+            vitals: {
+                ...character.vitals,
+                hitDice: {
+                    ...character.vitals.hitDice,
+                    die: `d${hitDieFaces}`,
+                    max: character.level
+                }
+            }
         });
 
         onClose();
