@@ -142,110 +142,134 @@
     {
       "name": "Acrobatics",
       "stat": "DEX",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Animal Handling",
       "stat": "WIS",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Arcana",
       "stat": "INT",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "BKG"
+      ]
     },
     {
       "name": "Athletics",
       "stat": "STR",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Deception",
       "stat": "CHA",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "CLASS"
+      ]
     },
     {
       "name": "History",
       "stat": "INT",
       "proficiency": true,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": [
+        "BKG"
+      ]
     },
     {
       "name": "Insight",
       "stat": "WIS",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "FEAT"
+      ]
     },
     {
       "name": "Intimidation",
       "stat": "CHA",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Investigation",
       "stat": "INT",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "FEAT"
+      ]
     },
     {
       "name": "Medicine",
       "stat": "WIS",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Nature",
       "stat": "INT",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Perception",
       "stat": "WIS",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "RACE"
+      ]
     },
     {
       "name": "Performance",
       "stat": "CHA",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Persuasion",
       "stat": "CHA",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "CLASS"
+      ]
     },
     {
       "name": "Religion",
       "stat": "INT",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Sleight of Hand",
       "stat": "DEX",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     },
     {
       "name": "Stealth",
       "stat": "DEX",
-      "proficiency": false,
-      "expertise": false
+      "proficiency": true,
+      "expertise": false,
+      "dynamicSources": [
+        "FEAT"
+      ]
     },
     {
       "name": "Survival",
       "stat": "WIS",
-      "proficiency": false,
-      "expertise": false
+      "expertise": false,
+      "dynamicSources": []
     }
   ],
   "senses": {
@@ -6479,6 +6503,78 @@
       "timestamp": 1771902313149,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 24,
+      "details": "19 + 5",
+      "timestamp": 1771909492413,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Arcana",
+      "result": 17,
+      "details": "12 + 5",
+      "timestamp": 1771909492535,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Persuasion",
+      "result": 16,
+      "details": "10 + 6",
+      "timestamp": 1771909495928,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Intimidation",
+      "result": 4,
+      "details": "1 + 3",
+      "timestamp": 1771909501991,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Intimidation",
+      "result": 15,
+      "details": "12 + 3",
+      "timestamp": 1771909502106,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Stealth",
+      "result": 17,
+      "details": "13 + 4",
+      "timestamp": 1771909518314,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Deception",
+      "result": 11,
+      "details": "5 + 6",
+      "timestamp": 1771909523617,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Deception",
+      "result": 15,
+      "details": "9 + 6",
+      "timestamp": 1771909523724,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Skill Check: Deception",
+      "result": 9,
+      "details": "3 + 6",
+      "timestamp": 1771909525003,
+      "diceType": "d20",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -9842,5 +9938,19 @@
     "profs": {
       "skill-0": "Perception"
     }
-  }
+  },
+  "classes": [
+    {
+      "name": "Sorcerer",
+      "level": 7,
+      "subclass": "The Gemini Protocol",
+      "classConfig": {
+        "profs": {
+          "skill-0": "deception",
+          "skill-1": "persuasion"
+        }
+      },
+      "isPrimary": true
+    }
+  ]
 }

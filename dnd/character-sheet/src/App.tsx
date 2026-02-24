@@ -20,7 +20,7 @@ import type { Character, StatName, Spell, RollEntry, StatModifier } from './type
 import { calculateEffectiveStats, calculateAC } from './utils/calculateStats';
 import { getProficiencyBonus, calculateMaxHP, getSorceryPoints, getPointBuyCost, getSpellSlots } from './utils/rules';
 import { getFeatModifiers, getFeatProficiencies } from './utils/featUtils';
-import { getRaceProficiencies, getBackgroundProficiencies } from './utils/profUtils';
+import { getRaceProficiencies, getBackgroundProficiencies, getClassProficiencies } from './utils/profUtils';
 import './App.css';
 
 import activeCharacterData from './data/activeCharacter.json';
@@ -106,14 +106,18 @@ function App() {
       const bgProfs = getBackgroundProficiencies(character);
       const isBgProf = bgProfs.skills[skill.name.toLowerCase()];
 
+      const classProfs = getClassProficiencies(character);
+      const isClassProf = classProfs.skills[skill.name.toLowerCase()];
+
       const dynamicSources: string[] = [];
       if (featSkill?.proficiency) dynamicSources.push('FEAT');
       if (isRaceProf) dynamicSources.push('RACE');
       if (isBgProf) dynamicSources.push('BKG');
+      if (isClassProf) dynamicSources.push('CLASS');
 
       return {
           ...skill,
-          proficiency: isProficient || !!(featSkill?.proficiency) || isRaceProf || isBgProf,
+          proficiency: isProficient || !!(featSkill?.proficiency) || isRaceProf || isBgProf || isClassProf,
           expertise: isExpert || !!(featSkill?.expertise),
           dynamicSources
       };

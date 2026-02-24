@@ -1,6 +1,7 @@
 import type { Character } from '../types';
 import racesData from '../../../5etools/5etools-src/data/races.json';
 import backgroundsData from '../../../5etools/5etools-src/data/backgrounds.json';
+import { XPHB_CLASSES } from '../data/classes';
 
 // Filter for XPHB content to match the UI lists
 const XPHB_RACES = (racesData.race || []).filter((r: any) => r.source === 'XPHB' && !r._copy);
@@ -87,4 +88,19 @@ export const getBackgroundProficiencies = (character: Character): Proficiencies 
     if (!bgData || !bgData.skillProficiencies) return profs;
 
     return extractProficiencies(bgData.skillProficiencies, character.backgroundConfig);
+};
+
+/**
+ * Get proficiencies granted by a character's primary Class.
+ */
+export const getClassProficiencies = (character: Character): Proficiencies => {
+    const profs: Proficiencies = { skills: {}, tools: [], languages: [] };
+    
+    const clsName = character.classes?.[0]?.name || character.class;
+    if (!clsName) return profs;
+
+    const classData = XPHB_CLASSES.find((c: any) => c.name === clsName);
+    if (!classData || !classData.startingProficiencies || !classData.startingProficiencies.skills) return profs;
+
+    return extractProficiencies(classData.startingProficiencies.skills, character.classes?.[0]?.classConfig);
 };

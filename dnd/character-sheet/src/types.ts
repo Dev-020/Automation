@@ -228,14 +228,25 @@ export interface Feature extends FeatureEntry {
   };
 }
 
+export interface CharacterClass {
+    name: string;
+    level: number;
+    subclass?: string;
+    classConfig?: {
+        profs?: Record<string, string>; // user choices for "choose" objects in class data
+    };
+    isPrimary?: boolean; // Whether this is the starting class (determines starting vs multiclass proficiencies)
+}
+
 export interface Character {
   name: string;
   race: string;
   raceConfig?: {
       profs?: Record<string, string>;
   };
-  class: string;
-  level: number;
+  class: string;           // Legacy: Keep for fallback/syncing
+  level: number;           // Legacy: Keep
+  classes?: CharacterClass[]; // New active class data
   background: string;
   backgroundConfig?: {
       profs?: Record<string, string>;

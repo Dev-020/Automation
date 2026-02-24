@@ -6,6 +6,7 @@ import type { Character } from '../types';
 import racesData from '../../../5etools/5etools-src/data/races.json';
 
 import { BackgroundPanel } from './BackgroundPanel';
+import { ClassPanel } from './ClassPanel';
 
 // Filter for XPHB (2024 PHB) content
 const XPHB_RACES = (racesData.race || []).filter((r: any) => r.source === 'XPHB' && !r._copy);
@@ -60,7 +61,7 @@ const ConditionItem = ({ condition, isActive, onToggle }: { condition: any, isAc
 };
 
 export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onChange, onExport, onImport, saveStatus = 'saved' }) => {
-  const [activePanel, setActivePanel] = React.useState<'race' | 'background' | 'conditions' | null>(null);
+  const [activePanel, setActivePanel] = React.useState<'race' | 'background' | 'conditions' | 'class' | null>(null);
   const [availableConditions, setAvailableConditions] = React.useState<any[]>([]);
   
   // Selected Data (derived from character or defaults)
@@ -177,7 +178,14 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                <span style={{ display: 'flex', gap: '4px' }}>
                   Level <input type="number" value={character.level} onChange={e => onChange({ level: parseInt(e.target.value) || 1 })} style={{...inputStyle, width: '30px'}} />
                </span>
-               <input value={character.class} onChange={e => onChange({ class: e.target.value })} style={{...inputStyle, flex: 1, minWidth: '80px'}} placeholder="Class" />
+               <button 
+                  onClick={() => setActivePanel('class')}
+                  style={{...inputStyle, flex: 1, minWidth: '80px', textAlign: 'left', cursor: 'pointer', color: (character.classes?.length || character.class) ? 'inherit' : '#777'}}
+               >
+                  {character.classes && character.classes.length > 0 
+                      ? character.classes.map(c => c.name).join(' / ') 
+                      : (character.class || "Select Class")}
+               </button>
                |
                <button 
                   onClick={() => setActivePanel('race')}
@@ -454,6 +462,13 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
             {/* Background Selection Panel */}
             <BackgroundPanel 
                 isOpen={activePanel === 'background'}
+                onClose={() => setActivePanel(null)}
+                character={character}
+                onChange={onChange}
+            />
+
+            <ClassPanel 
+                isOpen={activePanel === 'class'}
                 onClose={() => setActivePanel(null)}
                 character={character}
                 onChange={onChange}
