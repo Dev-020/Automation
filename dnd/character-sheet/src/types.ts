@@ -234,6 +234,7 @@ export interface CharacterClass {
     subclass?: string;
     classConfig?: {
         profs?: Record<string, string>; // user choices for "choose" objects in class data
+        tools?: Record<string, string>; // user choices for "anyArtisansTool", etc.
     };
     isPrimary?: boolean; // Whether this is the starting class (determines starting vs multiclass proficiencies)
 }

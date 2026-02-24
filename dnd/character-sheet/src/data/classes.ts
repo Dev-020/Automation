@@ -12,6 +12,21 @@ import sorcerer from '../../../5etools/5etools-src/data/class/class-sorcerer.jso
 import warlock from '../../../5etools/5etools-src/data/class/class-warlock.json';
 import wizard from '../../../5etools/5etools-src/data/class/class-wizard.json';
 
+// Class Fluff (Lore) imports
+import fluffArtificer from '../../../5etools/5etools-src/data/class/fluff-class-artificer.json';
+import fluffBarbarian from '../../../5etools/5etools-src/data/class/fluff-class-barbarian.json';
+import fluffBard from '../../../5etools/5etools-src/data/class/fluff-class-bard.json';
+import fluffCleric from '../../../5etools/5etools-src/data/class/fluff-class-cleric.json';
+import fluffDruid from '../../../5etools/5etools-src/data/class/fluff-class-druid.json';
+import fluffFighter from '../../../5etools/5etools-src/data/class/fluff-class-fighter.json';
+import fluffMonk from '../../../5etools/5etools-src/data/class/fluff-class-monk.json';
+import fluffPaladin from '../../../5etools/5etools-src/data/class/fluff-class-paladin.json';
+import fluffRanger from '../../../5etools/5etools-src/data/class/fluff-class-ranger.json';
+import fluffRogue from '../../../5etools/5etools-src/data/class/fluff-class-rogue.json';
+import fluffSorcerer from '../../../5etools/5etools-src/data/class/fluff-class-sorcerer.json';
+import fluffWarlock from '../../../5etools/5etools-src/data/class/fluff-class-warlock.json';
+import fluffWizard from '../../../5etools/5etools-src/data/class/fluff-class-wizard.json';
+
 export const ALL_CLASSES = [
     ...(artificer.class || []),
     ...(barbarian.class || []),
@@ -63,7 +78,7 @@ export const ALL_SUBCLASSES = [
     ...(wizard.subclass || [])
 ];
 
-// Returns sublcasses for a given class that are from XPHB (either natively or reprinted/copied as XPHB)
+// Returns subclasses for a given class that are from XPHB (either natively or reprinted/copied as XPHB)
 export const getXPHBSubclasses = (className: string) => {
     const filtered = ALL_SUBCLASSES.filter(sc => 
         sc.className === className && 
@@ -79,4 +94,26 @@ export const getXPHBSubclasses = (className: string) => {
     });
 
     return Array.from(unique.values());
+};
+
+// All class fluff aggregated
+const ALL_CLASS_FLUFF = [
+    ...(fluffArtificer.classFluff || []),
+    ...(fluffBarbarian.classFluff || []),
+    ...(fluffBard.classFluff || []),
+    ...(fluffCleric.classFluff || []),
+    ...(fluffDruid.classFluff || []),
+    ...(fluffFighter.classFluff || []),
+    ...(fluffMonk.classFluff || []),
+    ...(fluffPaladin.classFluff || []),
+    ...(fluffRanger.classFluff || []),
+    ...(fluffRogue.classFluff || []),
+    ...(fluffSorcerer.classFluff || []),
+    ...(fluffWarlock.classFluff || []),
+    ...(fluffWizard.classFluff || [])
+];
+
+// Returns XPHB class lore/fluff entries for a given class name
+export const getXPHBClassFluff = (className: string) => {
+    return ALL_CLASS_FLUFF.find((f: any) => f.name === className && f.source === 'XPHB');
 };

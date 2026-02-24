@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MainPanel } from './MainPanel';
+import EntryRenderer from './EntryRenderer';
 import type { Character } from '../types';
-import { XPHB_CLASSES, getXPHBSubclasses } from '../data/classes';
+import { XPHB_CLASSES, getXPHBSubclasses, getXPHBClassFluff } from '../data/classes';
 
 const ALL_SKILLS = [
     'acrobatics', 'animal handling', 'arcana', 'athletics', 'deception', 'history', 'insight', 'intimidation', 'investigation', 'medicine', 'nature', 'perception', 'performance', 'persuasion', 'religion', 'sleight of hand', 'stealth', 'survival'
+];
+
+const MUSICAL_INSTRUMENTS = [
+    'bagpipes', 'drum', 'dulcimer', 'flute', 'lute', 'lyre', 'horn', 'pan flute', 'shawm', 'viol'
+];
+
+const ARTISANS_TOOLS = [
+    "alchemist's supplies", "brewer's supplies", "calligrapher's supplies", "carpenter's tools", "cartographer's tools", "cobbler's tools", "cook's utensils", "glassblower's tools", "jeweler's tools", "leatherworker's tools", "mason's tools", "painter's supplies", "potter's tools", "smith's tools", "tinker's tools", "weaver's tools", "woodcarver's tools"
 ];
 
 interface ClassPanelProps {
@@ -23,6 +32,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
     const [customSubclass, setCustomSubclass] = useState<string>('');
     const [isCustomSubclass, setIsCustomSubclass] = useState<boolean>(false);
     const [skillSelections, setSkillSelections] = useState<Record<string, string>>(currentClass.classConfig?.profs || {});
+    const [toolSelections, setToolSelections] = useState<Record<string, string>>(currentClass.classConfig?.tools || {});
 
     // Available subclasses for the selected class
     const availableSubclasses = useMemo(() => {
@@ -52,6 +62,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
             }
 
             setSkillSelections(cls.classConfig?.profs || {});
+            setToolSelections(cls.classConfig?.tools || {});
         }
     }, [isOpen, character]);
 
@@ -62,6 +73,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
             setCustomSubclass('');
             setIsCustomSubclass(false);
             setSkillSelections({});
+            setToolSelections({});
         }
     }, [selectedClassName, currentClass.name]);
 
@@ -105,7 +117,8 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                 level: character.level,
                 subclass: finalSubclass || undefined,
                 classConfig: {
-                    profs: skillSelections
+                    profs: skillSelections,
+                    tools: toolSelections
                 },
                 isPrimary: true
             }]
@@ -187,12 +200,12 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
 
                         {/* 3. Starting Proficiencies */}
                         <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--color-primary)' }}>
-                            <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Starting Proficiencies</h4>
-                            
+                            <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Core Traits</h4>
+
                             {/* Armor */}
                             {(selectedClassData as any).startingProficiencies?.armor && (
                                 <div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-                                    <strong style={{ color: '#aaa' }}>Armor: </strong> 
+                                    <strong style={{ color: '#aaa' }}>Armor Training: </strong> 
                                     {(selectedClassData as any).startingProficiencies.armor.join(', ')}
                                 </div>
                             )}
@@ -213,6 +226,62 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                                 </div>
                             )}
 
+                            {/* Tool Proficiencies */}
+                            {(selectedClassData as any).startingProficiencies?.toolProficiencies && (() => {
+                                const profs = (selectedClassData as any).startingProficiencies.toolProficiencies;
+                                const textLabel = (selectedClassData as any).startingProficiencies.tools?.[0] || 'Tool Proficiencies:';
+                                
+                                const fixedTools = profs.filter((p: any) => Object.values(p)[0] === true).map((p: any) => Object.keys(p)[0]);
+                                
+                                let options: string[] = [];
+                                let numChoices = 0;
+                                profs.forEach((p: any) => {
+                                    if (p.anyMusicalInstrument) { options.push(...MUSICAL_INSTRUMENTS); numChoices = Math.max(numChoices, p.anyMusicalInstrument); }
+                                    if (p.anyArtisansTool) { options.push(...ARTISANS_TOOLS); numChoices = Math.max(numChoices, p.anyArtisansTool); }
+                                });
+
+                                return (
+                                    <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                                        <strong style={{ color: '#aaa', fontSize: '0.9rem' }}>Tools:</strong>
+                                        <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.5rem', fontStyle: 'italic' }}>
+                                            {typeof textLabel === 'string' ? textLabel.replace(/{@item ([^|]+).*?}/g, '$1') : 'Select tools'}
+                                        </div>
+
+                                        {fixedTools.length > 0 && (
+                                            <div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>{fixedTools.join(', ').toUpperCase()}</div>
+                                        )}
+
+                                        {numChoices > 0 && Array.from({ length: numChoices }).map((_, i) => (
+                                            <div key={`tool-choice-${i}`} style={{ marginTop: '0.5rem' }}>
+                                                <select
+                                                    value={toolSelections[`tool-${i}`] || ''}
+                                                    onChange={(e) => {
+                                                        const newVal = { ...toolSelections, [`tool-${i}`]: e.target.value };
+                                                        if (!e.target.value) delete newVal[`tool-${i}`];
+                                                        setToolSelections(newVal);
+                                                    }}
+                                                    style={{ 
+                                                        width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.4)', 
+                                                        border: '1px solid #555', borderRadius: '4px', color: 'white' 
+                                                    }}
+                                                >
+                                                    <option value="">- Choose a Tool -</option>
+                                                    {options.map((opt: string) => (
+                                                        <option 
+                                                            key={opt} 
+                                                            value={opt}
+                                                            disabled={Object.values(toolSelections).includes(opt) && toolSelections[`tool-${i}`] !== opt}
+                                                        >
+                                                            {opt.toUpperCase()}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
+
                             {/* Skills (with choices) */}
                             {selectedClassData.startingProficiencies?.skills && (
                                 <div style={{ marginTop: '1rem' }}>
@@ -230,9 +299,6 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                                                 
                                                 {choiceCount > 0 && Array.from({ length: choiceCount }).map((_, i) => (
                                                     <div key={`cls-choice-${i}`} style={{ marginTop: '0.5rem' }}>
-                                                        <label style={{ display: 'block', fontSize: '0.8rem', color: '#888', marginBottom: '0.25rem' }}>
-                                                            Skill Choice {i + 1}
-                                                        </label>
                                                         <select
                                                             value={skillSelections[`skill-${i}`] || ''}
                                                             onChange={(e) => {
@@ -263,6 +329,16 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                                     })}
                                 </div>
                             )}
+
+                            {/* Starting Equipment */}
+                            {selectedClassData.startingEquipment?.entries && (
+                                <div style={{ marginTop: '1.5rem' }}>
+                                    <strong style={{ color: '#aaa', fontSize: '0.9rem', display: 'block', marginBottom: '0.5rem' }}>Starting Equipment:</strong>
+                                    <div style={{ fontSize: '0.85rem', color: '#ccc', background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '6px' }}>
+                                        <EntryRenderer entry={selectedClassData.startingEquipment.entries} />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
@@ -282,6 +358,8 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                                 <div style={{ display: 'flex', gap: '2rem', color: '#ccc', fontSize: '0.85rem' }}>
                                     <div><strong>Hit Dice:</strong> 1d{selectedClassData.hd?.faces} per level</div>
+                                    <div><strong>Hit Points (1st Level):</strong> {selectedClassData.hd?.faces} + CON modifier</div>
+                                    <div><strong>Hit Points (Higher Levels):</strong> 1d{selectedClassData.hd?.faces} (or {Math.floor((selectedClassData.hd?.faces || 0) / 2) + 1}) + CON modifier</div>
                                     {(selectedClassData as any).spellcastingAbility && (
                                         <div><strong>Spellcasting:</strong> {(selectedClassData as any).spellcastingAbility.toUpperCase()}</div>
                                     )}
@@ -378,6 +456,22 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
                                         </table>
                                     </div>
                                 </div>
+
+                                {/* Class Lore / Description */}
+                                {(() => {
+                                    const fluff = getXPHBClassFluff(selectedClassName);
+                                    if (!fluff?.entries) return null;
+                                    return (
+                                        <div>
+                                            <h4 style={{ color: '#aaa', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+                                                About the {selectedClassName}
+                                            </h4>
+                                            <div style={{ color: '#ccc', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                                                <EntryRenderer entry={fluff.entries} />
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         )}
                     </div> {/* End Right Column */}

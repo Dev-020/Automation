@@ -13,7 +13,19 @@ const formatText = (text: string) => {
         .replace(/{@spell\s+([^|}]+)[^}]*}/g, '$1')
         .replace(/{@skill\s+([^|}]+)[^}]*}/g, '$1')
         .replace(/{@dc\s+([^}]+)}/g, 'DC $1')
-        .replace(/{@dice\s+([^}]+)}/g, '$1');
+        .replace(/{@dice\s+([^}]+)}/g, '$1')
+        // Item tags: {@item Dagger|XPHB|Daggers} -> Daggers, {@item Dagger|XPHB} -> Dagger
+        .replace(/{@item\s+([^|}]+)(?:\|[^|}]*)?(?:\|([^|}]+))?[^}]*}/gi, (_, p1, p2) => p2 || p1)
+        // Italic/Bold tags
+        .replace(/{@i\s+([^}]+)}/gi, '*$1*')
+        .replace(/{@italic\s+([^}]+)}/gi, '*$1*')
+        .replace(/{@b\s+([^}]+)}/gi, '**$1**')
+        .replace(/{@bold\s+([^}]+)}/gi, '**$1**')
+        // Filter tags: {@filter Cantrips|spells|...} -> Cantrips
+        .replace(/{@filter\s+([^|}]+)[^}]*}/gi, '$1')
+        .replace(/{@chance\s+([^}]+)}/gi, '$1%')
+        // Catch any remaining unknown tags
+        .replace(/{@\w+\s+([^|}]+)[^}]*}/g, '$1');
 
     // Handle Bold (**text**) and Italic (*text*)
     // We split by regex and map to elements
@@ -124,6 +136,33 @@ const EntryRenderer = ({ entry, depth = 0 }: { entry: any, depth?: number }) => 
                 )}
                 <EntryRenderer entry={entry.entries} depth={depth + 1} />
             </div>
+        );
+    }
+
+    if (entry.type === 'section') {
+        return (
+            <div style={{ margin: '0.5rem 0' }}>
+                {entry.name && (
+                    <h4 style={{ margin: '0.5rem 0', color: 'var(--color-text-main)', fontSize: '1rem' }}>
+                        {formatText(entry.name)}
+                    </h4>
+                )}
+                <EntryRenderer entry={entry.entries} depth={depth} />
+            </div>
+        );
+    }
+
+    if (entry.type === 'quote') {
+        return (
+            <blockquote style={{ 
+                margin: '1rem 0', padding: '0.75rem 1rem', 
+                borderLeft: '3px solid var(--color-primary)', 
+                background: 'rgba(255,255,255,0.03)', borderRadius: '0 4px 4px 0',
+                fontStyle: 'italic', color: '#aaa'
+            }}>
+                <EntryRenderer entry={entry.entries} depth={depth + 1} />
+                {entry.by && <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#888' }}>— {entry.by}</div>}
+            </blockquote>
         );
     }
 
