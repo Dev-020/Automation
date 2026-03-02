@@ -11,14 +11,27 @@ interface BackgroundPanelProps {
 }
 
 export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClose, character, onChange }) => {
-    const [selectedBackgroundName, setSelectedBackgroundName] = useState<string>(character.background || '');
+    const [selectedBackgroundValue, setSelectedBackgroundValue] = useState<string>(
+        character.backgroundSource ? `${character.background}|${character.backgroundSource}` : character.background || ''
+    );
     const [backgrounds, setBackgrounds] = useState<any[]>([]);
     const [feats, setFeats] = useState<any[]>([]);
 
     useEffect(() => {
         fetch('http://localhost:3001/api/backgrounds')
             .then(res => res.json())
-            .then(data => setBackgrounds((data || []).filter((b: any) => b.source === 'XPHB' && !b._copy)))
+            .then(data => {
+                const filtered = (data || []).filter((b: any) => !b._copy && !b.isReprinted);
+                filtered.sort((a: any, b: any) => {
+                    if (a.name === b.name) {
+                        if (a.source === 'XPHB') return -1;
+                        if (b.source === 'XPHB') return 1;
+                        return b.source.localeCompare(a.source);
+                    }
+                    return a.name.localeCompare(b.name);
+                });
+                setBackgrounds(filtered);
+            })
             .catch(console.error);
 
         fetch('http://localhost:3001/api/feats')
@@ -38,9 +51,12 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
     const [skillSelections, setSkillSelections] = useState<Record<string, string>>(character.backgroundConfig?.profs || {});
 
     // --- Derived Data ---
-    const selectedBackground = useMemo(() => 
-        backgrounds.find((b: any) => b.name === selectedBackgroundName), 
-    [selectedBackgroundName, backgrounds]);
+    const selectedBackground = useMemo(() => {
+        if (!selectedBackgroundValue) return null;
+        const [bgName, bgSource] = selectedBackgroundValue.includes('|') ? selectedBackgroundValue.split('|') : [selectedBackgroundValue, null];
+        if (bgSource) return backgrounds.find((b: any) => b.name === bgName && b.source === bgSource) || backgrounds.find((b: any) => b.name === bgName);
+        return backgrounds.find((b: any) => b.name === bgName);
+    }, [selectedBackgroundValue, backgrounds]);
 
     const grantedFeat = useMemo(() => {
         if (!selectedBackground?.feats) return null;
@@ -109,11 +125,11 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
     useEffect(() => {
         setAsiChoiceIndex(0);
         setAsiSelections({});
-    }, [selectedBackgroundName]);
+    }, [selectedBackground]);
 
     // --- Validation ---
     const isValid = useMemo(() => {
-        if (!selectedBackgroundName) return false;
+        if (!selectedBackground) return false;
         
         // Validate ASI
         const currentAsiOption = asiOptions[asiChoiceIndex];
@@ -140,7 +156,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
         }
 
         return true;
-    }, [selectedBackgroundName, asiOptions, asiChoiceIndex, asiSelections, skillSelections, selectedBackground]);
+    }, [selectedBackground, asiOptions, asiChoiceIndex, asiSelections, skillSelections, selectedBackground]);
 
 
     // --- Handlers ---
@@ -181,7 +197,18 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
 
         // 3. Update Tools (Static for now, Skills are dynamic)
         const oldBackgroundName = character.background;
-        const oldBackground = oldBackgroundName ? backgrounds.find((b: any) => b.name === oldBackgroundName) : null;
+        const oldBackgroundSearch = character.backgroundSource ? `${character.background}|${character.backgroundSource}` : character.background;
+        
+        let oldBackground = null;
+        if (oldBackgroundName) {
+            const [bName, bSource] = oldBackgroundSearch.includes('|') ? oldBackgroundSearch.split('|') : [oldBackgroundSearch, null];
+            if (bSource) {
+                oldBackground = backgrounds.find((b: any) => b.name === bName && b.source === bSource) || backgrounds.find((b: any) => b.name === bName);
+            } else {
+                oldBackground = backgrounds.find((b: any) => b.name === oldBackgroundName);
+            }
+        }
+        
         let newTools = [...(character.proficiencies?.tools || [])];
 
         if (oldBackground?.toolProficiencies) {
@@ -204,8 +231,11 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
         }
 
         // 4. Update Character
+        const [saveBgName, saveBgSource] = selectedBackgroundValue.includes('|') ? selectedBackgroundValue.split('|') : [selectedBackgroundValue, undefined];
+        
         onChange({
-            background: selectedBackgroundName,
+            background: saveBgName,
+            backgroundSource: saveBgSource,
             backgroundConfig: {
                 profs: skillSelections
             },
@@ -230,8 +260,8 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
                         SELECT BACKGROUND (XPHB)
                     </label>
                     <select 
-                        value={selectedBackgroundName}
-                        onChange={(e) => setSelectedBackgroundName(e.target.value)}
+                        value={selectedBackgroundValue}
+                        onChange={(e) => setSelectedBackgroundValue(e.target.value)}
                         style={{ 
                             width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.5)', 
                             border: '1px solid var(--color-primary)', borderRadius: '4px', 
@@ -240,7 +270,9 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
                     >
                         <option value="">-- Choose a Background --</option>
                         {backgrounds.map((b: any) => (
-                            <option key={b.name} value={b.name}>{b.name}</option>
+                            <option key={`${b.name}|${b.source}`} value={`${b.name}|${b.source}`}>
+                                {b.name} ({b.source})
+                            </option>
                         ))}
                     </select>
                 </div>

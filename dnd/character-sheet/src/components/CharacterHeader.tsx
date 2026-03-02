@@ -59,14 +59,29 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
   const [races, setRaces] = React.useState<any[]>([]);
   
   // Selected Data (derived from character or defaults)
-  const selectedRaceConfig = React.useMemo(() => 
-      races.find((r: any) => r.name === character.race) || (races.length > 0 ? races[0] : null), 
-  [character.race, races]);
+  const selectedRaceConfig = React.useMemo(() => {
+      if (!character.race) return races.length > 0 ? races[0] : null;
+      if (character.raceSource) {
+          return races.find((r: any) => r.name === character.race && r.source === character.raceSource) || races.find((r: any) => r.name === character.race);
+      }
+      return races.find((r: any) => r.name === character.race) || (races.length > 0 ? races[0] : null);
+  }, [character.race, character.raceSource, races]);
 
   React.useEffect(() => {
       fetch('http://localhost:3001/api/races')
           .then(res => res.json())
-          .then(data => setRaces((data || []).filter((r: any) => r.source === 'XPHB' && !r._copy)))
+          .then(data => {
+              const filtered = (data || []).filter((r: any) => !r._copy && !r.isReprinted); // keep original prints
+              filtered.sort((a: any, b: any) => {
+                  if (a.name === b.name) {
+                      if (a.source === 'XPHB') return -1;
+                      if (b.source === 'XPHB') return 1;
+                      return b.source.localeCompare(a.source);
+                  }
+                  return a.name.localeCompare(b.name);
+              });
+              setRaces(filtered);
+          })
           .catch(console.error);
   }, []);
 
@@ -361,8 +376,11 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                             SELECT RACE (XPHB)
                         </label>
                         <select 
-                            value={character.race}
-                            onChange={(e) => onChange({ race: e.target.value })}
+                            value={character.raceSource ? `${character.race}|${character.raceSource}` : character.race}
+                            onChange={(e) => {
+                                const [raceName, raceSource] = e.target.value.split('|');
+                                onChange({ race: raceName, raceSource: raceSource || undefined, raceConfig: {} });
+                            }}
                             style={{ 
                                 width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.5)', 
                                 border: '1px solid var(--color-primary)', borderRadius: '4px', 
@@ -371,7 +389,9 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                         >
                             <option value="">-- Choose a Race --</option>
                             {races.map((r: any) => (
-                                <option key={r.name} value={r.name}>{r.name}</option>
+                                <option key={`${r.name}|${r.source}`} value={`${r.name}|${r.source}`}>
+                                    {r.name} ({r.source})
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -400,8 +420,20 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                                         // Fixed Skills
                                         const fixedSkills = Object.keys(group).filter(k => k !== 'any' && k !== 'choose');
                                         
-                                        // Choices (e.g. { "any": 1 })
-                                        const choiceCount = group.any ? parseInt(group.any) : 0;
+                                        // Choices (e.g. { "any": 1 } or { "choose": { "from": [...], "count": 1 } })
+                                        let choiceCount = 0;
+                                        let options: string[] = character.skills.map(s => s.name);
+                                        let choiceLabel = "Any Skill Choice";
+                                        
+                                        if (group.any) {
+                                            choiceCount = parseInt(group.any);
+                                        } else if (group.choose) {
+                                            choiceCount = group.choose.count || 1;
+                                            if (group.choose.from) {
+                                                options = character.skills.filter(s => group.choose.from.includes(s.name.toLowerCase())).map(s => s.name);
+                                                choiceLabel = "Skill Choice";
+                                            }
+                                        }
 
                                         return (
                                             <div key={groupIdx} style={{ fontSize: '0.9rem', color: '#ccc' }}>
@@ -414,7 +446,7 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                                                 {choiceCount > 0 && Array.from({ length: choiceCount }).map((_, i) => (
                                                     <div key={`choice-${i}`} style={{ marginTop: '0.5rem' }}>
                                                         <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.25rem' }}>
-                                                            Any Skill Choice {i + 1}
+                                                            {choiceLabel} {i + 1}
                                                         </label>
                                                         <select
                                                             value={(character.raceConfig?.profs && character.raceConfig.profs[`skill-${i}`]) || ''}
@@ -429,8 +461,8 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                                                             }}
                                                         >
                                                             <option value="">- Choose a Skill -</option>
-                                                            {character.skills.map(skill => (
-                                                                <option key={skill.name} value={skill.name}>{skill.name}</option>
+                                                            {options.map(skillName => (
+                                                                <option key={skillName} value={skillName}>{skillName}</option>
                                                             ))}
                                                         </select>
                                                     </div>

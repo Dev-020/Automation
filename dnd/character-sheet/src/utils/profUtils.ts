@@ -68,7 +68,17 @@ export const getRaceProficiencies = (character: Character, racesData: any[]): Pr
     const profs: Proficiencies = { skills: {}, tools: [], languages: [] };
     if (!character.race || !racesData || racesData.length === 0) return profs;
 
-    const raceData = racesData.find((r: any) => r.name === character.race);
+    let raceData;
+    if (character.raceSource) {
+        raceData = racesData.find((r: any) => r.name === character.race && r.source === character.raceSource);
+    }
+    
+    // Fallback or legacy matching
+    if (!raceData) {
+        raceData = racesData.find((r: any) => r.name === character.race && (r.source === 'XPHB' || (r.reprintedAs && r.reprintedAs.some((rep: string) => rep.includes('XPHB'))))) 
+            || racesData.find((r: any) => r.name === character.race);
+    }
+
     if (!raceData || !raceData.skillProficiencies) return profs;
 
     return extractProficiencies(raceData.skillProficiencies, character.raceConfig);
@@ -78,7 +88,17 @@ export const getBackgroundProficiencies = (character: Character, backgroundsData
     const profs: Proficiencies = { skills: {}, tools: [], languages: [] };
     if (!character.background || !backgroundsData || backgroundsData.length === 0) return profs;
 
-    const bgData = backgroundsData.find((b: any) => b.name === character.background);
+    let bgData;
+    if (character.backgroundSource) {
+        bgData = backgroundsData.find((b: any) => b.name === character.background && b.source === character.backgroundSource);
+    }
+    
+    // Fallback or legacy matching
+    if (!bgData) {
+        bgData = backgroundsData.find((b: any) => b.name === character.background && (b.source === 'XPHB' || (b.reprintedAs && b.reprintedAs.some((rep: string) => rep.includes('XPHB'))))) 
+            || backgroundsData.find((b: any) => b.name === character.background);
+    }
+
     if (!bgData || !bgData.skillProficiencies) return profs;
 
     return extractProficiencies(bgData.skillProficiencies, character.backgroundConfig);

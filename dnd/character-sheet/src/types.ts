@@ -242,6 +242,7 @@ export interface CharacterClass {
 export interface Character {
   name: string;
   race: string;
+  raceSource?: string;
   raceConfig?: {
       profs?: Record<string, string>;
   };
@@ -249,6 +250,7 @@ export interface Character {
   level: number;           // Legacy: Keep
   classes?: CharacterClass[]; // New active class data
   background: string;
+  backgroundSource?: string;
   backgroundConfig?: {
       profs?: Record<string, string>;
   };
