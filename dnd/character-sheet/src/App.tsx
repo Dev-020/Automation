@@ -83,7 +83,7 @@ function App() {
     };
   });
 
-  const [activeTab, setActiveTab] = useState('Actions');
+  const [activeTab, setActiveTab] = useState('Overview');
   const statsList: StatName[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
@@ -171,8 +171,6 @@ function App() {
               }
           }
       });
-      
-      // 4. Calculate AC
       
       // 3. Calculate AC
       const geminiConfig = character.homebrew?.gemini ? {
@@ -549,10 +547,21 @@ function App() {
                             const isProficient = character.stats[stat].saveProficiency;
                             const mod = character.stats[stat].modifier + (isProficient ? character.vitals.proficiencyBonus : 0);
                             return (
-                            <li key={stat} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
-                                <span style={{color: isProficient ? 'var(--color-primary)' : 'inherit', fontWeight: isProficient ? 'bold' : 'normal'}}>
-                                {stat}
-                                </span>
+                            <li key={stat} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <div 
+                                        style={{ 
+                                            width: '10px', 
+                                            height: '10px', 
+                                            borderRadius: '50%', 
+                                            background: isProficient ? '#888888' : 'transparent',
+                                            border: isProficient ? 'none' : '1px solid #555',
+                                        }} 
+                                    />
+                                    <span style={{color: isProficient ? 'white' : 'var(--color-text-muted)', fontWeight: isProficient ? 'bold' : 'normal', transition: 'color 0.2s'}}>
+                                        {stat}
+                                    </span>
+                                </div>
                                 <span 
                                     className="interactive-roll"
                                     onClick={() => {
@@ -565,7 +574,8 @@ function App() {
                                         fontWeight: 'bold',
                                         padding: '0 4px',
                                         transition: 'all 0.2s',
-                                        borderRadius: '4px'
+                                        borderRadius: '4px',
+                                        color: isProficient ? 'white' : 'inherit'
                                     }}
                                     onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
                                     onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
@@ -590,25 +600,25 @@ function App() {
         {/* Tabbed Interface */}
         <div className="tabs-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <Tabs 
-            tabs={['Actions', 'Spells', 'Inventory', 'Feats', 'Features', 'Notes', 'Homebrew']} 
+            tabs={['Overview', 'Spells', 'Inventory', 'Feats', 'Features', 'Notes', 'Homebrew']} 
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
           />
           
           <div className="tab-content" style={{ 
-            overflowY: activeTab === 'Actions' ? 'hidden' : 'auto', 
+            overflowY: activeTab === 'Overview' ? 'hidden' : 'auto', 
             flex: 1, 
             paddingRight: '0.5rem', 
             marginTop: '1rem', 
             display: 'flex', 
             flexDirection: 'column',
-            height: activeTab === 'Actions' ? '100%' : 'auto'
+            height: activeTab === 'Overview' ? '100%' : 'auto'
           }}>
             <div className="animate-fade-in" style={{ 
-                height: activeTab === 'Actions' ? '100%' : 'auto', 
-                overflow: activeTab === 'Actions' ? 'hidden' : 'visible' 
+                height: activeTab === 'Overview' ? '100%' : 'auto', 
+                overflow: activeTab === 'Overview' ? 'hidden' : 'visible' 
             }}>
-                {activeTab === 'Actions' && <ActionsPanel 
+                {activeTab === 'Overview' && <ActionsPanel 
                     actions={character.actions} 
                     spells={character.spells}
                     spellSlots={character.spellSlots}

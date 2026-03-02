@@ -5,6 +5,7 @@ import { SidePanel } from './SidePanel';
 import { MainPanel } from './MainPanel';
 import { FeatEditor } from './FeatEditor';
 import { HomebrewFeatForm } from './HomebrewFeatForm';
+import { Card } from './Card';
 
 // Filter for everything EXCEPT legacy PHB content (as per user request)
 const ALL_FEATS = (featsData.feat || []).filter((f: any) => f.source !== 'PHB');
@@ -79,10 +80,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: '#e2e8f0', padding: '1rem' }}>
             
             {/* Header / Nav */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ margin: 0, fontSize: '1.8rem', background: 'linear-gradient(90deg, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    Feats
-                </h2>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button 
                         onClick={() => setIsCreatingHomebrew(true)}
@@ -119,10 +117,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
             {viewMode === 'list' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
                     {(character.feats || []).map((feat, idx) => (
-                        <div key={idx} style={{ 
-                            background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', 
-                            border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.5rem'
-                        }}>
+                        <Card key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <strong style={{ fontSize: '1.1rem', color: '#f8fafc' }}>{feat.name}</strong>
                                 <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{feat.source}</span>
@@ -156,7 +151,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                                     Remove
                                 </button>
                             </div>
-                        </div>
+                        </Card>
                     ))}
                     {(character.feats || []).length === 0 && (
                         <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: '#64748b' }}>
@@ -181,16 +176,19 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                     />
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem', overflowY: 'auto', paddingBottom: '2rem' }}>
                         {filteredFeats.map((feat: any) => (
-                             <div key={feat.name + feat.source} style={{ 
-                                background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px', 
-                                border: '1px solid var(--glass-border)', cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                display: 'flex', flexDirection: 'column', gap: '0.5rem'
-                            }}
-                            onClick={() => handleAddFeat(feat)}
-                            >
-                                <strong style={{ color: '#e2e8f0' }}>{feat.name}</strong> 
-                                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{feat.source}</span>
+                             <Card 
+                                key={feat.name + feat.source} 
+                                style={{ 
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    display: 'flex', flexDirection: 'column', gap: '0.5rem'
+                                }}
+                                onClick={() => handleAddFeat(feat)}
+                             >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <strong style={{ color: '#e2e8f0' }}>{feat.name}</strong> 
+                                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{feat.source}</span>
+                                </div>
                                 {feat.prerequisite && (
                                     <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                                         Requires: {feat.prerequisite.map((p: any) => {
@@ -212,7 +210,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                                         }).join('; ')}
                                     </div>
                                 )}
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </div>
