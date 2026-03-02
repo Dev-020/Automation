@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { MainPanel } from './MainPanel';
 import EntryRenderer from './EntryRenderer';
 import type { Character } from '../types';
-import { XPHB_CLASSES, getXPHBSubclasses, getXPHBClassFluff } from '../data/classes';
+import { getXPHBClasses, getXPHBSubclasses, getXPHBClassFluff } from '../data/classes';
 
 const ALL_SKILLS = [
     'acrobatics', 'animal handling', 'arcana', 'athletics', 'deception', 'history', 'insight', 'intimidation', 'investigation', 'medicine', 'nature', 'perception', 'performance', 'persuasion', 'religion', 'sleight of hand', 'stealth', 'survival'
@@ -34,13 +34,30 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
     const [skillSelections, setSkillSelections] = useState<Record<string, string>>(currentClass.classConfig?.profs || {});
     const [toolSelections, setToolSelections] = useState<Record<string, string>>(currentClass.classConfig?.tools || {});
 
+    // Dynamic Data
+    const [classesData, setClassesData] = useState<any[]>([]);
+    const [subclassesData, setSubclassesData] = useState<any[]>([]);
+    const [classFluffData, setClassFluffData] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/classes')
+            .then(res => res.json())
+            .then(data => {
+                setClassesData(data.classes || []);
+                setSubclassesData(data.subclasses || []);
+                setClassFluffData(data.classFluff || []);
+            })
+            .catch(console.error);
+    }, []);
+
+    const XPHB_CLASSES = useMemo(() => getXPHBClasses(classesData), [classesData]);
+
     // Available subclasses for the selected class
     const availableSubclasses = useMemo(() => {
         if (!selectedClassName) return [];
-        const filtered = getXPHBSubclasses(selectedClassName);
-        console.log('Available subclasses for', selectedClassName, ':', filtered.map((s:any)=>s.name));
+        const filtered = getXPHBSubclasses(selectedClassName, subclassesData);
         return filtered;
-    }, [selectedClassName]);
+    }, [selectedClassName, subclassesData]);
 
     // Sync with character updates
     useEffect(() => {
@@ -48,7 +65,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
             const cls = character.classes?.[0] || { name: character.class || '', level: character.level || 1 };
             setSelectedClassName(cls.name);
 
-            const standardSubclasses = getXPHBSubclasses(cls.name);
+            const standardSubclasses = getXPHBSubclasses(cls.name, subclassesData);
             const isStandard = standardSubclasses.some(sc => sc.name === cls.subclass);
             
             if (cls.subclass && !isStandard) {
@@ -64,7 +81,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
             setSkillSelections(cls.classConfig?.profs || {});
             setToolSelections(cls.classConfig?.tools || {});
         }
-    }, [isOpen, character]);
+    }, [isOpen, character, subclassesData]);
 
     // Reset subclass and skills when changing primary class
     useEffect(() => {
@@ -80,7 +97,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
     const selectedClassData = React.useMemo(() => {
         if (!selectedClassName) return null;
         return XPHB_CLASSES.find((c: any) => c.name === selectedClassName) || null;
-    }, [selectedClassName]);
+    }, [selectedClassName, XPHB_CLASSES]);
 
     const isValid = useMemo(() => {
         if (!selectedClassName) return false;
@@ -531,7 +548,7 @@ export const ClassPanel: React.FC<ClassPanelProps> = ({ isOpen, onClose, charact
 
                                 {/* Class Lore / Description */}
                                 {(() => {
-                                    const fluff = getXPHBClassFluff(selectedClassName);
+                                    const fluff = getXPHBClassFluff(selectedClassName, classFluffData);
                                     if (!fluff?.entries) return null;
                                     return (
                                         <div>

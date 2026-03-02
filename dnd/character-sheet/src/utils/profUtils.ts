@@ -1,17 +1,11 @@
 import type { Character } from '../types';
-import racesData from '../../../5etools/5etools-src/data/races.json';
-import backgroundsData from '../../../5etools/5etools-src/data/backgrounds.json';
-import { XPHB_CLASSES } from '../data/classes';
-
-// Filter for XPHB content to match the UI lists
-const XPHB_RACES = (racesData.race || []).filter((r: any) => r.source === 'XPHB' && !r._copy);
-const XPHB_BACKGROUNDS = (backgroundsData.background || []).filter((b: any) => b.source === 'XPHB' && !b._copy);
 
 export interface Proficiencies {
     skills: Record<string, boolean>;
     tools: string[];
     languages: string[];
 }
+
 
 /**
  * Extracts proficiencies from a list of objects that have a `skillProficiencies` array.
@@ -70,21 +64,21 @@ const extractProficiencies = (
     return profs;
 };
 
-export const getRaceProficiencies = (character: Character): Proficiencies => {
+export const getRaceProficiencies = (character: Character, racesData: any[]): Proficiencies => {
     const profs: Proficiencies = { skills: {}, tools: [], languages: [] };
-    if (!character.race) return profs;
+    if (!character.race || !racesData || racesData.length === 0) return profs;
 
-    const raceData = XPHB_RACES.find((r: any) => r.name === character.race);
+    const raceData = racesData.find((r: any) => r.name === character.race);
     if (!raceData || !raceData.skillProficiencies) return profs;
 
     return extractProficiencies(raceData.skillProficiencies, character.raceConfig);
 };
 
-export const getBackgroundProficiencies = (character: Character): Proficiencies => {
+export const getBackgroundProficiencies = (character: Character, backgroundsData: any[]): Proficiencies => {
     const profs: Proficiencies = { skills: {}, tools: [], languages: [] };
-    if (!character.background) return profs;
+    if (!character.background || !backgroundsData || backgroundsData.length === 0) return profs;
 
-    const bgData = XPHB_BACKGROUNDS.find((b: any) => b.name === character.background);
+    const bgData = backgroundsData.find((b: any) => b.name === character.background);
     if (!bgData || !bgData.skillProficiencies) return profs;
 
     return extractProficiencies(bgData.skillProficiencies, character.backgroundConfig);
@@ -93,13 +87,13 @@ export const getBackgroundProficiencies = (character: Character): Proficiencies 
 /**
  * Get proficiencies granted by a character's primary Class.
  */
-export const getClassProficiencies = (character: Character): Proficiencies => {
+export const getClassProficiencies = (character: Character, classesData: any[]): Proficiencies => {
     const profs: Proficiencies = { skills: {}, tools: [], languages: [] };
     
     const clsName = character.classes?.[0]?.name || character.class;
-    if (!clsName) return profs;
+    if (!clsName || !classesData || classesData.length === 0) return profs;
 
-    const classData = XPHB_CLASSES.find((c: any) => c.name === clsName);
+    const classData = classesData.find((c: any) => c.name === clsName);
     if (!classData || !classData.startingProficiencies || !classData.startingProficiencies.skills) return profs;
 
     return extractProficiencies(classData.startingProficiencies.skills, character.classes?.[0]?.classConfig);

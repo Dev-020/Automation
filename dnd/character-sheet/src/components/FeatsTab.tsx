@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Character, Feature } from '../types';
-import featsData from '../../../5etools/5etools-src/data/feats.json';
 import { SidePanel } from './SidePanel';
 import { MainPanel } from './MainPanel';
 import { FeatEditor } from './FeatEditor';
 import { HomebrewFeatForm } from './HomebrewFeatForm';
 import { Card } from './Card';
-
-// Filter for everything EXCEPT legacy PHB content (as per user request)
-const ALL_FEATS = (featsData.feat || []).filter((f: any) => f.source !== 'PHB');
 
 interface FeatsTabProps {
     character: Character;
@@ -21,6 +17,14 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
     const [editingFeat, setEditingFeat] = useState<Feature | null>(null);
     const [editMode, setEditMode] = useState<'add' | 'edit'>('edit'); // Track if we are adding a fresh feat or editing existing
     const [isCreatingHomebrew, setIsCreatingHomebrew] = useState(false);
+    const [allFeats, setAllFeats] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/feats')
+            .then(res => res.json())
+            .then(data => setAllFeats((data || []).filter((f: any) => f.source !== 'PHB')))
+            .catch(console.error);
+    }, []);
 
     // --- Actions ---
     const handleAddFeat = (feat: any) => {
@@ -72,7 +76,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
     };
 
     // --- Render ---
-    const filteredFeats = ALL_FEATS.filter((f: any) => 
+    const filteredFeats = allFeats.filter((f: any) => 
         f.name && f.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

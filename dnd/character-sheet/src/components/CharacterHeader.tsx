@@ -3,16 +3,9 @@ import { Card } from './Card';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
 import type { Character } from '../types';
-import racesData from '../../../5etools/5etools-src/data/races.json';
 
 import { BackgroundPanel } from './BackgroundPanel';
 import { ClassPanel } from './ClassPanel';
-
-// Filter for XPHB (2024 PHB) content
-const XPHB_RACES = (racesData.race || []).filter((r: any) => r.source === 'XPHB' && !r._copy);
-
-
-
 interface CharacterHeaderProps {
   character: Character;
   onChange: (updates: Partial<Character>) => void;
@@ -63,13 +56,19 @@ const ConditionItem = ({ condition, isActive, onToggle }: { condition: any, isAc
 export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onChange, onExport, onImport, saveStatus = 'saved' }) => {
   const [activePanel, setActivePanel] = React.useState<'race' | 'background' | 'conditions' | 'class' | null>(null);
   const [availableConditions, setAvailableConditions] = React.useState<any[]>([]);
+  const [races, setRaces] = React.useState<any[]>([]);
   
   // Selected Data (derived from character or defaults)
   const selectedRaceConfig = React.useMemo(() => 
-      XPHB_RACES.find((r: any) => r.name === character.race) || XPHB_RACES[0], 
-  [character.race]);
+      races.find((r: any) => r.name === character.race) || (races.length > 0 ? races[0] : null), 
+  [character.race, races]);
 
-
+  React.useEffect(() => {
+      fetch('http://localhost:3001/api/races')
+          .then(res => res.json())
+          .then(data => setRaces((data || []).filter((r: any) => r.source === 'XPHB' && !r._copy)))
+          .catch(console.error);
+  }, []);
 
   React.useEffect(() => {
       if (activePanel === 'conditions' && availableConditions.length === 0) {
@@ -371,7 +370,7 @@ export const CharacterHeader: React.FC<CharacterHeaderProps> = ({ character, onC
                             }}
                         >
                             <option value="">-- Choose a Race --</option>
-                            {XPHB_RACES.map((r: any) => (
+                            {races.map((r: any) => (
                                 <option key={r.name} value={r.name}>{r.name}</option>
                             ))}
                         </select>

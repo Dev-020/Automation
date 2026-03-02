@@ -49,12 +49,20 @@ const ITEMS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/items.jso
 const ITEMS_BASE_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/items-base.json';
 const MAGIC_VARIANTS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/magicvariants.json';
 const VARIANT_RULES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/variantrules.json';
+const RACES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/races.json';
+const BACKGROUNDS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/backgrounds.json';
+const LANGUAGES_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/languages.json';
+const CLASSES_DIR = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/class';
 
 let spellCache = null; // Array of all enriched spells
 let featureCache = null; // Optional Features (Metamagic, Fighting Styles)
 let featCache = null;    // Feats
 let skillCache = null;   // Skills
 let conditionCache = null; // Conditions
+let raceCache = null;    // Races
+let backgroundCache = null; // Backgrounds
+let languageCache = null; // Languages
+let classCache = null;   // Classes, Subclasses, Class Features, and Fluff
 
 const CONDITIONS_PATH = 'C:/GitBash/Automation/dnd/5etools/5etools-src/data/conditionsdiseases.json';
 
@@ -93,10 +101,16 @@ async function loadData() {
         const featsRaw = await fs.promises.readFile(FEATS_PATH, 'utf8');
         const skillsRaw = await fs.promises.readFile(SKILLS_PATH, 'utf8');
         const conditionsRaw = await fs.promises.readFile(CONDITIONS_PATH, 'utf8');
+        const racesRaw = await fs.promises.readFile(RACES_PATH, 'utf8');
+        const backgroundsRaw = await fs.promises.readFile(BACKGROUNDS_PATH, 'utf8');
+        const languagesRaw = await fs.promises.readFile(LANGUAGES_PATH, 'utf8');
 
         featureCache = JSON.parse(optFeatRaw).optionalfeature;
         featCache = JSON.parse(featsRaw).feat;
         skillCache = JSON.parse(skillsRaw).skill;
+        raceCache = JSON.parse(racesRaw).race || [];
+        backgroundCache = JSON.parse(backgroundsRaw).background || [];
+        languageCache = JSON.parse(languagesRaw).language || [];
         
         const conditionsData = JSON.parse(conditionsRaw);
         // Combine 'condition' and 'status' arrays
@@ -105,7 +119,35 @@ async function loadData() {
             ...(conditionsData.status || [])
         ];
 
-        console.log(`Loaded ${allSpellsRaw.length} raw spells, ${featureCache.length} optional features, ${featCache.length} feats, ${conditionCache.length} conditions.`);
+        // Load classes from directory
+        let allClassData = [];
+        let allClassFeaturesData = [];
+        let allSubclassData = [];
+        let allClassFluffData = [];
+
+        const classFilesList = await fs.promises.readdir(CLASSES_DIR);
+        for (const file of classFilesList) {
+            if (file.startsWith('class-') && file.endsWith('.json')) {
+                const raw = await fs.promises.readFile(path.join(CLASSES_DIR, file), 'utf8');
+                const json = JSON.parse(raw);
+                if (json.class) allClassData.push(...json.class);
+                if (json.classFeature) allClassFeaturesData.push(...json.classFeature);
+                if (json.subclass) allSubclassData.push(...json.subclass);
+            } else if (file.startsWith('fluff-class-') && file.endsWith('.json')) {
+                const raw = await fs.promises.readFile(path.join(CLASSES_DIR, file), 'utf8');
+                const json = JSON.parse(raw);
+                if (json.classFluff) allClassFluffData.push(...json.classFluff);
+            }
+        }
+
+        classCache = {
+            classes: allClassData,
+            classFeatures: allClassFeaturesData,
+            subclasses: allSubclassData,
+            classFluff: allClassFluffData
+        };
+
+        console.log(`Loaded ${allSpellsRaw.length} raw spells, ${featureCache.length} optional features, ${featCache.length} feats, ${conditionCache.length} conditions, ${raceCache.length} races, ${classCache.classes.length} classes.`);
         
         // 3. Enrich Spells with Class Info
         const enrichedSpells = allSpellsRaw.map(spell => {
@@ -221,6 +263,32 @@ app.get('/api/ref/actions', async (req, res) => {
         console.error("Failed to load actions:", error);
         res.status(500).json({ error: "Failed to load actions" });
     }
+});
+
+// New Core Data Endpoints (Classes, Races, Backgrounds, Feats, Languages)
+app.get('/api/classes', (req, res) => {
+    if (!classCache) return res.status(503).json({ error: 'Data loading...' });
+    res.json(classCache);
+});
+
+app.get('/api/races', (req, res) => {
+    if (!raceCache) return res.status(503).json({ error: 'Data loading...' });
+    res.json(raceCache);
+});
+
+app.get('/api/backgrounds', (req, res) => {
+    if (!backgroundCache) return res.status(503).json({ error: 'Data loading...' });
+    res.json(backgroundCache);
+});
+
+app.get('/api/feats', (req, res) => {
+    if (!featCache) return res.status(503).json({ error: 'Data loading...' });
+    res.json(featCache);
+});
+
+app.get('/api/languages', (req, res) => {
+    if (!languageCache) return res.status(503).json({ error: 'Data loading...' });
+    res.json(languageCache);
 });
 
 // Serve 5eTools Data - Items

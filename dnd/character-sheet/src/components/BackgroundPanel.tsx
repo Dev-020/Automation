@@ -1,14 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { SidePanel } from './SidePanel';
 import EntryRenderer from './EntryRenderer';
-import type { Character, StatName, StatModifier, Feature } from '../types';
-import backgroundsData from '../../../5etools/5etools-src/data/backgrounds.json';
-import featsData from '../../../5etools/5etools-src/data/feats.json';
-
-
-// Filter for XPHB content
-const XPHB_BACKGROUNDS = (backgroundsData.background || []).filter((b: any) => b.source === 'XPHB' && !b._copy);
-const XPHB_FEATS = (featsData.feat || []).filter((f: any) => f.source === 'XPHB' || f.source === 'PHB'); 
+import type { Character, StatName } from '../types';
 
 interface BackgroundPanelProps {
     isOpen: boolean;
@@ -19,6 +12,20 @@ interface BackgroundPanelProps {
 
 export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClose, character, onChange }) => {
     const [selectedBackgroundName, setSelectedBackgroundName] = useState<string>(character.background || '');
+    const [backgrounds, setBackgrounds] = useState<any[]>([]);
+    const [feats, setFeats] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/backgrounds')
+            .then(res => res.json())
+            .then(data => setBackgrounds((data || []).filter((b: any) => b.source === 'XPHB' && !b._copy)))
+            .catch(console.error);
+
+        fetch('http://localhost:3001/api/feats')
+            .then(res => res.json())
+            .then(data => setFeats((data || []).filter((f: any) => f.source === 'XPHB' || f.source === 'PHB')))
+            .catch(console.error);
+    }, []);
     
     // --- Local State for Configuration ---
     // ASI State
@@ -32,8 +39,8 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
 
     // --- Derived Data ---
     const selectedBackground = useMemo(() => 
-        XPHB_BACKGROUNDS.find((b: any) => b.name === selectedBackgroundName), 
-    [selectedBackgroundName]);
+        backgrounds.find((b: any) => b.name === selectedBackgroundName), 
+    [selectedBackgroundName, backgrounds]);
 
     const grantedFeat = useMemo(() => {
         if (!selectedBackground?.feats) return null;
@@ -43,11 +50,11 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
         const searchName = name.toLowerCase();
 
         // 1. Try exact match
-        const exactMatch = XPHB_FEATS.find((f: any) => f.name.toLowerCase() === searchName);
+        const exactMatch = feats.find((f: any) => f.name.toLowerCase() === searchName);
         if (exactMatch) return exactMatch;
 
         // 2. Try finding in _versions (e.g. "Magic Initiate; Wizard" inside "Magic Initiate")
-        for (const baseFeat of XPHB_FEATS as any[]) {
+        for (const baseFeat of feats as any[]) {
             if (baseFeat._versions) {
                 const versionMatch = baseFeat._versions.find((v: any) => v.name.toLowerCase() === searchName);
                 if (versionMatch) {
@@ -78,7 +85,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
         }
         
         return null;
-    }, [selectedBackground]);
+    }, [selectedBackground, feats]);
 
     // ASI Options parsing
     const asiOptions = useMemo(() => {
@@ -174,7 +181,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
 
         // 3. Update Tools (Static for now, Skills are dynamic)
         const oldBackgroundName = character.background;
-        const oldBackground = oldBackgroundName ? XPHB_BACKGROUNDS.find((b: any) => b.name === oldBackgroundName) : null;
+        const oldBackground = oldBackgroundName ? backgrounds.find((b: any) => b.name === oldBackgroundName) : null;
         let newTools = [...(character.proficiencies?.tools || [])];
 
         if (oldBackground?.toolProficiencies) {
@@ -232,7 +239,7 @@ export const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ isOpen, onClos
                         }}
                     >
                         <option value="">-- Choose a Background --</option>
-                        {XPHB_BACKGROUNDS.map((b: any) => (
+                        {backgrounds.map((b: any) => (
                             <option key={b.name} value={b.name}>{b.name}</option>
                         ))}
                     </select>

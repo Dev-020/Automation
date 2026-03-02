@@ -33,7 +33,7 @@
       "saveProficiency": true,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771902985723-0",
+          "id": "bg-asi-1772437863105-0",
           "source": "Background",
           "value": 2,
           "type": "bonus"
@@ -48,7 +48,7 @@
       "total": 18,
       "breakdown": [
         {
-          "id": "bg-asi-1771902985723-0",
+          "id": "bg-asi-1772437863105-0",
           "source": "Background",
           "value": 2,
           "type": "bonus"
@@ -67,7 +67,7 @@
       "saveProficiency": false,
       "manualModifiers": [
         {
-          "id": "bg-asi-1771902985723-1",
+          "id": "bg-asi-1772437863105-1",
           "source": "Background",
           "value": 1,
           "type": "bonus"
@@ -76,7 +76,7 @@
       "total": 14,
       "breakdown": [
         {
-          "id": "bg-asi-1771902985723-1",
+          "id": "bg-asi-1772437863105-1",
           "source": "Background",
           "value": 1,
           "type": "bonus"
@@ -151,8 +151,7 @@
       "name": "Animal Handling",
       "stat": "WIS",
       "expertise": false,
-      "dynamicSources": [],
-      "proficiency": false
+      "dynamicSources": []
     },
     {
       "name": "Arcana",
@@ -226,11 +225,8 @@
     {
       "name": "Perception",
       "stat": "WIS",
-      "proficiency": true,
       "expertise": false,
-      "dynamicSources": [
-        "RACE"
-      ]
+      "dynamicSources": []
     },
     {
       "name": "Performance",
@@ -6811,6 +6807,158 @@
       "timestamp": 1772210629144,
       "diceType": "d20",
       "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 26,
+      "details": "19 + 7",
+      "timestamp": 1772437923645,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 8,
+      "details": "1 + 7",
+      "timestamp": 1772437924306,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CON",
+      "result": 25,
+      "details": "18 + 7",
+      "timestamp": 1772437924739,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: WIS",
+      "result": 13,
+      "details": "14 - 1",
+      "timestamp": 1772437925663,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: INT",
+      "result": 11,
+      "details": "9 + 2",
+      "timestamp": 1772437926305,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Saving Throw: CHA",
+      "result": 20,
+      "details": "14 + 6",
+      "timestamp": 1772437926473,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 22,
+      "details": "16 + 6",
+      "timestamp": 1772437929980,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 20,
+      "details": "14 + 6",
+      "timestamp": 1772437930333,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 23,
+      "details": "17 + 6",
+      "timestamp": 1772437930947,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Absorb Elements",
+      "result": 2,
+      "details": "2",
+      "timestamp": 1772437933310,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Absorb Elements",
+      "result": 4,
+      "details": "4",
+      "timestamp": 1772437933740,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield",
+      "result": 10,
+      "details": "(4 + 2 + 4)",
+      "timestamp": 1772437935389,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Effect: Cacophonic Shield",
+      "result": 13,
+      "details": "(4 + 3 + 6)",
+      "timestamp": 1772437935829,
+      "diceType": "d6",
+      "sendToDiscord": false
+    },
+    {
+      "label": "1d100 (Dis)",
+      "result": 13,
+      "details": "Roll 1: 13 = 13 <<\nRoll 2: 41 = 41",
+      "timestamp": 1772437938555,
+      "diceType": "d100",
+      "sendToDiscord": false
+    },
+    {
+      "label": "1d2 + 1d4 + 1d6 + 1d8 + 1d10 + 1d12 + 1d20 + 1d100 (Dis)",
+      "result": 59,
+      "details": "Roll 1: 2 + 2 + 5 + 6 + 10 + 10 + 17 + 7 = 59 <<\nRoll 2: 2 + 1 + 1 + 6 + 5 + 4 + 18 + 63 = 100",
+      "timestamp": 1772437943449,
+      "diceType": "d100",
+      "sendToDiscord": false
+    },
+    {
+      "label": "1d2 + 1d4 + 1d10 + 1d12 (Adv)",
+      "result": 14,
+      "details": "Roll 1: 2 + 2 + 2 + 3 = 9\nRoll 2: 1 + 4 + 6 + 3 = 14 <<",
+      "timestamp": 1772437947814,
+      "diceType": "d12",
+      "sendToDiscord": false
+    },
+    {
+      "label": "3d20 (Adv)",
+      "result": 38,
+      "details": "Roll 1: (13 + 14 + 11) = 38 <<\nRoll 2: (8 + 3 + 14) = 25",
+      "timestamp": 1772437950116,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "1d20 (Adv)",
+      "result": 20,
+      "details": "Roll 1: 19 = 19\nRoll 2: 20 = 20 <<",
+      "timestamp": 1772437952066,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "4d2 + 1d4 + 1d6 + 1d12",
+      "result": 17,
+      "details": "(1 + 1 + 1 + 2) + 1 + 6 + 5",
+      "timestamp": 1772437955579,
+      "diceType": "d12",
+      "sendToDiscord": false
     }
   ],
   "containers": [
@@ -8376,65 +8524,6 @@
         "prepared": true
       },
       {
-        "name": "Shadow Blade",
-        "source": "XGE",
-        "page": 164,
-        "level": 2,
-        "school": "I",
-        "time": [
-          {
-            "number": 1,
-            "unit": "bonus"
-          }
-        ],
-        "range": {
-          "type": "point",
-          "distance": {
-            "type": "self"
-          }
-        },
-        "components": {
-          "v": true,
-          "s": true
-        },
-        "duration": [
-          {
-            "type": "timed",
-            "duration": {
-              "type": "minute",
-              "amount": 1
-            },
-            "concentration": true
-          }
-        ],
-        "entries": [
-          "You weave together threads of shadow to create a sword of solidified gloom in your hand. This magic sword lasts until the spell ends. It counts as a simple melee weapon with which you are proficient. It deals {@damage 2d8} psychic damage on a hit and has the finesse, light, and thrown properties (range 20/60). In addition, when you use the sword to attack a target that is in dim light or darkness, you make the attack roll with advantage.",
-          "If you drop the weapon or throw it, it dissipates at the end of the turn. Thereafter, while the spell persists, you can use a bonus action to cause the sword to reappear in your hand."
-        ],
-        "entriesHigherLevel": [
-          {
-            "type": "entries",
-            "name": "At Higher Levels",
-            "entries": [
-              "When you cast this spell using a 3rd- or 4th-level spell slot, the damage increases to {@damage 3d8}. When you cast it using a 5th- or 6th-level spell slot, the damage increases to {@damage 4d8}. When you cast it using a spell slot of 7th level or higher, the damage increases to {@damage 5d8}."
-            ]
-          }
-        ],
-        "damageInflict": [
-          "psychic"
-        ],
-        "miscTags": [
-          "UBA"
-        ],
-        "hasFluffImages": true,
-        "classes": [
-          "Sorcerer",
-          "Warlock",
-          "Wizard"
-        ],
-        "prepared": true
-      },
-      {
         "name": "Misty Step",
         "source": "XPHB",
         "page": 299,
@@ -9145,6 +9234,62 @@
           "Sorcerer",
           "Wizard",
           "Artificer"
+        ],
+        "prepared": true
+      },
+      {
+        "name": "Sickening Radiance",
+        "source": "XGE",
+        "page": 164,
+        "level": 4,
+        "school": "V",
+        "time": [
+          {
+            "number": 1,
+            "unit": "action"
+          }
+        ],
+        "range": {
+          "type": "point",
+          "distance": {
+            "type": "feet",
+            "amount": 120
+          }
+        },
+        "components": {
+          "v": true,
+          "s": true
+        },
+        "duration": [
+          {
+            "type": "timed",
+            "duration": {
+              "type": "minute",
+              "amount": 10
+            },
+            "concentration": true
+          }
+        ],
+        "entries": [
+          "Dim, greenish light spreads within a 30-foot-radius sphere centered on a point you choose within range. The light spreads around corners, and it lasts until the spell ends.",
+          "When a creature moves into the spell's area for the first time on a turn or starts its turn there, that creature must succeed on a Constitution saving throw or take {@damage 4d10} radiant damage, and it suffers one level of {@condition exhaustion} and emits a dim, greenish light in a 5-foot radius. This light makes it impossible for the creature to benefit from being {@condition invisible}. The light and any levels of {@condition exhaustion} caused by this spell go away when the spell ends."
+        ],
+        "damageInflict": [
+          "radiant"
+        ],
+        "conditionInflict": [
+          "exhaustion"
+        ],
+        "savingThrow": [
+          "constitution"
+        ],
+        "areaTags": [
+          "S"
+        ],
+        "classes": [
+          "Sorcerer",
+          "Warlock",
+          "Wizard"
         ],
         "prepared": true
       }

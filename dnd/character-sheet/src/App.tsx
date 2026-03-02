@@ -89,6 +89,9 @@ function App() {
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [allSpells, setAllSpells] = useState<Spell[]>([]);
   const [allSkills, setAllSkills] = useState<any[]>([]); // Using any for now, or define SkillRef type
+  const [racesData, setRacesData] = useState<any[]>([]);
+  const [backgroundsData, setBackgroundsData] = useState<any[]>([]);
+  const [classesData, setClassesData] = useState<any[]>([]);
   const [sendToDiscord, setSendToDiscord] = useState(false);
   const [selectedStat, setSelectedStat] = useState<StatName | null>(null);
 
@@ -100,13 +103,13 @@ function App() {
       const featProfs = getFeatProficiencies(character.feats);
       const featSkill = featProfs.skills[skill.name.toLowerCase()];
 
-      const raceProfs = getRaceProficiencies(character);
+      const raceProfs = getRaceProficiencies(character, racesData);
       const isRaceProf = raceProfs.skills[skill.name.toLowerCase()];
 
-      const bgProfs = getBackgroundProficiencies(character);
+      const bgProfs = getBackgroundProficiencies(character, backgroundsData);
       const isBgProf = bgProfs.skills[skill.name.toLowerCase()];
 
-      const classProfs = getClassProficiencies(character);
+      const classProfs = getClassProficiencies(character, classesData);
       const isClassProf = classProfs.skills[skill.name.toLowerCase()];
 
       const dynamicSources: string[] = [];
@@ -261,6 +264,22 @@ function App() {
         .then(res => res.json())
         .then(data => setAllSkills(data))
         .catch(err => console.error("Failed to load skills:", err));
+
+    fetch('http://localhost:3001/api/races')
+        .then(res => res.json())
+        .then(setRacesData)
+        .catch(console.error);
+
+    fetch('http://localhost:3001/api/backgrounds')
+        .then(res => res.json())
+        .then(setBackgroundsData)
+        .catch(console.error);
+
+    fetch('http://localhost:3001/api/classes')
+        .then(res => res.json())
+        .then(data => setClassesData(data.classes || []))
+        .catch(console.error);
+
   }, []);
 
   // Auto-Save Effect (Local Storage + API)

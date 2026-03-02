@@ -1,19 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import EntryRenderer from './EntryRenderer';
 import type { Feature, Character, StatName } from '../types';
-import itemsData from '../../../5etools/5etools-src/data/items.json';
-import itemsBaseData from '../../../5etools/5etools-src/data/items-base.json';
-import languagesData from '../../../5etools/5etools-src/data/languages.json';
-
-const allItems = [...(itemsData.item || []), ...(itemsBaseData.baseitem || [])];
-const filteredTools = allItems.filter((i: any) => 
-    (i.type === 'AT' || i.type === 'T' || i.type === 'AT|XPHB' || i.type === 'T|XPHB' || 
-     i.type === 'INS' || i.type === 'INS|XPHB' || i.type === 'GS' || i.type === 'GS|XPHB') 
-    && i.source !== 'PHB'
-).map((i: any) => i.name);
-const TOOLS_LIST = Array.from(new Set(filteredTools)).sort();
-
-const LANGUAGES_LIST = (languagesData.language || []).filter((l: any) => l.source === 'XPHB' || l.source === 'PHB').map((l: any) => l.name);
 const SKILLS_LIST = [
     'Athletics', 'Acrobatics', 'Sleight of Hand', 'Stealth', 'Arcana', 'History', 'Investigation', 
     'Nature', 'Religion', 'Animal Handling', 'Insight', 'Medicine', 'Perception', 'Survival', 
@@ -71,6 +58,10 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
     const [spellSelections, setSpellSelections] = useState<Record<string, string>>({});
     const [spellAbilitySelections, setSpellAbilitySelections] = useState<Record<string, string>>({});
     const [profSelections, setProfSelections] = useState<Record<string, string>>({});
+    
+    // Dynamic Reference Data
+    const [TOOLS_LIST, setToolsList] = useState<string[]>([]);
+    const [LANGUAGES_LIST, setLanguagesList] = useState<string[]>([]);
 
     // Fetch Spells
     useEffect(() => {
@@ -88,7 +79,34 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                 setIsLoadingSpells(false);
             }
         };
+        
+        const fetchRefData = async () => {
+             try {
+                 const [itemsRes, itemsBaseRes, langRes] = await Promise.all([
+                     fetch('http://localhost:3001/api/items'),
+                     fetch('http://localhost:3001/api/items-base'),
+                     fetch('http://localhost:3001/api/languages')
+                 ]);
+                 const itemsData = await itemsRes.json();
+                 const itemsBaseData = await itemsBaseRes.json();
+                 const langData = await langRes.json();
+
+                 const allItems = [...(itemsData || []), ...(itemsBaseData || [])];
+                 const filteredTools = allItems.filter((i: any) => 
+                     (i.type === 'AT' || i.type === 'T' || i.type === 'AT|XPHB' || i.type === 'T|XPHB' || 
+                      i.type === 'INS' || i.type === 'INS|XPHB' || i.type === 'GS' || i.type === 'GS|XPHB') 
+                     && i.source !== 'PHB'
+                 ).map((i: any) => i.name);
+                 
+                 setToolsList(Array.from(new Set(filteredTools)).sort() as string[]);
+                 setLanguagesList((langData || []).filter((l: any) => l.source === 'XPHB' || l.source === 'PHB').map((l: any) => l.name));
+             } catch (err) {
+                 console.error("Failed to fetch reference data in FeatEditor:", err);
+             }
+        };
+
         fetchSpells();
+        fetchRefData();
     }, []);
 
     const effectiveFeat = useMemo(() => {
@@ -414,13 +432,13 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
         const finalSpellSelections = { ...spellSelections };
         const finalSpellAbilitySelections = { ...spellAbilitySelections };
         
-        spellGroups.forEach(group => {
+        spellGroups.forEach((group: any) => {
             // Static Ability
             if (group.staticAbility) {
                 finalSpellAbilitySelections[`${group.id}-ability`] = group.staticAbility;
             }
             // Fixed Spells
-            group.options.forEach(opt => {
+            group.options.forEach((opt: any) => {
                 if (opt.type === 'fixed' && opt.fullValue) {
                     finalSpellSelections[opt.id] = opt.fullValue;
                 }
@@ -614,7 +632,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                 ))}
 
                 {/* Spell Selector - ROBUST VERSION */}
-                {spellGroups.map((group) => (
+                {spellGroups.map((group: any) => (
                     <div key={group.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px' }}>
                         <h4 style={{ margin: '0 0 1rem 0', color: '#e2e8f0' }}>{group.label}</h4>
                         
@@ -630,14 +648,14 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                                     style={{ width: '100%', padding: '0.6rem', background: 'rgba(0,0,0,0.5)', border: '1px solid #475569', borderRadius: '4px', color: 'white' }}
                                 >
                                     <option value="">- Choose Ability -</option>
-                                    {group.abilityOption.from.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                                    {group.abilityOption.from.map((s: any) => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                                 </select>
                              </div>
                         )}
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {isLoadingSpells && <div style={{ color: '#aaa' }}>Loading spells...</div>}
-                            {!isLoadingSpells && group.options.map((opt) => {
+                            {!isLoadingSpells && group.options.map((opt: any) => {
                                 if (opt.type === 'fixed') {
                                     return (
                                         <div key={opt.id} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}>
