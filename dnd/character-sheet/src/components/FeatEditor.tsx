@@ -683,17 +683,7 @@ export const FeatEditor: React.FC<FeatEditorProps> = ({ feat, character, onSave,
                 </button>
                 <button 
                     onClick={handleSave}
-                    disabled={
-                        (asiOptions.length > 0 && asiOptions[asiModeIndex].type === 'choose' && Object.keys(asiSelections).length < (asiOptions[asiModeIndex].count || 1)) ||
-                        (spellGroups.some(g => g.abilityOption && !spellAbilitySelections[g.abilityOption.id])) ||
-                        (spellGroups.some(g => g.options.some(o => o.type === 'choose' && !spellSelections[o.id]))) ||
-                        (profOptions.some((opt, idx) => {
-                             if (opt.mode === 'static') return false; 
-                             const required = opt.count || opt.anyCount || 1;
-                             const made = Object.keys(profSelections).filter(k => k.startsWith(`${opt.type}-${idx}-`)).length;
-                             return made < required;
-                        }))
-                    }
+                    disabled={false}
                     style={{
                         padding: '0.75rem 2rem', background: 'linear-gradient(135deg, var(--color-primary), #7c3aed)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold',
                         opacity: 0.9

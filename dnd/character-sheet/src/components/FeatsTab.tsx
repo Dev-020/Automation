@@ -125,12 +125,12 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ character, onChange }) => {
                             
                             {/* Short summary or badges for configuration */}
                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                {(feat as any)._config?.spells && (
+                                {(feat as any)._config?.spells && Object.keys((feat as any)._config.spells).length > 0 && (
                                     <span style={{ fontSize: '0.75rem', background: '#3b82f6', color: 'white', padding: '2px 6px', borderRadius: '4px' }}>
                                         Spells Configured
                                     </span>
                                 )}
-                                {(feat as any)._config?.asi && (
+                                {(feat as any)._config?.asi && Object.keys((feat as any)._config.asi).length > 0 && (
                                      <span style={{ fontSize: '0.75rem', background: '#10b981', color: 'white', padding: '2px 6px', borderRadius: '4px' }}>
                                         ASI Configured
                                     </span>
