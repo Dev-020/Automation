@@ -116,36 +116,33 @@ class YTDLPExtractor extends BaseExtractor {
             url = 'https:' + url;
         }
 
-        // Spawn yt-dlp to extract the best audio and pipe raw audio to stdout
-        const ytdlp = spawn('yt-dlp', [
-            '--no-playlist',
-            '-f', 'bestaudio',
-            '-o', '-',            // Output to stdout
-            '--quiet',
-            '--no-warnings',
-            url
-        ], {
-            stdio: ['ignore', 'pipe', 'pipe']
+        // Instead of piping via stdout (which can be unstable on Windows or cause demuxer errors),
+        // we use yt-dlp to get the direct audio stream URL and return that to discord-player.
+        // discord-player will then use its internal FFmpeg to handle the stream natively.
+        return new Promise((resolve, reject) => {
+            console.log(`[YTDLPExtractor] Fetching direct stream URL for playback...`);
+            execFile('yt-dlp', [
+                '-f', 'bestaudio',
+                '--no-playlist',
+                '-g',                    // Just get the direct URL
+                '--no-warnings',
+                '--quiet',
+                url
+            ], (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`[YTDLPExtractor] stream() error: ${error.message}`);
+                    // Fallback: return original URL and hope discord-player handles it
+                    return resolve(url);
+                }
+                const directUrl = stdout.trim();
+                if (!directUrl) {
+                    console.error(`[YTDLPExtractor] stream() failed to get direct URL — returning original.`);
+                    return resolve(url);
+                }
+                console.log(`[YTDLPExtractor] Found direct stream link! Passing to player.`);
+                resolve(directUrl);
+            });
         });
-
-        // Log stderr for debugging (yt-dlp progress/errors)
-        ytdlp.stderr.on('data', (data) => {
-            const msg = data.toString().trim();
-            if (msg) console.error(`[YTDLPExtractor] yt-dlp stderr: ${msg}`);
-        });
-
-        ytdlp.on('error', (err) => {
-            console.error(`[YTDLPExtractor] yt-dlp spawn error: ${err.message}`);
-        });
-
-        ytdlp.on('close', (code) => {
-            if (code !== 0 && code !== null) {
-                console.error(`[YTDLPExtractor] yt-dlp exited with code ${code}`);
-            }
-        });
-
-        console.log('[YTDLPExtractor] stream() — yt-dlp process spawned, piping audio...');
-        return ytdlp.stdout;
     }
 
     /**
