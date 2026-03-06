@@ -71,6 +71,11 @@ module.exports = {
                     leaveOnEnd: false,
                     leaveOnEmpty: false,
                     leaveOnStop: false,
+                    bufferingTimeout: 5000,
+                    ytdlOptions: {
+                        quality: 'highestaudio',
+                        highWaterMark: 1 << 25 // 32MB
+                    }
                 }
             });
 
