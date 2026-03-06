@@ -10,6 +10,8 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
     ]
 });
 
@@ -76,9 +78,14 @@ if (fs.existsSync(eventsPath)) {
     }
 }
 
-// Default generic ready event
 client.once('clientReady', () => {
     console.log(`Logged in as ${client.user.tag}! Ready to play music.`);
+});
+
+// Persistent Status Message Bumping
+const statusManager = require('./utils/statusManager');
+client.on('messageCreate', (message) => {
+    statusManager.handleChannelActivity(message);
 });
 
 // Log into Discord

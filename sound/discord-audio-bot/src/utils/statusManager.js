@@ -1,0 +1,117 @@
+const { EmbedBuilder } = require('discord.js');
+const { QueueRepeatMode } = require('discord-player');
+
+/**
+ * Manages the persistent status message (Now Playing embed) for each guild.
+ */
+class StatusManager {
+    constructor() {
+        // Map of guildId -> { lastMessageId, lastUpdateAt }
+        this.statusMessages = new Map();
+        // Set of guildIds currently undergoing an update to prevent race conditions
+        this.updating = new Set();
+        this.COOLDOWN_MS = 5000;
+    }
+
+    /**
+     * Creates the "Now Playing" embed.
+     */
+    createEmbed(queue, track) {
+        if (!track) return null;
+
+        const nextTrack = queue.tracks.toArray()[0];
+        let repeatModeText = 'Off';
+        if (queue.repeatMode === QueueRepeatMode.TRACK) repeatModeText = 'Single Track 🔂';
+        if (queue.repeatMode === QueueRepeatMode.QUEUE) repeatModeText = 'Full Queue 🔁';
+
+        const embed = new EmbedBuilder()
+            .setTitle('🎶 Now Playing')
+            .setDescription(`**[${track.title}](${track.url})**`)
+            .setThumbnail(track.thumbnail)
+            .addFields(
+                { name: 'Duration', value: track.duration, inline: true },
+                { name: 'Loop Mode', value: repeatModeText, inline: true }
+            )
+            .setColor('#2b2d31')
+            .setTimestamp();
+
+        if (nextTrack) {
+            embed.addFields({ name: '📜 Up Next', value: `[${nextTrack.title}](${nextTrack.url})` });
+        } else {
+            embed.addFields({ name: '📜 Up Next', value: 'The queue is empty.' });
+        }
+
+        return embed;
+    }
+
+    /**
+     * Updates or resends the status message in the bottom-most position.
+     * @param {Object} queue - discord-player queue
+     * @param {Object} track - current track
+     * @param {boolean} forceResend - whether to delete and resend even if recently updated
+     */
+    async updateStatus(queue, track, forceResend = false) {
+        const guildId = queue.guild.id;
+        const channel = queue.metadata?.channel;
+        if (!channel || !track) return;
+
+        // Prevention of Race Condition: If an update is already in progress for this guild, skip.
+        if (this.updating.has(guildId)) return;
+
+        const guildData = this.statusMessages.get(guildId) || { lastMessageId: null, lastUpdateAt: 0 };
+        const now = Date.now();
+        
+        // Rate limiting for "bumping" (not for new song starts)
+        if (!forceResend && now - guildData.lastUpdateAt < this.COOLDOWN_MS) {
+            return;
+        }
+
+        const embed = this.createEmbed(queue, track);
+        if (!embed) return;
+
+        // Lock this guild for updates
+        this.updating.add(guildId);
+
+        try {
+            // Delete old message if it exists
+            if (guildData.lastMessageId) {
+                const oldMsg = await channel.messages.fetch(guildData.lastMessageId).catch(() => null);
+                if (oldMsg) await oldMsg.delete().catch(() => null);
+            }
+
+            // Send new message
+            const newMsg = await channel.send({ embeds: [embed] });
+            this.statusMessages.set(guildId, {
+                lastMessageId: newMsg.id,
+                lastUpdateAt: Date.now()
+            });
+        } catch (error) {
+            console.error('[StatusManager] Error updating status:', error);
+        } finally {
+            // Release the lock
+            this.updating.delete(guildId);
+        }
+    }
+
+    /**
+     * Called when any message is sent in the channel. Bumps the embed to the bottom.
+     */
+    async handleChannelActivity(message) {
+        const guildId = message.guild.id;
+        const guildData = this.statusMessages.get(guildId);
+        
+        // If we don't have an active status message for this guild, do nothing
+        if (!guildData || !guildData.lastMessageId) return;
+
+        // Don't bump our own messages (would cause a loop)
+        if (message.author.id === message.client.user.id) return;
+
+        const queue = require('discord-player').useQueue(guildId);
+        if (!queue || !queue.isPlaying()) return;
+
+        // Use updateStatus with rate limiting (forceResend = false)
+        await this.updateStatus(queue, queue.currentTrack, false);
+    }
+}
+
+module.exports = new StatusManager();

@@ -66,8 +66,15 @@ YouTube frequently changes its internal API and HTML structure.  Every JavaScrip
   - `handle(query)`: Restores `https:` protocol (stripped by discord-player), cleans playlist params from YouTube URLs, then calls `yt-dlp --dump-json` for direct URLs or `yt-dlp "ytsearch5:<query>"` for text search.
   - `stream(info)`: Spawns `yt-dlp -f bestaudio -o -` and pipes raw audio bytes to discord-player via stdout.
 - `audioCache.js`: **The Local Caching Module.** Hashes track URLs to unique filenames. On cache hit, returns local `.flac` path. On cache miss, uses `yt-dlp -x --audio-format flac` to download. YouTube and Spotify URLs are **skipped** (streamed natively by extractors instead).
-- `voiceValidator.js`: **Voice Isolation Module.** Enforces: (1) user must be in a voice channel, (2) if bot is in a different VC in the same server, it leaves and re-routes.
-- `playDLExtractor.js`: **DEPRECATED** — old `play-dl`-based extractor, no longer loaded. Can be safely deleted.
+- `voiceValidator.js`: **Voice Isolation Module.** Enforces user/bot voice channel constraints.
+- `statusManager.js`: **[NEW] Persistent Status Module.** Manages a single "Now Playing" embed per guild. Handles:
+  - Deleting/resending the embed to stay at the bottom of the channel.
+  - A 5-second cooldown ("bumping") to prevent spam.
+  - **Race Condition Prevention**: Implements a per-guild concurrency lock (`updating` Set) to ensure only one message renewal happens at a time during rapid chat activity.
+  - Automatic song-start updates.
+
+- `playDLExtractor.js`: **DEPRECATED** — no longer used.
+
 
 ### `src/events/` - Event Listeners
 - `interactionCreate.js`: Routes slash commands to command handlers.
