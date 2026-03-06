@@ -1,0 +1,91 @@
+const { SlashCommandBuilder } = require('discord.js');
+const { useMainPlayer, QueryType } = require('discord-player');
+const { validateVoiceChannel } = require('../utils/voiceValidator');
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('play')
+        .setDescription('Plays an audio track from YouTube, Spotify, SoundCloud, or Local File.')
+        .addStringOption(option => 
+            option.setName('query')
+                .setDescription('The URL or search query for the track')
+                .setRequired(false)),
+    
+    async execute(interaction) {
+        // Voice Validator: Ensures user is in a VC, and handles cross-server bot isolation
+        const isValid = await validateVoiceChannel(interaction);
+        if (!isValid) return;
+
+        // Defer reply as downloading/searching might take a few seconds
+        await interaction.deferReply();
+
+        const player = useMainPlayer();
+        const query = interaction.options.getString('query');
+        const channel = interaction.member.voice.channel;
+        
+        // Note: we can access the queue of the current server to check if it's paused.
+        const queue = player.nodes.get(interaction.guild.id);
+
+        if (!query) {
+            // User typed `/play` with no query. Let's try to resume a paused track.
+            if (queue && queue.node.isPaused()) {
+                queue.node.setPaused(false);
+                return interaction.followUp({ content: '▶️ Resumed the current track!' });
+            } else {
+                return interaction.followUp({ content: '❌ You did not provide a search query, and there is no paused track to resume.' });
+            }
+        }
+
+        try {
+            console.log(`[Play Command] Searching for query: "${query}"`);
+
+            // 1. Search for the track using discord-player
+            // Our custom PlayDLExtractor handles YouTube URLs, YouTube search, and SoundCloud.
+            // The default SpotifyExtractor bridges Spotify links to a search automatically.
+            const searchResult = await player.search(query, {
+                requestedBy: interaction.user,
+                searchEngine: QueryType.AUTO
+            });
+
+            console.log(`[Play Command] Search complete. hasTracks: ${searchResult.hasTracks()}, count: ${searchResult.tracks?.length || 0}`);
+            if (searchResult.tracks?.length > 0) {
+                console.log(`[Play Command] First track: "${searchResult.tracks[0].title}" — ${searchResult.tracks[0].url}`);
+            }
+
+            if (!searchResult.hasTracks()) {
+                return interaction.followUp({ content: `❌ No results found for \`${query}\`` });
+            }
+
+            const track = searchResult.tracks[0];
+
+            // 2. Command the Player to Play!
+            // The custom extractor's stream() method handles audio delivery.
+            await player.play(channel, searchResult, {
+                nodeOptions: {
+                    metadata: {
+                        channel: interaction.channel,
+                        client: interaction.client,
+                        requestedBy: interaction.user,
+                    },
+                    leaveOnEnd: false,
+                    leaveOnEmpty: true,
+                    leaveOnStop: false,
+                }
+            });
+
+            // Note: We don't send the "Now Playing Embed" here! 
+            // We successfully delegated that to src/events/playerEvents.js
+            
+            // Just acknowledge the addition to the queue
+            if (queue && queue.isPlaying()) {
+                 return interaction.followUp({ content: `✅ Added to queue: **${track.title || query}**` });
+            } else {
+                 return interaction.followUp({ content: `⏳ Loading: **${track.title || query}**` });
+            }
+
+        } catch (e) {
+            console.error(e);
+            return interaction.followUp({ content: `❌ Something went wrong while trying to play: ${e.message}` });
+        }
+    },
+};

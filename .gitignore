@@ -27,3 +27,6 @@ dnd/5etools
 dnd/.env
 dnd/Homebrew
 dnd/Homebrew/Homebrew_Subclass.md
+sound/discord-audio-bot/node_modules
+sound/discord-audio-bot/cache
+sound/discord-audio-bot/.env
