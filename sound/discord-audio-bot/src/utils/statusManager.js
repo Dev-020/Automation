@@ -27,13 +27,16 @@ class StatusManager {
         const embed = new EmbedBuilder()
             .setTitle('🎶 Now Playing')
             .setDescription(`**[${track.title}](${track.url})**`)
-            .setThumbnail(track.thumbnail)
             .addFields(
                 { name: 'Duration', value: track.duration, inline: true },
                 { name: 'Loop Mode', value: repeatModeText, inline: true }
             )
             .setColor('#2b2d31')
             .setTimestamp();
+
+        if (track.thumbnail && track.thumbnail.startsWith('http')) {
+            embed.setThumbnail(track.thumbnail);
+        }
 
         if (nextTrack) {
             embed.addFields({ name: '📜 Up Next', value: `[${nextTrack.title}](${nextTrack.url})` });

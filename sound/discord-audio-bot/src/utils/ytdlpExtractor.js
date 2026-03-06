@@ -84,7 +84,7 @@ class YTDLPExtractor extends BaseExtractor {
                 title: info.title || 'Unknown Title',
                 author: info.channel || info.uploader || 'Unknown Artist',
                 url: info.webpage_url || info.url || cleanQuery,
-                thumbnail: info.thumbnail || '',
+                thumbnail: info.thumbnail || (info.thumbnails && info.thumbnails.length > 0 ? info.thumbnails[0].url : null),
                 duration: this._formatDuration(info.duration || 0),
                 views: info.view_count || 0,
                 requestedBy: context.requestedBy,
