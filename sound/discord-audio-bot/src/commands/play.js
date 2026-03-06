@@ -67,8 +67,9 @@ module.exports = {
                         client: interaction.client,
                         requestedBy: interaction.user,
                     },
+                    volume: 10,
                     leaveOnEnd: false,
-                    leaveOnEmpty: true,
+                    leaveOnEmpty: false,
                     leaveOnStop: false,
                 }
             });

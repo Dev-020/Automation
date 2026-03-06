@@ -122,7 +122,7 @@ class YTDLPExtractor extends BaseExtractor {
         return new Promise((resolve, reject) => {
             console.log(`[YTDLPExtractor] Fetching direct stream URL for playback...`);
             execFile('yt-dlp', [
-                '-f', 'bestaudio',
+                '-f', 'bestaudio/best',
                 '--no-playlist',
                 '-g',                    // Just get the direct URL
                 '--no-warnings',
@@ -152,6 +152,7 @@ class YTDLPExtractor extends BaseExtractor {
         return new Promise((resolve, reject) => {
             execFile('yt-dlp', [
                 '--dump-json',
+                '-f', 'bestaudio/best',
                 '--no-playlist',
                 '--no-warnings',
                 '--quiet',
@@ -180,6 +181,7 @@ class YTDLPExtractor extends BaseExtractor {
         return new Promise((resolve, reject) => {
             execFile('yt-dlp', [
                 '--dump-json',
+                '-f', 'bestaudio/best',
                 '--flat-playlist',
                 '--no-warnings',
                 '--quiet',

@@ -48,10 +48,14 @@ YouTube frequently changes its internal API and HTML structure.  Every JavaScrip
 - `package.json`: Project dependencies and scripts (`npm start`, `npm test`).
 
 ### `src/commands/` - Player Controls
-- `play.js`: Validates voice state, searches via `discord-player` (which routes to the correct extractor), and plays the result. Handles resume-on-empty-query.
-- `stop.js`: Pauses current playback. Does **not** clear the queue or disconnect.
-- `skip.js`: Skips the current track and starts the next in queue.
-- `queue.js`: Views current queue (first 10 tracks) and supports clearing.
+- `play.js`: Validates voice state, searches via `discord-player`, and plays. **Default volume set to 50%**. Bot stays in VC even when empty (`leaveOnEmpty: false`).
+- `volume.js`: **[NEW]** Adjusts playback volume (0-200%).
+- `queue.js`: **[REFACTORED]** Consolidated management:
+  - `/queue view`: Shows current track and next 10 items.
+  - `/queue clear`: Removes all items from the queue.
+  - `/queue loop`: Toggles `QueueRepeatMode.QUEUE` to loop all songs currently in the queue.
+- `stop.js`: Pauses current playback.
+- `skip.js`: Skips the current track.
 - `leave.js`: Hard reset — stops playback, clears queue, disconnects.
 - `help.js`: Prints an embed with all available commands.
 
