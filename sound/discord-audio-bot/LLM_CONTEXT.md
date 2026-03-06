@@ -11,8 +11,9 @@ It focuses on robust cross-server voice isolation and supports local disk cachin
 - **Discord API**: `discord.js` (v14)
 - **Audio Framework**: `discord-player` v7.2.0 (handles queues, extractors, and playback)
 - **YouTube Backend**: `yt-dlp` (system binary, installed via `pip install yt-dlp`) — the **only** actively maintained YouTube audio tool. All JavaScript alternatives (`youtubei.js`, `play-dl`, `@distube/ytdl-core`) are broken or archived.
-- **Voice Encryption**: `@snazzah/davey` (DAVE protocol support for Discord's end-to-end voice encryption)
-- **Transcoding**: `ffmpeg` (system binary), `ffmpeg-static`, `opusscript`, `libsodium-wrappers` (required for Discord Voice)
+- **Voice Encryption**: `sodium-native` (Native C++ engine for XOR/Poly1305 encryption), `libsodium-wrappers` (fallback)
+- **Opus Encoding**: `@discord-player/opus` (Native C++ engine), `opusscript` (fallback)
+- **Transcoding**: `ffmpeg` (system binary), `ffmpeg-static`
 - **Testing**: `jest` v30
 
 ## Audio Pipeline Architecture
@@ -79,7 +80,20 @@ YouTube frequently changes its internal API and HTML structure.  Every JavaScrip
 ### `cache/`
 - Dynamically generated directory. `audioCache.js` saves hashed `.flac` files here. `.gitignore`'d.
 
+## Audio Quality & Performance
+
+### Optimization Highlights
+- **Native 48kHz (Opus)**: `ytdlpExtractor.js` prioritizes **Format 251 (Opus)**. This matches Discord's native 48kHz rate exactly, bypassing JS-side resampling distortion.
+- **Native Performance Engines**:
+    - **`sodium-native`**: Drastically speeds up per-packet encryption, reducing event-loop lag.
+    - **`@discord-player/opus`**: Native C++ opus encoding; prevents stuttering during audio "peaks" where software encoding fails.
+- **Enhanced Buffering**: `play.js` uses a **32MB highWaterMark** and **5s timeout** to cushion against network jitter on Windows.
+
+### Future Improvements (Postponed/Pending)
+- **FFmpeg 48kHz Force**: If static persists, update `ytdlpExtractor.js` to pass `-ar 48000` to FFmpeg to ensure perfectly clean resampling before the Opus stage.
+- **Node Downgrade (v22 LTS)**: If stuttering continues on Node v24, downgrading to the current LTS (v22) is recommended for better native binary stability and pre-built module support.
+
 ## System Requirements
-- Node.js v18+
+- Node.js v18+ (v22 LTS recommended for best native engine stability)
 - `yt-dlp` binary on PATH (install via `pip install yt-dlp`, keep updated with `pip install -U yt-dlp`)
 - `ffmpeg` binary on PATH

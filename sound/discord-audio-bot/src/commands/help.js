@@ -1,24 +1,40 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('help')
         .setDescription('Displays a list of all available commands and their descriptions.'),
     async execute(interaction) {
-        
+        let helpContent = '';
+        try {
+            const helpFilePath = path.join(__dirname, 'help.md');
+            helpContent = fs.readFileSync(helpFilePath, 'utf8');
+        } catch (error) {
+            console.error('Error reading help.md:', error);
+            return interaction.reply({ content: '❌ Could not load help content. Please try again later.', ephemeral: true });
+        }
+
         const embed = new EmbedBuilder()
-            .setTitle('Discord Audio Bot - Help')
-            .setDescription('Here is a list of commands you can use to control the audio player:')
-            .setColor('#2b2d31')
-            .addFields(
-                { name: '▶️ `/play <search>`', value: 'Plays an audio track from YouTube, Spotify, SoundCloud, or Local File. If the player is currently paused, run this command without a search to resume playback.' },
-                { name: '⏸️ `/stop`', value: 'Pauses the currently playing audio. The track is not removed.' },
-                { name: '⏭️ `/skip`', value: 'Skips the current track.' },
-                { name: '📜 `/queue view`', value: 'Displays the current tracks loaded in the player\'s queue.' },
-                { name: '🗑️ `/queue clear`', value: 'Clears all tracks from the queue.' },
-                { name: '👋 `/leave`', value: 'Stops the audio completely, clears the queue, and explicitly disconnects the bot from the voice channel.' }
-            )
-            .setFooter({ text: 'Supported Platforms: YouTube, Spotify, SoundCloud, Local' });
+            .setTitle('Discord Audio Bot - Help Guide')
+            .setDescription('Here is everything you need to know about controlling the player:')
+            .setColor('#2b2d31');
+
+        // Split by command headers (e.g., ### Command)
+        const sections = helpContent.split('\n### ');
+        
+        sections.slice(1).forEach(section => {
+            const lines = section.split('\n');
+            const commandName = lines[0].trim();
+            const description = lines.slice(1).join('\n').trim();
+            
+            if (commandName && description) {
+                embed.addFields({ name: commandName, value: description });
+            }
+        });
+
+        embed.setFooter({ text: 'Supported Platforms: YouTube, Spotify, SoundCloud' });
             
         return interaction.reply({ embeds: [embed], ephemeral: true });
     },
