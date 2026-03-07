@@ -12,7 +12,13 @@
 - Adjusts the current playback volume.
 - `0` is muted, `100` is standard, and `200` is double volume (boosted).
 
-### 📜 `/queue`
+### � `/cache`
+**Usage**: `/cache enabled:<True/False>`
+- Toggles the bot's local audio caching system on or off.
+- When enabled, downloads highly compressed audio to the server disk for faster replays.
+- Provided for debugging stream vs disk read issues.
+
+### �📜 `/queue`
 **Usage**: `/queue <action> [mode]`
 - **`action: View Queue`**: Shows the current song and the next 10 tracks.
 - **`action: Clear Queue`**: Removes all upcoming tracks (the current song keeps playing).
