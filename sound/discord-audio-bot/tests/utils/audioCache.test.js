@@ -18,6 +18,10 @@ describe('Audio Cache Module', () => {
              if (targetPath === MOCK_CACHE_DIR) return true;
              return false;
         });
+        
+        // Mock readdirSync and statSync for the LRU cache limit check
+        fs.readdirSync.mockReturnValue([]);
+        fs.statSync.mockReturnValue({ size: 1000, atimeMs: Date.now() });
     });
 
     test('returns original URL if URL is null/empty', async () => {
@@ -32,7 +36,7 @@ describe('Audio Cache Module', () => {
         const testUrl = 'https://soundcloud.com/track/123';
         const result = await getCachedAudioPath(testUrl);
 
-        expect(result).toContain('.flac');
+        expect(result).toContain('.opus');
         expect(child_process.execFile).not.toHaveBeenCalled(); // yt-dlp must not be called
     });
 
@@ -54,22 +58,7 @@ describe('Audio Cache Module', () => {
         expect(child_process.execFile).toHaveBeenCalled();
         const execArgs = child_process.execFile.mock.calls[0];
         expect(execArgs[0]).toBe('yt-dlp');
-        expect(result).toContain('.flac');
-    });
-
-    test('returns original URL instantly if it is a YouTube or Spotify URL (Cache Skip)', async () => {
-        // existsSync returns false for file check so we hit the URL-type check
-        fs.existsSync.mockReturnValue(false);
-
-        const youtubeUrl = 'https://youtube.com/watch?v=456';
-        const spotifyUrl = 'https://spotify.com/track/789';
-        
-        const ytResult = await getCachedAudioPath(youtubeUrl);
-        const spResult = await getCachedAudioPath(spotifyUrl);
-        
-        expect(ytResult).toBe(youtubeUrl);
-        expect(spResult).toBe(spotifyUrl);
-        expect(child_process.execFile).not.toHaveBeenCalled();
+        expect(result).toContain('.opus');
     });
 
     test('returns original URL (fallback) if download fails', async () => {

@@ -64,8 +64,8 @@ YouTube frequently changes its internal API and HTML structure.  Every JavaScrip
 - `ytdlpExtractor.js`: **The Custom YouTube Extractor.** Extends `discord-player`'s `BaseExtractor`. Key methods:
   - `validate(query)`: Accepts YouTube URLs and plain text search. Rejects SoundCloud/Spotify/other URLs.
   - `handle(query)`: Restores `https:` protocol (stripped by discord-player), cleans playlist params from YouTube URLs, then calls `yt-dlp --dump-json` for direct URLs or `yt-dlp "ytsearch5:<query>"` for text search.
-  - `stream(info)`: Spawns `yt-dlp -f bestaudio -o -` and pipes raw audio bytes to discord-player via stdout.
-- `audioCache.js`: **The Local Caching Module.** Hashes track URLs to unique filenames. On cache hit, returns local `.flac` path. On cache miss, uses `yt-dlp -x --audio-format flac` to download. YouTube and Spotify URLs are **skipped** (streamed natively by extractors instead).
+  - `stream(info)`: First checks `audioCache.js` for a local disk copy. If found, yields the local file. **CRITICAL ARCHITECTURE NOTE:** `discord-player`'s internal FFmpeg dispatcher requires local files to be passed as a stream object: `{ stream: fs.createReadStream(filePath) }`. Passing a raw string path causes Windows backslash escape errors. Passing `{$fmt: 'opus'}` for `yt-dlp`'s `.opus` files causes corruption because they are actually Ogg containers, not raw demuxed Opus frames. If no cache exists, it spawns `yt-dlp -g` to get a direct URL and passes that back.
+- `audioCache.js`: **The Local Caching Module.** Hashes track URLs to unique filenames. On cache hit, returns local `.opus` path. On cache miss, uses `yt-dlp -x --audio-format opus` to download into highly compressed `.opus` files. Includes a global `cacheConfig` to toggle caching on/off via the `/cache` command to isolate stream debugging API endpoints vs disk reads.
 - `voiceValidator.js`: **Voice Isolation Module.** Enforces user/bot voice channel constraints.
 - `statusManager.js`: **[NEW] Persistent Status Module.** Manages a single "Now Playing" embed per guild. Handles:
   - Deleting/resending the embed to stay at the bottom of the channel.

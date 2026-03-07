@@ -1,6 +1,8 @@
 const { BaseExtractor, Track, QueryType } = require('discord-player');
 const { spawn, execFile } = require('child_process');
 const { Readable } = require('stream');
+const { getCachedAudioPath } = require('./audioCache');
+const fs = require('fs');
 
 /**
  * Custom Extractor that uses yt-dlp for YouTube metadata + audio streaming.
@@ -104,25 +106,42 @@ class YTDLPExtractor extends BaseExtractor {
     }
 
     /**
-     * Creates the audio stream for a track by spawning yt-dlp and piping audio to stdout.
-     * Uses ffmpeg to transcode to opus for Discord.
+     * Creates the audio stream for a track by either returning a local cached file path
+     * or by falling back to fetching a direct stream URL from yt-dlp.
      */
     async stream(info) {
         let url = info.url;
-        console.log(`[YTDLPExtractor] stream() — url: "${url}"`);
+        console.log(`[YTDLPExtractor] stream() requested — url: "${url}"`);
 
         // Restore protocol if needed
         if (url.startsWith('//')) {
             url = 'https:' + url;
         }
 
-        // Instead of piping via stdout (which can be unstable on Windows or cause demuxer errors),
-        // we use yt-dlp to get the direct audio stream URL and return that to discord-player.
-        // discord-player will then use its internal FFmpeg to handle the stream natively.
+        try {
+            // First, try to get or download the cached local file
+            const audioPath = await getCachedAudioPath(url);
+            
+            // If getCachedAudioPath returns a path to a file (ends in .opus), 
+            // return a read stream. Do NOT attach $fmt: 'opus' because these are 
+            // Ogg containers containing Opus, not raw demuxed Opus frames.
+            // Leaving $fmt undefined forces discord-player to run it through FFmpeg.
+            if (audioPath && audioPath.endsWith('.opus')) {
+                console.log(`[YTDLPExtractor] Yielding local cached file stream to player: ${audioPath}`);
+                return {
+                    stream: fs.createReadStream(audioPath)
+                };
+            }
+        } catch (e) {
+            console.error(`[YTDLPExtractor] Error while trying to cache audio: ${e.message}`);
+        }
+
+        // --- FALLBACK ---
+        // If caching fails or returns the original URL, fallback to just getting the remote stream URL.
         return new Promise((resolve, reject) => {
-            console.log(`[YTDLPExtractor] Fetching direct stream URL for playback...`);
+            console.log(`[YTDLPExtractor] Fetching direct stream URL for playback (fallback)...`);
             execFile('yt-dlp', [
-                '-f', '251/140/bestaudio/best', // Prefer Opus (251 - 48kHz), then m4a (140 - 44.1kHz), then bestaudio
+                '-f', '251/140/bestaudio/best', // Prefer Opus, then m4a, then bestaudio
                 '--no-playlist',
                 '-g',                    // Just get the direct URL
                 '--no-warnings',
@@ -131,7 +150,6 @@ class YTDLPExtractor extends BaseExtractor {
             ], (error, stdout, stderr) => {
                 if (error) {
                     console.error(`[YTDLPExtractor] stream() error: ${error.message}`);
-                    // Fallback: return original URL and hope discord-player handles it
                     return resolve(url);
                 }
                 const directUrl = stdout.trim();
