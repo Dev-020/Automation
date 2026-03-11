@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { execFile } = require('child_process');
 
 const CACHE_DIR = path.join(__dirname, '..', '..', 'cache');
+const METADATA_FILE = path.join(CACHE_DIR, 'metadata.json');
 
 // Default max limit: 500 MB
 const MAX_CACHE_SIZE_BYTES = 500 * 1024 * 1024; 
@@ -12,9 +13,36 @@ const MAX_CACHE_SIZE_BYTES = 500 * 1024 * 1024;
 const cacheConfig = { enabled: true };
 
 /**
+ * Reads the metadata dictionary from disk.
+ */
+function readMetadata() {
+    if (!fs.existsSync(METADATA_FILE)) return {};
+    try {
+        const data = fs.readFileSync(METADATA_FILE, 'utf-8');
+        return JSON.parse(data);
+    } catch (e) {
+        console.error('[Cache Error] Failed to read metadata.json:', e.message);
+        return {};
+    }
+}
+
+/**
+ * Writes the metadata dictionary to disk.
+ */
+function writeMetadata(data) {
+    try {
+        if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+        fs.writeFileSync(METADATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+        console.error('[Cache Error] Failed to write metadata.json:', e.message);
+    }
+}
+
+/**
  * Sweeps the cache directory, calculates the total size, 
  * and deletes the oldest files (Least Recently Used) 
  * until the size is under MAX_CACHE_SIZE_BYTES.
+ * Also prunes metadata.json.
  */
 function enforceCacheLimit() {
     if (!fs.existsSync(CACHE_DIR)) return;
@@ -35,6 +63,9 @@ function enforceCacheLimit() {
     // Sort files by last accessed time, oldest first
     files.sort((a, b) => a.accessed - b.accessed);
 
+    let metadataChanged = false;
+    const metadata = readMetadata();
+
     for (const file of files) {
         if (totalSize <= MAX_CACHE_SIZE_BYTES) {
             break;
@@ -44,9 +75,20 @@ function enforceCacheLimit() {
             fs.unlinkSync(file.path);
             totalSize -= file.size;
             console.log(`[Cache Cleanup] Deleted ${file.name} to free up space.`);
+
+            // Also remove it from metadata if it exists
+            const hash = file.name.replace('.opus', '');
+            if (metadata[hash]) {
+                delete metadata[hash];
+                metadataChanged = true;
+            }
         } catch (e) {
             console.error(`[Cache Error] Failed to delete file ${file.path}:`, e.message);
         }
+    }
+
+    if (metadataChanged) {
+        writeMetadata(metadata);
     }
 }
 
@@ -56,9 +98,10 @@ function enforceCacheLimit() {
  * then returns the new local file path.
  * 
  * @param {string} trackUrl The URL of the track (YouTube, SoundCloud, etc.)
+ * @param {object} trackMetadata Optional metadata to bake into metadata.json {title, author, duration}
  * @returns {Promise<string>} The absolute path to the local cached file, or the original URL on download failure.
  */
-async function getCachedAudioPath(trackUrl) {
+async function getCachedAudioPath(trackUrl, trackMetadata = null) {
     if (!trackUrl) return null;
 
     // Bypass caching entirely if disabled, forcing native streaming logic
@@ -106,6 +149,19 @@ async function getCachedAudioPath(trackUrl) {
 
         if (fs.existsSync(filePath)) {
             console.log(`[Cache Success] Successfully saved ${trackUrl} to disk.`);
+            
+            // Save metadata
+            if (trackMetadata) {
+                const metadata = readMetadata();
+                metadata[hash] = {
+                    title: trackMetadata.title || 'Unknown Title',
+                    author: trackMetadata.author || 'Unknown Artist',
+                    url: trackUrl,
+                    duration: trackMetadata.duration || '0:00'
+                };
+                writeMetadata(metadata);
+            }
+
             // After successfully saving, check the total size and enforce the limit
             enforceCacheLimit();
             return filePath;
@@ -118,4 +174,4 @@ async function getCachedAudioPath(trackUrl) {
     }
 }
 
-module.exports = { getCachedAudioPath, enforceCacheLimit, cacheConfig };
+module.exports = { getCachedAudioPath, enforceCacheLimit, cacheConfig, readMetadata };

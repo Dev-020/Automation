@@ -153,7 +153,12 @@ class YTDLPExtractor extends BaseExtractor {
 
         try {
             // First, try to get or download the cached local file
-            const audioPath = await getCachedAudioPath(url);
+            const trackMetadata = {
+                title: info.title,
+                author: info.author,
+                duration: info.duration
+            };
+            const audioPath = await getCachedAudioPath(url, trackMetadata);
             
             // If getCachedAudioPath returns a path to a file (ends in .opus), 
             // return a read stream. Do NOT attach $fmt: 'opus' because these are 
