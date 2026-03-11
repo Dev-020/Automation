@@ -1,4 +1,4 @@
-const { BaseExtractor, Track, QueryType } = require('discord-player');
+const { BaseExtractor, Track, Playlist, QueryType } = require('discord-player');
 const { spawn, execFile } = require('child_process');
 const { Readable } = require('stream');
 const { getCachedAudioPath } = require('./audioCache');
@@ -50,10 +50,14 @@ class YTDLPExtractor extends BaseExtractor {
         }
 
         // Strip playlist/radio params from YouTube URLs — extract just the video
+        // EXCEPT if the link is EXPLICITLY a playlist URL and not just a video in a mix
+        let isPlaylistUrl = query.includes('list=');
+        
         if (cleanQuery.includes('youtube.com') || cleanQuery.includes('youtu.be')) {
             try {
                 const url = new URL(cleanQuery);
-                if (url.searchParams.has('v')) {
+                // If it has a video ID but also a list ID, let it stay a playlist if we want playlist UX
+                if (url.searchParams.has('v') && !isPlaylistUrl) {
                     cleanQuery = `https://www.youtube.com/watch?v=${url.searchParams.get('v')}`;
                     console.log(`[YTDLPExtractor] Cleaned YouTube URL → "${cleanQuery}"`);
                 }
@@ -65,12 +69,17 @@ class YTDLPExtractor extends BaseExtractor {
             let results;
 
             if (isUrl) {
-                // Direct URL → get metadata for that specific video
-                const info = await this._getVideoInfo(cleanQuery);
-                if (info) {
-                    results = [info];
+                if (isPlaylistUrl) {
+                    // Direct URL but explicitly a Playlist
+                    results = await this._getPlaylistInfo(cleanQuery);
                 } else {
-                    results = [];
+                    // Direct URL → get metadata for that specific video
+                    const info = await this._getVideoInfo(cleanQuery);
+                    if (info) {
+                        results = [info];
+                    } else {
+                        results = [];
+                    }
                 }
             } else {
                 // Text search → search YouTube via yt-dlp
@@ -97,6 +106,30 @@ class YTDLPExtractor extends BaseExtractor {
             }));
 
             console.log(`[YTDLPExtractor] Found ${tracks.length} track(s). First: "${tracks[0].title}"`);
+
+            if (isPlaylistUrl) {
+                // If this was an explicit playlist, we must wrap it in a Playlist object
+                // so play.js native `searchResult.hasPlaylist()` evaluates to true
+                const playlist = new Playlist(this.context.player, {
+                    tracks,
+                    title: results[0]?.playlist_title || 'YouTube Playlist',
+                    author: results[0]?.playlist_uploader || 'Unknown Creator',
+                    description: '',
+                    thumbnail: tracks[0]?.thumbnail || '',
+                    type: 'playlist',
+                    source: 'youtube',
+                    id: '',
+                    url: cleanQuery
+                });
+                
+                // Crucial: assign the playlist object back to each track so queue.js formatting works!
+                for (const t of tracks) {
+                    t.playlist = playlist;
+                }
+
+                return this.createResponse(playlist, tracks);
+            }
+
             return this.createResponse(null, tracks);
 
         } catch (err) {
@@ -187,6 +220,37 @@ class YTDLPExtractor extends BaseExtractor {
                 } catch (parseErr) {
                     console.error(`[YTDLPExtractor] JSON parse error: ${parseErr.message}`);
                     return resolve(null);
+                }
+            });
+        });
+    }
+
+    /**
+     * Get metadata for a Playlist URL using yt-dlp --dump-json --flat-playlist
+     */
+    _getPlaylistInfo(url) {
+        return new Promise((resolve, reject) => {
+            execFile('yt-dlp', [
+                '--dump-json',
+                '-f', '251/140/bestaudio/best',
+                '--flat-playlist',
+                '--no-warnings',
+                '--quiet',
+                url
+            ], { maxBuffer: 1024 * 1024 * 50 }, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`[YTDLPExtractor] _getPlaylistInfo error: ${error.message}`);
+                    return resolve([]);
+                }
+                try {
+                    // yt-dlp outputs one JSON object per line for playlist tracks
+                    const lines = stdout.trim().split('\n').filter(l => l.trim());
+                    const results = lines.map(line => JSON.parse(line));
+                    console.log(`[YTDLPExtractor] Playlist parsing returned ${results.length} tracks.`);
+                    return resolve(results);
+                } catch (parseErr) {
+                    console.error(`[YTDLPExtractor] Playlist parse error: ${parseErr.message}`);
+                    return resolve([]);
                 }
             });
         });

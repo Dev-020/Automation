@@ -70,16 +70,71 @@ module.exports = {
             if (queue.repeatMode === QueueRepeatMode.TRACK) repeatModeText = ' (Looping Track 🔂)';
             if (queue.repeatMode === QueueRepeatMode.QUEUE) repeatModeText = ' (Looping Queue 🔁)';
             
-            if (tracks.length === 0) {
-                return interaction.reply({ content: `🎵 **Now Playing:** ${currentTrack.title}${repeatModeText}\n📜 **Up Next:** (The queue is empty)` });
+            // Add playlist context to Now Playing
+            let nowPlayingText = `[${currentTrack.title}](${currentTrack.url})`;
+            if (currentTrack.playlist) {
+                nowPlayingText += `\n*(from playlist: **${currentTrack.playlist.title}**)*`;
             }
 
-            const nextTracksList = tracks.slice(0, 10).map((t, i) => `**${i + 1}.** ${t.title}`).join('\n');
-            const hiddenCount = tracks.length > 10 ? `\n...and ${tracks.length - 10} more tracks.` : '';
+            if (tracks.length === 0) {
+                return interaction.reply({ content: `🎵 **Now Playing:** ${nowPlayingText}${repeatModeText}\n📜 **Up Next:** (The queue is empty)` });
+            }
+
+            // Group contiguous playlist tracks together
+            const displayGroups = [];
+            let currentPlaylistGroup = null;
+
+            for (let i = 0; i < tracks.length; i++) {
+                const t = tracks[i];
+
+                if (t.playlist) {
+                    if (currentPlaylistGroup && currentPlaylistGroup.playlistTitle === t.playlist.title) {
+                        currentPlaylistGroup.count++;
+                    } else {
+                        currentPlaylistGroup = {
+                            isPlaylist: true,
+                            playlistTitle: t.playlist.title,
+                            firstTrackUrl: t.url,
+                            count: 1,
+                            startIndex: i + 1
+                        };
+                        displayGroups.push(currentPlaylistGroup);
+                    }
+                } else {
+                    currentPlaylistGroup = null;
+                    displayGroups.push({
+                        isPlaylist: false,
+                        title: t.title,
+                        url: t.url,
+                        index: i + 1
+                    });
+                }
+            }
+
+            // Cap the displayed groups to 15 chunks so Discord doesn't exceed embed limits
+            const DISPLAY_LIMIT = 15;
+            const visibleGroups = displayGroups.slice(0, DISPLAY_LIMIT);
+            
+            const nextTracksList = visibleGroups.map(v => {
+                if (v.isPlaylist) {
+                    return `📦 **[Playlist]** [${v.playlistTitle}](${v.firstTrackUrl}) — *${v.count} tracks remaining*`;
+                } else {
+                    return `🎵 **${v.index}.** [${v.title}](${v.url})`;
+                }
+            }).join('\n');
+
+            let hiddenCount = '';
+            if (displayGroups.length > DISPLAY_LIMIT) {
+                let remainingTracks = 0;
+                for (let i = DISPLAY_LIMIT; i < displayGroups.length; i++) {
+                    remainingTracks += displayGroups[i].isPlaylist ? displayGroups[i].count : 1;
+                }
+                hiddenCount = `\n\n...and ${remainingTracks} more tracks.`;
+            }
 
             const embed = new EmbedBuilder()
                 .setTitle(`Server Audio Queue${repeatModeText}`)
-                .setDescription(`🎵 **Now Playing:** [${currentTrack.title}](${currentTrack.url})\n\n📜 **Up Next:**\n${nextTracksList}${hiddenCount}`)
+                .setDescription(`🎵 **Now Playing:** ${nowPlayingText}\n\n📜 **Up Next:**\n${nextTracksList}${hiddenCount}`)
                 .setColor('#0099ff');
                 
             return interaction.reply({ embeds: [embed] });

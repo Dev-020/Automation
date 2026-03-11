@@ -26,9 +26,15 @@ class StatusManager {
         if (queue.repeatMode === QueueRepeatMode.TRACK) repeatModeText = 'Single Track 🔂';
         if (queue.repeatMode === QueueRepeatMode.QUEUE) repeatModeText = 'Full Queue 🔁';
 
+        let descriptionText = `**[${track.title}](${track.url})**`;
+        if (track.playlist) {
+            descriptionText += `\n*(from playlist: **${track.playlist.title}**)*`;
+        }
+        descriptionText += `\n\n${queue.node.createProgressBar()}`;
+
         const embed = new EmbedBuilder()
             .setTitle('🎶 Now Playing')
-            .setDescription(`**[${track.title}](${track.url})**\n\n${queue.node.createProgressBar()}`)
+            .setDescription(descriptionText)
             .addFields(
                 { name: 'Duration', value: track.duration, inline: true },
                 { name: 'Loop Mode', value: repeatModeText, inline: true }

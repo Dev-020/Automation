@@ -56,14 +56,35 @@ module.exports = {
                 return interaction.followUp({ content: `❌ No results found for \`${query}\`` });
             }
 
-            const track = searchResult.tracks[0];
-            
-            // 2. Validate Track Duration
+            // 2. Validate Track Durations & Handle Playlists
             // Enforce a strict 10-minute (600,000 ms) maximum duration limit per track to prevent memory crashes
-            // and save local disk cache/bandwidth.
-            if (track.durationMS > 600000) {
-            	return interaction.followUp({ content: `❌ **Track Too Long:** The maximum permitted audio duration is 10 minutes (you requested ${track.duration}).` });
+            let validTracks = [];
+            let skippedCount = 0;
+
+            for (const t of searchResult.tracks) {
+                // Keep tracks <= 10 minutes AND not livestreams (duration 0 usually means livestream or un-fetched)
+                if (t.durationMS > 0 && t.durationMS <= 600000) {
+                    validTracks.push(t);
+                } else {
+                    skippedCount++;
+                }
             }
+
+            if (validTracks.length === 0) {
+                return interaction.followUp({ content: `❌ **No Valid Tracks:** All requested tracks were either livestreams or exceeded the 10-minute maximum limit.` });
+            }
+
+            // Override the raw search result tracks with our filtered safe-list
+            searchResult.tracks = validTracks;
+            
+            // If the searchResult contains a Playlist object, we MUST sync its internal array
+            // Otherwise discord-player.play() will inject the raw, unfiltered playlist!
+            if (searchResult.hasPlaylist()) {
+                searchResult.playlist.tracks = validTracks;
+            }
+            
+            // Set the primary track to the first valid one in our new clean list
+            const track = searchResult.tracks[0];
 
             // 3. Command the Player to Play!
             // The custom extractor's stream() method handles audio delivery.
@@ -94,10 +115,15 @@ module.exports = {
             // We successfully delegated that to src/events/playerEvents.js
             
             // Just acknowledge the addition to the queue
-            if (queue && queue.isPlaying()) {
-                 return interaction.followUp({ content: `✅ Added to queue: **${track.title || query}**` });
+            let skipNotice = skippedCount > 0 ? ` *(Skipped ${skippedCount} tracks > 10m)*` : '';
+            
+            if (searchResult.hasPlaylist()) {
+                let playlistTitle = searchResult.playlist.title || 'Playlist';
+                return interaction.followUp({ content: `✅ Added **${validTracks.length}** tracks from **${playlistTitle}** to the queue!${skipNotice}` });
+            } else if (queue && queue.isPlaying()) {
+                 return interaction.followUp({ content: `✅ Added to queue: **${track.title || query}**${skipNotice}` });
             } else {
-                 return interaction.followUp({ content: `⏳ Loading: **${track.title || query}**` });
+                 return interaction.followUp({ content: `⏳ Loading: **${track.title || query}**${skipNotice}` });
             }
 
         } catch (e) {
