@@ -6959,6 +6959,30 @@
       "timestamp": 1772437955579,
       "diceType": "d12",
       "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 17,
+      "details": "11 + 6",
+      "timestamp": 1772969008795,
+      "diceType": "d20",
+      "sendToDiscord": false
+    },
+    {
+      "label": "Attack: Spell Attack",
+      "result": 13,
+      "details": "7 + 6",
+      "timestamp": 1772969013575,
+      "diceType": "d20",
+      "sendToDiscord": true
+    },
+    {
+      "label": "1d20 (Adv)",
+      "result": 14,
+      "details": "Roll 1: 2 = 2\nRoll 2: 14 = 14 <<",
+      "timestamp": 1772969020855,
+      "diceType": "d20",
+      "sendToDiscord": true
     }
   ],
   "containers": [

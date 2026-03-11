@@ -75,7 +75,11 @@ module.exports = {
                     ytdlOptions: {
                         quality: 'highestaudio',
                         highWaterMark: 1 << 25 // 32MB
-                    }
+                    },
+                    ffmpegArgs: [
+                        '-ar', '48000',   // Force 48kHz resampling natively 
+                        '-b:a', '96k'     // Cap bitrate at 96kbps to prevent Discord packet drops
+                    ]
                 }
             });
 
