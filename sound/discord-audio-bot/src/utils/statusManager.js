@@ -7,10 +7,12 @@ const { QueueRepeatMode } = require('discord-player');
 class StatusManager {
     constructor() {
         // Map of guildId -> { lastMessageId, lastUpdateAt }
+        // Map of guildId -> { lastMessageId, lastUpdateAt, interval }
         this.statusMessages = new Map();
         // Set of guildIds currently undergoing an update to prevent race conditions
         this.updating = new Set();
         this.COOLDOWN_MS = 5000;
+        this.UPDATE_INTERVAL_MS = 2000; // 2 seconds update frequency
     }
 
     /**
@@ -26,7 +28,7 @@ class StatusManager {
 
         const embed = new EmbedBuilder()
             .setTitle('🎶 Now Playing')
-            .setDescription(`**[${track.title}](${track.url})**`)
+            .setDescription(`**[${track.title}](${track.url})**\n\n${queue.node.createProgressBar()}`)
             .addFields(
                 { name: 'Duration', value: track.duration, inline: true },
                 { name: 'Loop Mode', value: repeatModeText, inline: true }
@@ -61,7 +63,7 @@ class StatusManager {
         // Prevention of Race Condition: If an update is already in progress for this guild, skip.
         if (this.updating.has(guildId)) return;
 
-        const guildData = this.statusMessages.get(guildId) || { lastMessageId: null, lastUpdateAt: 0 };
+        const guildData = this.statusMessages.get(guildId) || { lastMessageId: null, lastUpdateAt: 0, interval: null };
         const now = Date.now();
         
         // Rate limiting for "bumping" (not for new song starts)
@@ -86,13 +88,67 @@ class StatusManager {
             const newMsg = await channel.send({ embeds: [embed] });
             this.statusMessages.set(guildId, {
                 lastMessageId: newMsg.id,
-                lastUpdateAt: Date.now()
+                lastUpdateAt: Date.now(),
+                interval: guildData.interval // Retain the existing interval if there is one
             });
+            
+            // If we're forcing a resend (new track started), clear any old interval and start a new one
+            if (forceResend) {
+                this.startLiveUpdate(queue, channel, newMsg.id);
+            }
         } catch (error) {
             console.error('[StatusManager] Error updating status:', error);
         } finally {
             // Release the lock
             this.updating.delete(guildId);
+        }
+    }
+
+    /**
+     * Starts the 2-second polling to update the progress bar natively.
+     */
+    startLiveUpdate(queue, channel, messageId) {
+        const guildId = queue.guild.id;
+        this.stopLiveUpdate(guildId); // Ensure only 1 interval runs at a time
+
+        const interval = setInterval(async () => {
+            // Stop polling if music stops playing
+            if (!queue || !queue.isPlaying()) {
+                this.stopLiveUpdate(guildId);
+                return;
+            }
+
+            try {
+                // If the message has since been recreated by a bump, we need to edit the new one
+                const guildData = this.statusMessages.get(guildId);
+                if (!guildData || !guildData.lastMessageId) return;
+
+                const msg = await channel.messages.fetch(guildData.lastMessageId).catch(() => null);
+                if (!msg) return;
+
+                const newEmbed = this.createEmbed(queue, queue.currentTrack);
+                if (newEmbed) {
+                    await msg.edit({ embeds: [newEmbed] }).catch(() => null);
+                }
+            } catch (err) {
+                // Ignore DiscordAPIError on edits
+            }
+        }, this.UPDATE_INTERVAL_MS);
+
+        const currentData = this.statusMessages.get(guildId) || { lastMessageId: null, lastUpdateAt: 0 };
+        currentData.interval = interval;
+        this.statusMessages.set(guildId, currentData);
+    }
+
+    /**
+     * Stops the live update polling for a specific guild
+     */
+    stopLiveUpdate(guildId) {
+        const guildData = this.statusMessages.get(guildId);
+        if (guildData && guildData.interval) {
+            clearInterval(guildData.interval);
+            guildData.interval = null;
+            this.statusMessages.set(guildId, guildData);
         }
     }
 

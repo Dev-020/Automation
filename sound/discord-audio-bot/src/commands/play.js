@@ -57,8 +57,15 @@ module.exports = {
             }
 
             const track = searchResult.tracks[0];
+            
+            // 2. Validate Track Duration
+            // Enforce a strict 10-minute (600,000 ms) maximum duration limit per track to prevent memory crashes
+            // and save local disk cache/bandwidth.
+            if (track.durationMS > 600000) {
+            	return interaction.followUp({ content: `❌ **Track Too Long:** The maximum permitted audio duration is 10 minutes (you requested ${track.duration}).` });
+            }
 
-            // 2. Command the Player to Play!
+            // 3. Command the Player to Play!
             // The custom extractor's stream() method handles audio delivery.
             await player.play(channel, searchResult, {
                 nodeOptions: {
