@@ -49,23 +49,24 @@ YouTube frequently changes its internal API and HTML structure.  Every JavaScrip
 - `package.json`: Project dependencies and scripts (`npm start`, `npm test`).
 
 ### `src/commands/` - Player Controls
-- `play.js`: Validates voice state, searches via `discord-player`, and plays. **Default volume set to 50%**. Bot stays in VC even when empty (`leaveOnEmpty: false`).
-- `volume.js`: **[NEW]** Adjusts playback volume (0-200%).
-- `queue.js`: **[REFACTORED]** Consolidated management:
-  - `/queue view`: Shows current track and next 10 items.
+- `play.js`: Validates voice state, searches via `discord-player`, and plays. **Default volume set to 50%**. Enforces a **10-minute maximum track duration**.
+- `volume.js`: Adjusts playback volume (0-200%).
+- `queue.js`: Management of the current audio lineup:
+  - `/queue view`: Shows current track and dynamically groups contiguous songs sharing the same `Playlist` metadata into single `📦 Playlist` blocks.
   - `/queue clear`: Removes all items from the queue.
-  - `/queue loop`: Toggles `QueueRepeatMode.QUEUE` to loop all songs currently in the queue.
+  - `/queue loop`: Toggles `QueueRepeatMode.QUEUE` to infinitely loop songs. Natively handles and loops entire Playlists flawlessly.
 - `stop.js`: Pauses current playback.
-- `skip.js`: Skips the current track.
+- `skip.js`: Skips the current track. Includes a `target` choice option to skip either the `Current Track` or purge an `Entire Playlist` block from the queue.
+- `autoplay.js`: Toggles a boolean flag. If ON, the queue will automatically pick a random cached `.opus` file and play it when it runs completely empty.
 - `leave.js`: Hard reset — stops playback, clears queue, disconnects.
 - `help.js`: Prints an embed with all available commands.
 
 ### `src/utils/` - Core Logic & Extractors
-- `ytdlpExtractor.js`: **The Custom YouTube Extractor.** Extends `discord-player`'s `BaseExtractor`. Key methods:
+- `ytdlpExtractor.js`: **The Custom YouTube Extractor.** Extends `discord-player`'s `BaseExtractor`.
   - `validate(query)`: Accepts YouTube URLs and plain text search. Rejects SoundCloud/Spotify/other URLs.
-  - `handle(query)`: Restores `https:` protocol (stripped by discord-player), cleans playlist params from YouTube URLs, then calls `yt-dlp --dump-json` for direct URLs or `yt-dlp "ytsearch5:<query>"` for text search.
-  - `stream(info)`: First checks `audioCache.js` for a local disk copy. If found, yields the local file. **CRITICAL ARCHITECTURE NOTE:** `discord-player`'s internal FFmpeg dispatcher requires local files to be passed as a stream object: `{ stream: fs.createReadStream(filePath) }`. Passing a raw string path causes Windows backslash escape errors. Passing `{$fmt: 'opus'}` for `yt-dlp`'s `.opus` files causes corruption because they are actually Ogg containers, not raw demuxed Opus frames. If no cache exists, it spawns `yt-dlp -g` to get a direct URL and passes that back.
-- `audioCache.js`: **The Local Caching Module.** Hashes track URLs to unique filenames. On cache hit, returns local `.opus` path. On cache miss, uses `yt-dlp -x --audio-format opus` to download into highly compressed `.opus` files. Includes a global `cacheConfig` to toggle caching on/off via the `/cache` command to isolate stream debugging API endpoints vs disk reads.
+  - `handle(query)`: Parses `--dump-json` for direct URLs. If `list=` is detected, seamlessly bridges to `--dump-json --flat-playlist` to harvest massive 200+ song playlists instantly into official `Playlist` objects.
+  - `stream(info)`: First checks `audioCache.js` for a local disk copy. If found, yields a raw `fs.createReadStream(filePath)`. If no cache exists, spawns `yt-dlp -g` to pass the remote stream back to Discord.
+- `audioCache.js`: **The Local Caching architecture.** Hashes track URLs to unique MD5 strings and saves `.opus` binaries dynamically. Crucially, it manages a master `metadata.json` dictionary that links these local hashes back to the original `{ title, author, url, duration }` so `discord-player` can reconstruct fake Track objects for the AutoPlay system if the queue runs dry.
 - `voiceValidator.js`: **Voice Isolation Module.** Enforces user/bot voice channel constraints.
 - `statusManager.js`: **[NEW] Persistent Status Module.** Manages a single "Now Playing" embed per guild. Handles:
   - Deleting/resending the embed to stay at the bottom of the channel.
@@ -91,13 +92,13 @@ YouTube frequently changes its internal API and HTML structure.  Every JavaScrip
 
 ### Optimization Highlights
 - **Native 48kHz (Opus)**: `ytdlpExtractor.js` prioritizes **Format 251 (Opus)**. This matches Discord's native 48kHz rate exactly, bypassing JS-side resampling distortion.
+- **FFmpeg 48kHz Target**: `play.js` passes `ffmpegArgs: ['-ar', '48000', '-b:a', '96k']` into the internal transcode engine, capping bitrate at 96k to prevent connection drops and forcing clean resampling for non-Opus Spotify sources.
 - **Native Performance Engines**:
     - **`sodium-native`**: Drastically speeds up per-packet encryption, reducing event-loop lag.
     - **`@discord-player/opus`**: Native C++ opus encoding; prevents stuttering during audio "peaks" where software encoding fails.
 - **Enhanced Buffering**: `play.js` uses a **32MB highWaterMark** and **5s timeout** to cushion against network jitter on Windows.
 
 ### Future Improvements (Postponed/Pending)
-- **FFmpeg 48kHz Force**: If static persists, update `ytdlpExtractor.js` to pass `-ar 48000` to FFmpeg to ensure perfectly clean resampling before the Opus stage.
 - **Node Downgrade (v22 LTS)**: If stuttering continues on Node v24, downgrading to the current LTS (v22) is recommended for better native binary stability and pre-built module support.
 
 ## System Requirements

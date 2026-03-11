@@ -3,7 +3,8 @@
 ### ▶️ `/play`
 **Usage**: `/play <search_query_or_url>`
 - Plays audio from **YouTube**, **Spotify**, or **SoundCloud**.
-- Supports direct links and plain text searches.
+- Fully supports massive **Playlists** (instantly fetches them all).
+- Automatically rejects any track longer than 10 minutes to prevent crash loops.
 - If the player is paused and you provide no query, it will **resume** playback.
 - **Default Volume**: 10% (safe for all listeners).
 
@@ -20,7 +21,7 @@
 
 ### �📜 `/queue`
 **Usage**: `/queue <action> [mode]`
-- **`action: View Queue`**: Shows the current song and the next 10 tracks.
+- **`action: View Queue`**: Shows the current song and upcoming tracks. Extremely long playlists are gracefully compressed into single `��� Playlist` blocks.
 - **`action: Clear Queue`**: Removes all upcoming tracks (the current song keeps playing).
 - **`action: Loop Toggle`**: Toggles repetition.
     - **`mode: Off`**: No looping.
@@ -28,7 +29,13 @@
     - **`mode: Full Queue`**: Repeats the entire list in order.
 
 ### ⏭️ `/skip`
-- Immediately stops the current track and starts the next one in the queue.
+**Usage**: `/skip [target]`
+- **`target: Current Track`** *(Default)*: Immediately stops the current track and starts the next one.
+- **`target: Entire Playlist`**: If playing a massive playlist, this cleanly removes *every* remaining song belonging to that specific playlist so you can leapfrog it entirely!
+
+### 📻 `/autoplay`
+- Toggles the Random Cache AutoPlay feature.
+- When **ON**, if the queue naturally empties out, the bot will pick a completely random song it has saved to disk and play it eternally to keep the party alive.
 
 ### ⏸️ `/stop`
 - Pauses the music. Use `/play` (with no arguments) to resume.
